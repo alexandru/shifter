@@ -22,7 +22,7 @@ pomExtra := (
   </scm>
   <developers>
     <developer>
-      <id>alexn</id>
+      <id>alex_ndc</id>
       <name>Alexandru Nedelcu</name>
       <url>http://bionicspirit.com</url>
     </developer>

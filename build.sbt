@@ -6,11 +6,23 @@ version := "0.1.0-SNAPSHOT"
 
 scalaVersion := "2.9.2"
 
+scalacOptions ++= Seq("-unchecked", "-deprecation")
+
 licenses := Seq("BSD-style" -> url("http://www.opensource.org/licenses/bsd-license.php"))
 
 homepage := Some(url("http://github.com/alexandru/scala-shifter"))
 
+resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
+
 libraryDependencies ++= Seq(
+  "hsqldb" % "hsqldb" % "1.8.0.10",
+  "org.apache.derby" % "derby" % "10.9.1.0",
+  "org.yaml" % "snakeyaml" % "1.10",
+  "com.codahale" % "jerkson_2.9.1" % "0.5.0",
+  "com.ning" % "async-http-client" % "1.7.5" % "test",
+  "com.typesafe.akka" % "akka-actor" % "2.0.3" % "test",
+  "mysql" % "mysql-connector-java" % "5.1.20" % "test",
+  "commons-io" % "commons-io" % "2.4" % "test",
   "org.scalatest" %% "scalatest" % "1.8" % "test",
   "junit" % "junit" % "4.10" % "test"
 )

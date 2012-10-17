@@ -1,6 +1,6 @@
-package com.bionicspirit.shifter
+package shifter.migrations
 
-import com.bionicspirit.utils._
+import shifter.reflection._
 
 
 abstract class Migrator(val packageName: String, val group: String) {
@@ -8,10 +8,14 @@ abstract class Migrator(val packageName: String, val group: String) {
   def persistVersion(version: Int): Unit
   def currentVersion: Int
 
+  def initMigration(cls: Class[Migration]) = 
+    toInstance(cls)
+
   lazy val migrations: Seq[Migration] = {
-    val classes = findTypes[Migration](packageName).filterNot(_.isInterface)
-    val instances = classes.flatMap(c => toInstance(c))
-    instances.filter(_.group == group).toList.sortBy(_.version)
+    val classes = findSubTypes[Migration](packageName).filterNot(_.isInterface)
+    val instances = classes.flatMap(c => initMigration(c))
+    val setup = instances.filter(_.group == group)
+    setup.toList.sortBy(_.version)
   } 
 
   lazy val latestMigration: Option[Migration] = {

@@ -2,7 +2,6 @@ package shifter
 
 import org.yaml.snakeyaml.Yaml
 import collection.JavaConverters._
-import scala.collection.JavaConversions.propertiesAsScalaMap
 import java.io.{FileNotFoundException, BufferedReader, InputStreamReader, InputStream}
 import java.util.{HashMap, Map => JavaMap}
 import java.lang.{Iterable => JavaIterable}
@@ -33,7 +32,7 @@ package object config {
    */
   def loadSystemConfig(path: Option[String]): Map[String, String] =
     path match {
-      case Some(p) => loadResource(p, Option(System.getProperties.toMap))
+      case Some(p) => loadResource(p, Option(System.getProperties.asScala.toMap))
       case None =>
 	try {
 	  loadSystemConfig(Some("/config/local.yml"))

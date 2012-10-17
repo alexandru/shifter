@@ -2,7 +2,7 @@ package shifter
 
 import java.io.{File, FileInputStream}
 import java.util.zip.ZipInputStream
-import collection.JavaConversions.enumerationAsScalaIterator
+import collection.JavaConverters._
 import annotation.tailrec
 
 package object reflection {
@@ -21,7 +21,7 @@ package object reflection {
     assert(classLoader != null, "Problem loading ClassLoader")
 
     val paths = packages.map(_.replace('.', '/'))
-    val resources = paths.flatMap(p => classLoader.getResources(p)).toList.map(_.toExternalForm)
+    val resources = paths.flatMap(p => classLoader.getResources(p).asScala.toSeq).toList.map(_.toExternalForm)
     val classFiles: Set[String] = resources.flatMap(r => listClasses(r, packages)).toSet
     classFiles.flatMap(p => toClass(p))    
   }

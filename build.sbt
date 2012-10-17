@@ -6,6 +6,8 @@ version := "0.2"
 
 scalaVersion := "2.9.2"
 
+crossScalaVersions := Seq("2.8.2", "2.9.2")
+
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 
 licenses := Seq("BSD-style" -> url("http://www.opensource.org/licenses/bsd-license.php"))

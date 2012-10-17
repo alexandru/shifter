@@ -15,10 +15,9 @@ homepage := Some(url("http://github.com/alexandru/scala-shifter"))
 resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
 libraryDependencies ++= Seq(
-  "hsqldb" % "hsqldb" % "1.8.0.10",
-  "org.apache.derby" % "derby" % "10.9.1.0",
   "org.yaml" % "snakeyaml" % "1.10",
-  "com.codahale" % "jerkson_2.9.1" % "0.5.0",
+  "hsqldb" % "hsqldb" % "1.8.0.10" % "test",
+  "org.apache.derby" % "derby" % "10.9.1.0" % "test",
   "com.ning" % "async-http-client" % "1.7.5" % "test",
   "com.typesafe.akka" % "akka-actor" % "2.0.3" % "test",
   "mysql" % "mysql-connector-java" % "5.1.20" % "test",

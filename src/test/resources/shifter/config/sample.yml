@@ -1,0 +1,10 @@
+http:
+  host: 127.0.0.2
+  port: 9999
+
+  minThreads: 20
+  maxThreads: 120
+
+logging:
+  format: "%-5p [%d{yyyy-MM-dd HH:mm:ss}] %c{1}: %m\n"
+  level: DEBUG

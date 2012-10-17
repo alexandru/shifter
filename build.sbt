@@ -2,7 +2,7 @@ organization := "com.bionicspirit"
 
 name := "scala-shifter"
 
-version := "0.1.0-SNAPSHOT"
+version := "0.2"
 
 scalaVersion := "2.9.2"
 

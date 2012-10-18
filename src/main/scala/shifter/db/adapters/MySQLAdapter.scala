@@ -1,4 +1,4 @@
-package shifter.db
+package shifter.db.adapters
 
 import java.sql.{DriverManager, Connection}
 

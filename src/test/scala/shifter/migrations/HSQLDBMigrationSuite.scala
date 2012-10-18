@@ -1,8 +1,8 @@
 package shifter.migrations
 
+import shifter.db._
 import shifter.db.Conversions._
-import shifter.db.DBConnection
-import shifter.reflection.using
+import shifter.lang._
 import java.sql.{Connection, DriverManager}
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
@@ -23,13 +23,17 @@ class HSQLDBMigrationSuite extends FunSuite {
   test("Migrate to version 1") {
     withMigrator {
       (conn, m) => 
+	implicit val db = conn
+
 	assert(m.migrateOneUp)
 
-	val dbVersion = conn.fetchOne("SELECT mvalue FROM shiftermigrations WHERE mname = ?", "version").getOrElse("0").toInt
+	val dbVersion = SQL("SELECT mvalue FROM shiftermigrations WHERE mname = ?").withArgs("version").
+	  select.map(_[Int]("mvalue")).toStream.headOption.getOrElse(0)
+
 	assert(dbVersion === 1)
 	assert(m.currentVersion === 1)
 
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.contains("SHIFTERMIGRATIONS"))
 	assert(tables.contains("TEST1"))
 	assert(!tables.contains("TEST2"))
@@ -43,7 +47,7 @@ class HSQLDBMigrationSuite extends FunSuite {
 	assert(m.migrateOneUp)
 	assert(m.migrateOneUp)
 	assert(m.currentVersion === 2)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.contains("SHIFTERMIGRATIONS"))
 	assert(tables.contains("TEST1"))
 	assert(tables.contains("TEST2"))
@@ -56,7 +60,7 @@ class HSQLDBMigrationSuite extends FunSuite {
       (conn, m) => 
 	assert(m.migrateTo(2))
 	assert(m.currentVersion === 2)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.contains("SHIFTERMIGRATIONS"))
 	assert(tables.contains("TEST1"))
 	assert(tables.contains("TEST2"))
@@ -71,7 +75,7 @@ class HSQLDBMigrationSuite extends FunSuite {
 	assert(m.migrateOneUp)
 	assert(m.migrateOneUp)
 	assert(m.currentVersion === 3)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.contains("SHIFTERMIGRATIONS"))
 	assert(tables.contains("TEST1"))
 	assert(tables.contains("TEST2"))
@@ -84,7 +88,7 @@ class HSQLDBMigrationSuite extends FunSuite {
       (conn, m) => 
 	assert(m.migrateTo(3))
 	assert(m.currentVersion === 3)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.contains("SHIFTERMIGRATIONS"))
 	assert(tables.contains("TEST1"))
 	assert(tables.contains("TEST2"))
@@ -99,7 +103,7 @@ class HSQLDBMigrationSuite extends FunSuite {
 	assert(m.currentVersion === 3)
 	assert(m.migrateOneDown)
 	assert(m.currentVersion === 2)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.contains("SHIFTERMIGRATIONS"))
 	assert(tables.contains("TEST1"))
 	assert(tables.contains("TEST2"))
@@ -114,7 +118,7 @@ class HSQLDBMigrationSuite extends FunSuite {
 	assert(m.currentVersion === 3)
 	assert(m.migrateTo(1))
 	assert(m.currentVersion === 1)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.contains("SHIFTERMIGRATIONS"))
 	assert(tables.contains("TEST1"))
 	assert(!tables.contains("TEST2"))
@@ -131,7 +135,7 @@ class HSQLDBMigrationSuite extends FunSuite {
 	assert(m.currentVersion === 1)
 	assert(m.migrate)
 	assert(m.currentVersion === 3)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.contains("SHIFTERMIGRATIONS"))
 	assert(tables.contains("TEST1"))
 	assert(tables.contains("TEST2"))
@@ -147,7 +151,7 @@ class HSQLDBMigrationSuite extends FunSuite {
 
 	assert(m.migrateToZero)
 	assert(m.currentVersion === 0)
-	val tablesVer0 = conn.listTables
+	val tablesVer0 = conn.toDB.listTables
 	assert(tablesVer0.contains("SHIFTERMIGRATIONS"))
 	assert(!tablesVer0.contains("TEST1"))
 	assert(!tablesVer0.contains("TEST2"))
@@ -156,7 +160,7 @@ class HSQLDBMigrationSuite extends FunSuite {
 	assert(m.migrate)
 	assert(m.currentVersion === 3)
 
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.contains("SHIFTERMIGRATIONS"))
 	assert(tables.contains("TEST1"))
 	assert(tables.contains("TEST2"))
@@ -165,7 +169,7 @@ class HSQLDBMigrationSuite extends FunSuite {
 	assert(m.migrateToZero)
 	assert(m.currentVersion === 0)
 
-	val tablesFinal = conn.listTables
+	val tablesFinal = conn.toDB.listTables
 	assert(tablesFinal.contains("SHIFTERMIGRATIONS"))
 	assert(!tablesFinal.contains("TEST1"))
 	assert(!tablesFinal.contains("TEST2"))
@@ -174,7 +178,7 @@ class HSQLDBMigrationSuite extends FunSuite {
   }
 
   def withMigrator(f: (Connection, Migrator) => Any) {
-    using (DBConnection("jdbc:hsqldb:mem:shiftertest", "SA", "")) {
+    using (DB("jdbc:hsqldb:mem:shiftertest", "SA", "").underlying) {
       inst =>
 	implicit val db = inst
 

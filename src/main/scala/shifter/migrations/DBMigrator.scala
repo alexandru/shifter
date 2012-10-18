@@ -1,15 +1,15 @@
 package shifter.migrations
 
-import shifter.db.DBConnectionPool
 import java.sql.Connection
 import shifter.lang._
+import shifter.db._
 import shifter.db.Conversions._
 
 
 abstract class DBMigrator(packageName: String, group: String, val conn: Connection)
 extends Migrator(packageName, group) {
   override def setup() {
-    if (!conn.listTables.exists(_.toLowerCase == "shiftermigrations")) {
+    if (!conn.toDB.listTables.exists(_.toLowerCase == "shiftermigrations")) {
       using (conn.createStatement)(
 	_.execute("CREATE TABLE shiftermigrations (mname VARCHAR(100) NOT NULL, mvalue VARCHAR(100) DEFAULT NULL)"))
       using (conn.createStatement)(

@@ -6,43 +6,43 @@ import collection.immutable.Queue
 import java.util.concurrent.atomic.{AtomicReference, AtomicBoolean}
 
 
-class DBConnectionPool private (url: String, user: String, password: String, poolSize: Int = 20) {  
-  val queue: AtomicReference[Queue[Connection]] = {
+class DBPool private (url: String, user: String, password: String, poolSize: Int = 20) {  
+  private[this] val queue: AtomicReference[Queue[DB]] = {
     val conns = (0 until poolSize).map(x => getConnection())
-    new AtomicReference(Queue.empty[Connection] ++ conns)
+    new AtomicReference(Queue.empty[DB] ++ conns)
   }
 
   def withConnection[A](f: Connection => A): A = {
     val conn = acquireConnection()
     
     try {
-      f(conn)
+      f(conn.underlying)
     } finally {
       releaseConnection(conn)
     }
   }
 
-  def close() {
+  def closeAll() {
     queue.synchronized {
       queue.get.foreach(conn => try {
-	conn.close()} catch {case _ =>})
+	conn.underlying.close()} catch {case _ =>})
     }
   }
 
   @tailrec
-  final def releaseConnection(conn: Connection) {
+  final def releaseConnection(conn: DB) {
     val queueRef = queue.get
     val newQueue = queueRef :+ conn
     if (!queue.compareAndSet(queueRef, newQueue))
-	releaseConnection(conn)	
+      releaseConnection(conn)	
   }
 
-  final def acquireConnection(): Connection = {
-    var returnConn: Connection = null
+  final def acquireConnection(): DB = {
+    var returnConn: DB = null
 
     // fetch connection from the queue 
     while (returnConn == null) {
-      var queueRef: Queue[Connection] = queue.get
+      var queueRef: Queue[DB] = queue.get
 
       while (queueRef == null || queueRef.isEmpty)
         queue.synchronized {
@@ -64,18 +64,18 @@ class DBConnectionPool private (url: String, user: String, password: String, poo
   }
 
   private[this] def getConnection() =
-    DBConnection(url, user, password)
+    DB(url, user, password)
 }
 
 
-object DBConnectionPool {
+object DBPool {
   @volatile
-  private[this] var map = Map.empty[String, DBConnectionPool]
+  private[this] var map = Map.empty[String, DBPool]
 
-  def apply(uid: String): DBConnectionPool = 
+  def apply(uid: String): DBPool = 
     apply(uid, null, null, null, 20)
 
-  def apply(uid: String, url: String, user: String, password: String, initPoolSize: Int = 20): DBConnectionPool = {
+  def apply(uid: String, url: String, user: String, password: String, initPoolSize: Int = 20): DBPool = {
     require(initPoolSize > 0, "Pool size must be a non-negative, positive number")
 
     if (map.contains(uid))
@@ -88,12 +88,12 @@ object DBConnectionPool {
     }
   }
 
-  private[this] def createPool(uid: String, url: String, user: String, password: String, poolSize: Int): DBConnectionPool = 
+  private[this] def createPool(uid: String, url: String, user: String, password: String, poolSize: Int): DBPool = 
     this.synchronized {
       map.get(uid) match {
 	case Some(pool) => pool
 	case None => {
-	  val pool = new DBConnectionPool(url, user, password, poolSize)
+	  val pool = new DBPool(url, user, password, poolSize)
 	  map = map + (uid -> pool)
 	  pool
 	}

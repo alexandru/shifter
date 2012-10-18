@@ -5,6 +5,8 @@ import java.io.{File, FileInputStream}
 import java.util.zip.ZipInputStream
 import collection.JavaConverters._
 import annotation.tailrec
+import scala.reflect.Manifest
+
 
 package object reflection {
 
@@ -133,4 +135,90 @@ package object reflection {
       case _ => None
     }
   }
+
+  def castTo[T : Manifest](value: Any): Option[T] = {
+    import scala.runtime._
+    import collection.immutable.StringOps
+    val m = manifest[T]
+
+    val (erasure, wantsNumber) = m match {
+      case Manifest.Byte => (classOf[java.lang.Byte], true)
+      case Manifest.Short => (classOf[java.lang.Short], true)
+      case Manifest.Char => (classOf[java.lang.Character], true)
+      case Manifest.Long => (classOf[java.lang.Long], true)
+      case Manifest.Float => (classOf[java.lang.Float], true)
+      case Manifest.Double => (classOf[java.lang.Double], true)
+      case Manifest.Boolean => (classOf[java.lang.Boolean], true)
+      case Manifest.Int => (classOf[java.lang.Integer], true)	
+      case m => (m.erasure, false)
+    }
+
+    if(erasure.isInstance(value)) 
+      Some(value.asInstanceOf[T]) 
+
+    else if (value.isInstanceOf[String] && wantsNumber) 
+      value match {
+	case NumberFormat(_*) =>
+	  val str = value.asInstanceOf[String]
+	  val proxy = new StringOps(str)
+	  Some((m match {
+	    case Manifest.Byte => proxy.toByte
+	    case Manifest.Short => proxy.toShort
+	    case Manifest.Char => str(0)
+	    case Manifest.Long => proxy.toLong
+	    case Manifest.Float => proxy.toFloat
+	    case Manifest.Double => proxy.toDouble
+	    case Manifest.Boolean => (if (proxy.toInt != 0) true else false)
+            case Manifest.Int => proxy.toInt
+	  }).asInstanceOf[T])
+
+	case FloatFormat(_*) =>
+	  val str = value.asInstanceOf[String]
+	  val proxy = new StringOps(str)
+	  Some((m match {
+	    case Manifest.Byte => proxy.toDouble.toByte
+	    case Manifest.Short => proxy.toDouble.toShort
+	    case Manifest.Char => str(0)
+	    case Manifest.Long => proxy.toDouble.toLong
+	    case Manifest.Float => proxy.toFloat
+	    case Manifest.Double => proxy.toDouble
+	    case Manifest.Boolean => (if (proxy.toDouble != 0) true else false)
+            case Manifest.Int => proxy.toDouble.toInt
+	  }).asInstanceOf[T])
+	  
+	case _ => None
+      }
+    else if (wantsNumber) {
+      val proxy = value match {
+	case v : Byte => new RichByte(v)
+	case v : Short => new RichShort(v)
+	case v : Char => new RichChar(v)
+	case v : Long => new RichLong(v)
+	case v : Float => new RichFloat(v)
+	case v : Double => new RichDouble(v)
+	case v : Boolean => new RichInt(if (v) 1 else 0)
+	case v : Int => new RichInt(v)
+	case _ => null
+      }
+
+      if (proxy != null)
+	Some((m match {
+	  case Manifest.Byte => proxy.toByte
+	  case Manifest.Short => proxy.toShort
+	  case Manifest.Char => proxy.toChar
+	  case Manifest.Long => proxy.toLong
+	  case Manifest.Float => proxy.toFloat
+	  case Manifest.Double => proxy.toDouble
+	  case Manifest.Boolean => (if (proxy.toInt != 0) true else false)
+          case Manifest.Int => proxy.toInt
+	}).asInstanceOf[T])
+      else
+	None
+    }
+    else 
+      None
+  }
+
+  private[this] val FloatFormat = """^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$""".r
+  private[this] val NumberFormat = """^[-+]?[0-9]+$""".r
 }

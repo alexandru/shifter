@@ -9,6 +9,7 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 import collection.breakOut
 import reflect.Manifest
+import shifter.reflection.castTo
 
 
 class SqlException(msg: String) extends RuntimeException(msg)
@@ -25,7 +26,11 @@ class Row(val names: Vector[String], val values: Vector[Any]) {
     val keys = Seq(key, key.toLowerCase, key.toUpperCase)
     val searchKey = keys.find(namesSet.contains(_))
     require(!searchKey.isEmpty, "Non-existent key '"+ key +"' in row")
-    toMap(searchKey.get).asInstanceOf[T]
+    castTo[T](toMap(searchKey.get)) match {
+      case Some(value) => value
+      case None =>
+	throw new IllegalArgumentException("Cannot find element for key '"+key+"' of type "+manifest[T].toString)
+    }
   }
 
   def get[T : Manifest](key: String): Option[T] = {
@@ -33,23 +38,7 @@ class Row(val names: Vector[String], val values: Vector[Any]) {
     keys.find(namesSet.contains(_)) match {
       case Some(key) => 
 	val value = toMap(key)
-
-	val erasure = manifest[T] match {
-	  case Manifest.Byte => classOf[java.lang.Byte]
-	  case Manifest.Short => classOf[java.lang.Short]
-	  case Manifest.Char => classOf[java.lang.Character]
-	  case Manifest.Long => classOf[java.lang.Long]
-	  case Manifest.Float => classOf[java.lang.Float]
-	  case Manifest.Double => classOf[java.lang.Double]
-	  case Manifest.Boolean => classOf[java.lang.Boolean]
-	  case Manifest.Int => classOf[java.lang.Integer]
-	  case m => m.erasure
-	}
-
-	if(erasure.isInstance(value)) 
-	  Some(value.asInstanceOf[T]) 
-	else 
-	  None
+	castTo[T](value)
       case None =>
 	None
     }
@@ -109,7 +98,9 @@ sealed class Sql(conn: Connection, query: String) {
 
       def next(): Row = {
 	assert(!noMore, "Iterator.empty")
-	assert(doesHaveNext, "hasNext() was not called")
+	if (!doesHaveNext) 
+	  doesHaveNext = result.next
+	assert(doesHaveNext, "Iterator.empty")
 
 	val cols = (1 to colsCount).foldLeft(Vector.empty[Any]) {
 	  (acc, idx) =>

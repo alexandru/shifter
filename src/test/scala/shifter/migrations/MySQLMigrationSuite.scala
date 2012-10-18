@@ -1,8 +1,8 @@
 package shifter.migrations
 
+import shifter.db._
 import shifter.db.Conversions._
-import shifter.db.DBConnection
-import shifter.reflection.using
+import shifter.lang.using
 import java.sql.Connection
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
@@ -26,7 +26,7 @@ class MySQLMigrationSuite extends FunSuite {
       (conn, m) => 
 	assert(m.migrateOneUp)
 	assert(m.currentVersion === 1)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.size === 2)
 	assert(tables.contains("shiftermigrations"))
 	assert(tables.contains("test1"))
@@ -39,7 +39,7 @@ class MySQLMigrationSuite extends FunSuite {
 	assert(m.migrateOneUp)
 	assert(m.migrateOneUp)
 	assert(m.currentVersion === 2)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.size === 3)
 	assert(tables.contains("shiftermigrations"))
 	assert(tables.contains("test1"))
@@ -52,7 +52,7 @@ class MySQLMigrationSuite extends FunSuite {
       (conn, m) => 
 	assert(m.migrateTo(2))
 	assert(m.currentVersion === 2)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.size === 3)
 	assert(tables.contains("shiftermigrations"))
 	assert(tables.contains("test1"))
@@ -67,7 +67,7 @@ class MySQLMigrationSuite extends FunSuite {
 	assert(m.migrateOneUp)
 	assert(m.migrateOneUp)
 	assert(m.currentVersion === 3)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.size === 4)
 	assert(tables.contains("shiftermigrations"))
 	assert(tables.contains("test1"))
@@ -81,7 +81,7 @@ class MySQLMigrationSuite extends FunSuite {
       (conn, m) => 
 	assert(m.migrateTo(3))
 	assert(m.currentVersion === 3)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.size === 4)
 	assert(tables.contains("shiftermigrations"))
 	assert(tables.contains("test1"))
@@ -97,7 +97,7 @@ class MySQLMigrationSuite extends FunSuite {
 	assert(m.currentVersion === 3)
 	assert(m.migrateOneDown)
 	assert(m.currentVersion === 2)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.size === 3)
 	assert(tables.contains("shiftermigrations"))
 	assert(tables.contains("test1"))
@@ -112,7 +112,7 @@ class MySQLMigrationSuite extends FunSuite {
 	assert(m.currentVersion === 3)
 	assert(m.migrateTo(1))
 	assert(m.currentVersion === 1)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.size === 2)
 	assert(tables.contains("shiftermigrations"))
 	assert(tables.contains("test1"))
@@ -128,7 +128,7 @@ class MySQLMigrationSuite extends FunSuite {
 	assert(m.currentVersion === 1)
 	assert(m.migrate)
 	assert(m.currentVersion === 3)
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.size === 4)
 	assert(tables.contains("shiftermigrations"))
 	assert(tables.contains("test1"))
@@ -145,14 +145,14 @@ class MySQLMigrationSuite extends FunSuite {
 
 	assert(m.migrateToZero)
 	assert(m.currentVersion === 0)
-	val tablesVer0 = conn.listTables
+	val tablesVer0 = conn.toDB.listTables
 	assert(tablesVer0.size === 1)
 	assert(tablesVer0.contains("shiftermigrations"))
 
 	assert(m.migrate)
 	assert(m.currentVersion === 3)
 
-	val tables = conn.listTables
+	val tables = conn.toDB.listTables
 	assert(tables.size === 4)
 	assert(tables.contains("shiftermigrations"))
 	assert(tables.contains("test1"))
@@ -164,7 +164,7 @@ class MySQLMigrationSuite extends FunSuite {
   def withMigrator(f: (Connection, Migrator) => Any) {
     var conn: Connection = null 
     try {
-      conn = DBConnection("jdbc:mysql://localhost:3306/shifter", "root", "")
+      conn = DB("jdbc:mysql://localhost:3306/shifter", "root", "").underlying
     } catch {
       case ex: MySQLSyntaxErrorException =>
 	throw new TestPendingException()
@@ -175,7 +175,7 @@ class MySQLMigrationSuite extends FunSuite {
 	implicit val db = inst
 
       // resets everything
-      db.listTables.foreach {
+      db.toDB.listTables.foreach {
 	tblName =>
 	  val stm = db.prepareStatement("DROP TABLE " + tblName)
 	stm.execute

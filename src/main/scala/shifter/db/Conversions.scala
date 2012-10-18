@@ -4,6 +4,10 @@ import java.sql.Connection
 
 
 object Conversions {
-  implicit def `Connection -> DBConnection`(conn: Connection) =
-    new DBConnection(conn)
+  class DBConnectionHelper(conn: Connection) {
+    def toDB = new DB(conn)
+  }
+
+  implicit def `Connection -> DBConnectionHelper`(conn: Connection) =
+    new DBConnectionHelper(conn)
 }

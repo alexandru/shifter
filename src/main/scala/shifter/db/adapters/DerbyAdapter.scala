@@ -1,4 +1,4 @@
-package shifter.db
+package shifter.db.adapters
 
 import java.sql.{DriverManager, Connection}
 
@@ -11,15 +11,5 @@ class DerbyAdapter extends DBAdapter("derby") {
 	Class.forName("org.apache.derby.jdbc.EmbeddedDriver")
 
     DriverManager.getConnection(url, user, password)
-  }
-
-  override def listTables(conn: Connection): Seq[String] = {
-    val rs = conn.getMetaData.getTables(null, null, "%", null)
-    var tables = Seq.empty[String]
-    
-    while (rs.next) 
-      tables = tables :+ rs.getString(3) 
-
-    tables
   }
 }

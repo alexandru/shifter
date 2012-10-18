@@ -1,4 +1,4 @@
-package shifter.db
+package shifter.db.adapters
 
 import java.sql.{DriverManager, Connection}
 
@@ -11,16 +11,6 @@ class HSQLDBAdapter extends DBAdapter("hsqldb") {
     )
 
     DriverManager.getConnection(url, user, password)    
-  }
-
-  override def listTables(conn: Connection): Seq[String] = {
-    val rs = conn.getMetaData.getTables(null, null, "%", null)
-    var tables = Seq.empty[String]
-    
-    while (rs.next) 
-      tables = tables :+ rs.getString(3) 
-
-    tables
   }
 
   private[this] def tryLoadDrivers(drivers: String*) {

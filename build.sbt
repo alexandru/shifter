@@ -2,11 +2,11 @@ organization := "com.bionicspirit"
 
 name := "scala-shifter"
 
-version := "0.2"
+version := "0.2.1"
 
 scalaVersion := "2.9.2"
 
-crossScalaVersions := Seq("2.8.2", "2.9.2")
+crossScalaVersions := Seq("2.9.2")
 
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 

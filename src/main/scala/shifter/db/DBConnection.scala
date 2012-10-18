@@ -1,9 +1,9 @@
 package shifter.db
 
 import java.sql.Connection
-import java.sql.DriverManager
 import java.sql.SQLException
 import shifter.reflection._
+import shifter.lang._
 
 
 class DBConnectionException(msg: String) extends SQLException(msg)
@@ -36,18 +36,6 @@ class DBConnection(val underlying: Connection) {
 
   def listTables: Seq[String] =
     adapter.listTables(underlying)
-
-  def fetchOne(sql: String, args: String*): Option[String] = 
-    using(underlying.prepareStatement(sql)) {
-      stm =>
-	(0 until args.length).foreach {
-	  idx =>
-	    stm.setString(idx+1, args(idx))
-	}
-	using (stm.executeQuery) {
-	  rs => if (rs.next) Some(rs.getString(1)) else None
-	}
-    }
 
   def changeSchema(sql: String, silentOnErrors: Boolean = false) = 
     try {

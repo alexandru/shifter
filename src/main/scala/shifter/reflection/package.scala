@@ -1,20 +1,12 @@
 package shifter
 
+import shifter.lang._
 import java.io.{File, FileInputStream}
 import java.util.zip.ZipInputStream
 import collection.JavaConverters._
 import annotation.tailrec
 
 package object reflection {
-  type Closeable = { def close():Unit }
-
-  def using[A, B <: Closeable](closable: B)(f: B => A): A = 
-    try {
-      f(closable)
-    }
-    finally {
-      closable.close()
-    }
 
   def allTypesIn(packages: Set[String]): Set[Class[_]] = {
     val classLoader = Thread.currentThread().getContextClassLoader()

@@ -18,7 +18,7 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 
 libraryDependencies ++= Seq(
   "org.yaml" % "snakeyaml" % "1.10",
-  "hsqldb" % "hsqldb" % "1.8.0.10" % "test",
+  "hsqldb" % "hsqldb" % "1.8.0.10",
   "org.apache.derby" % "derby" % "10.9.1.0" % "test",
   "com.ning" % "async-http-client" % "1.7.5" % "test",
   "com.typesafe.akka" % "akka-actor" % "2.0.3" % "test",

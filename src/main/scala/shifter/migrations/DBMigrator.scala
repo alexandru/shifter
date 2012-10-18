@@ -2,7 +2,7 @@ package shifter.migrations
 
 import shifter.db.DBConnectionPool
 import java.sql.Connection
-import shifter.reflection.using
+import shifter.lang._
 import shifter.db.Conversions._
 
 

@@ -32,7 +32,7 @@ For the dependency:
         <dependency>
             <groupId>com.bionicspirit</groupId>
             <artifactId>shifter_2.9.2</artifactId>
-            <version>0.2.1</version>
+            <version>0.2.2</version>
         </dependency>
 	    <!-- ... -->
     <dependencies>
@@ -47,4 +47,4 @@ For the repo resolver:
 
 For the dependency:
     
-    libraryDependencies += "com.bionicspirit" %% "shifter" % "0.2.1"
+    libraryDependencies += "com.bionicspirit" %% "shifter" % "0.2.2"

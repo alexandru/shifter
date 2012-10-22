@@ -11,11 +11,11 @@ object ShifterBuild extends Build {
 
         organization in ThisBuild := "com.bionicspirit",
 
-	version in ThisBuild := "0.2.1",
+	version in ThisBuild := "0.2.2",
 
 	scalaVersion in ThisBuild := "2.9.2",
 
-	crossScalaVersions in ThisBuild := Seq("2.9.2"),
+	crossScalaVersions in ThisBuild := Seq("2.9.1", "2.9.2"),
 
 	scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation"),
 

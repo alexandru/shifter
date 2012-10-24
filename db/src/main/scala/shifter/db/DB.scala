@@ -9,6 +9,7 @@ import shifter.db.adapters._
 
 class DBException(msg: String) extends SQLException(msg)
 
+
 class DB(val underlying: Connection) {
   def withSession[A](f: Connection => A): A =
     f(underlying)
@@ -33,6 +34,7 @@ class DB(val underlying: Connection) {
   def listTables: Seq[String] =
     DBAdapter.adapterForConnection(underlying).listTables(underlying)
 }
+
 
 object DB {
   def apply(url: String, user: String, password: String) =     

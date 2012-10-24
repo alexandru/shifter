@@ -6,11 +6,11 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class CastToSuite extends FunSuite {
-  test("string representing number casts to int") {
+  test("string representing number casts correctly") {
     assert(castTo[Int]("1") === Some(1))
     assert(castTo[Long]("1") === Some(1L))
-    assert(castTo[Char]("1") === Some('1'))
-    assert(castTo[Char]("11") === Some('1'))
+    assert(castTo[Char]("1") === Some(1.toChar))
+    assert(castTo[Char]("11") === Some(11.toChar))
     assert(castTo[Byte]("1") === Some(1.toByte))
     assert(castTo[Short]("1") === Some(1.toShort))
     assert(castTo[Boolean]("1") === Some(true))

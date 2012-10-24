@@ -1,9 +1,10 @@
 package shifter.db.adapters
 
+import shifter.lang.memoize
+import shifter.reflection._
+import shifter.lang.backports._
 import java.sql.Connection
 import java.sql.DriverManager
-import shifter.reflection._
-import shifter.lang._
 
 
 class DBAdapter(val dbIdentifier: String) {
@@ -21,47 +22,36 @@ class DBAdapter(val dbIdentifier: String) {
 
 
 object DBAdapter {
-  @volatile
-  private[this] var registeredPackages = Set.empty[String]
-  @volatile
-  private[this] var registeredAdapters = Map.empty[String, DBAdapter]
-
-  private[this] val JDBCUrl = """^jdbc:(\w+):.*$""".r
-
   def registerPackage(name: String) {
     this.synchronized {
       registeredPackages += name
     }
   }
 
+  def allAdapterClasses = 
+    memoize("shifter.db.DBAdapter.allAdapterClasses", registeredPackages.size) {
+      findSubTypes[DBAdapter](registeredPackages + "shifter.db.adapters").filterNot(_.isInterface)
+    }
+  
   def adapterFor(dbIdentifier: String): DBAdapter = 
-    if (registeredAdapters.contains(dbIdentifier)) 
-      registeredAdapters(dbIdentifier)
-    else
-      this.synchronized {
-	if (registeredAdapters.contains(dbIdentifier))
-	  adapterFor(dbIdentifier)
-	else {
-	  val classes = findSubTypes[DBAdapter](registeredPackages + "shifter.db.adapters").filterNot(_.isInterface)
-
-	  val adapter = classes.foldLeft(Option.empty[DBAdapter]) { 
-	    (acc, cls) =>
-	      if (acc.isEmpty)
-		toInstance(cls) match {
-		  case Some(inst) if inst.dbIdentifier == dbIdentifier =>
-		    registeredAdapters += (dbIdentifier -> inst)
-		    Some(inst)
-		  case _ => None
-		}
-	      else acc
-	  }
-
-	  adapter match {
-	    case Some(inst) => inst
-	    case None => new DBAdapter(dbIdentifier)
-	  }
-	}
+    memoize("shifter.db.DBAdapter.adapterFor", dbIdentifier) {
+      val classes = allAdapterClasses
+      val adapter = classes.foldLeft(Option.empty[DBAdapter]) { 
+	(acc, cls) =>
+	  if (acc.isEmpty)
+	    toInstance(cls) match {
+	      case Some(inst) if inst.dbIdentifier == dbIdentifier =>
+		Some(inst)
+	      case _ => None
+	    }
+	  else acc
       }
+
+      adapter match {
+	case Some(inst) => inst
+	case None => new DBAdapter(dbIdentifier)
+      }
+    }
 
   def identifierOf(url: String) = 
     url match {
@@ -77,4 +67,8 @@ object DBAdapter {
 
   def apply(url: String, user: String, password: String): Connection = 
     adapterForUrl(url).initConnection(url, user, password)
+
+  @volatile
+  private[this] var registeredPackages = Set.empty[String]
+  private[this] val JDBCUrl = """^jdbc:(\w+):.*$""".r
 }

@@ -164,7 +164,7 @@ package object reflection {
 	  Some((m match {
 	    case Manifest.Byte => proxy.toByte
 	    case Manifest.Short => proxy.toShort
-	    case Manifest.Char => str(0)
+	    case Manifest.Char => proxy.toInt.toChar
 	    case Manifest.Long => proxy.toLong
 	    case Manifest.Float => proxy.toFloat
 	    case Manifest.Double => proxy.toDouble
@@ -178,7 +178,7 @@ package object reflection {
 	  Some((m match {
 	    case Manifest.Byte => proxy.toDouble.toByte
 	    case Manifest.Short => proxy.toDouble.toShort
-	    case Manifest.Char => str(0)
+	    case Manifest.Char => proxy.toDouble.toChar
 	    case Manifest.Long => proxy.toDouble.toLong
 	    case Manifest.Float => proxy.toFloat
 	    case Manifest.Double => proxy.toDouble

@@ -17,6 +17,7 @@ class MySQLMigrationSuite extends FunSuite {
   test("First version should be zero") {
     withMigrator {
       (conn, m) => 
+	m.setup
 	assert(m.currentVersion === 0)
     }
   }
@@ -183,8 +184,6 @@ class MySQLMigrationSuite extends FunSuite {
       }
 
       val migrator = new DBTestMigrator
-      migrator.setup()
-
       f(db, migrator)
     }
   }

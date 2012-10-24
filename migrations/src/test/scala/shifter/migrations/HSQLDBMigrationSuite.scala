@@ -16,6 +16,7 @@ class HSQLDBMigrationSuite extends FunSuite {
   test("First version should be zero") {
     withMigrator {
       (conn, m) => 
+	m.setup
 	assert(m.currentVersion === 0)
     }
   }
@@ -184,8 +185,6 @@ class HSQLDBMigrationSuite extends FunSuite {
 
       try {
 	val migrator = new DBTestMigrator
-	migrator.setup()
-
 	f(db, migrator)
       } finally {
 	val stm = db.createStatement

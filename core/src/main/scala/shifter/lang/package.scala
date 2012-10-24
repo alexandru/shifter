@@ -13,4 +13,6 @@ package object lang {
       closable.close()
     }
 
+  def memoize[T: Manifest](group: Any, args: Any*)(process: => T): T =
+    Memoize(group, args)(process)
 }

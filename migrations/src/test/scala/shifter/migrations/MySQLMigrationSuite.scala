@@ -17,7 +17,6 @@ class MySQLMigrationSuite extends FunSuite {
   test("First version should be zero") {
     withMigrator {
       (conn, m) => 
-	m.setup
 	assert(m.currentVersion === 0)
     }
   }
@@ -162,7 +161,7 @@ class MySQLMigrationSuite extends FunSuite {
     }
   }
 
-  def withMigrator(f: (Connection, Migrator) => Any) {
+  def withMigrator(f: (Connection, MigratorSession) => Any) {
     var conn: Connection = null 
     try {
       conn = DB("jdbc:mysql://localhost:3306/shifter", "root", "").underlying
@@ -183,8 +182,7 @@ class MySQLMigrationSuite extends FunSuite {
 	stm.close
       }
 
-      val migrator = new DBTestMigrator
-      f(db, migrator)
+      new DBTestMigrator().withSession { s => f(db, s) }
     }
   }
 }

@@ -1,4 +1,4 @@
-name := "shifter-core"
+name := "shifter-validations"
 
 libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "1.8" % "test",

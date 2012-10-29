@@ -11,7 +11,7 @@ object ShifterBuild extends Build {
 
         organization in ThisBuild := "com.bionicspirit",
 
-	version in ThisBuild := "0.2.5",
+	version in ThisBuild := "0.2.6.1-SNAPSHOT",
 
 	scalaVersion in ThisBuild := "2.9.2",
 
@@ -39,11 +39,17 @@ object ShifterBuild extends Build {
 	resolvers in ThisBuild ++= Seq(
 	  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/")
       )
-    ) aggregate(core, config, logging, db, migrations) dependsOn(core, config, logging, db, migrations)
+    ) 
+    .aggregate(core, validations, config, logging, db, migrations, misc) 
+    .dependsOn(core, validations, config, logging, db, migrations)
 
     lazy val core = Project(
       id = "shifter-core",
       base = file("core"))
+
+    lazy val validations = Project(
+      id = "shifter-validations",
+      base = file("validations")) dependsOn(core, db)
 
     lazy val logging = Project(
       id = "shifter-logging",
@@ -60,4 +66,8 @@ object ShifterBuild extends Build {
     lazy val migrations = Project(
       id = "shifter-migrations",
       base = file("migrations")) dependsOn(core, db)
+
+    lazy val misc = Project(
+      id = "shifter-misc",
+      base = file("misc")) dependsOn(core)
 }

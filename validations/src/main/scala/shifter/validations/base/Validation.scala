@@ -1,4 +1,4 @@
-package shifter.validations
+package shifter.validations.base
 
 
 trait Validation[-A, +E] extends Function1[A, Validated[E]] {

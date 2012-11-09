@@ -1,4 +1,4 @@
-package shifter.validations
+package shifter.validations.base
 
 import collection.{Map => IMap}
 

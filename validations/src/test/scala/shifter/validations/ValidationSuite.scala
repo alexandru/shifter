@@ -7,6 +7,9 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class ValidationSuite extends FunSuite {
+  import shifter.validations.base._
+  import shifter.validations.requests._
+
   def createSimpleCheck(test: String) = 
     Validation {
       (value: String) => if (value == test)
@@ -51,55 +54,4 @@ class ValidationSuite extends FunSuite {
     assert(dual("name"-> "alex") == failure("address" -> "is missing"))
     assert(dual("zipcode"-> "90210") == failure("name" -> "is missing", "address" -> "is missing"))
   }
-
-  val params: Map[String, Seq[String]] = Map(
-    "age" -> Seq("30"),
-    "name" -> Seq("Alexandru"),
-    "phones" -> Seq("0721254943", "021254943"),
-    "zipcode" -> Seq("90210")
-  )
-
-  test("simple required-param validation") {
-    var branch = "none"
-
-    val result = validate(params) (
-      "name" is required,
-      "age"  is required
-    ) onFailure { e =>
-      assert(false, "should not be a failure")
-    } onSuccess {
-      branch = "success"
-    }
-
-    assert(branch === "success")
-    assert(result === Success)
-  }
-
-  test("required-params fails") {
-    var branch = "none"
-
-    validate (Map.empty[String, Seq[String]]) (
-      "name" is required,
-      "age"  is required & integer
-    ) onFailure { (errors) =>
-      assert(errors === Map("name" -> "is required", "age" -> "is required"))
-      branch = "failure"
-    } onSuccess {
-      assert(false, "should not have been a success")
-    }
-
-    assert(branch === "failure")
-
-    validate (Map("age" -> Seq("aaa"), "name" -> Seq("alex"))) (
-      "name" is required,
-      "age"  is required & integer
-    ) onFailure { (errors) =>
-      assert(errors === Map("age" -> "must be an integer"))
-      branch = "failure"
-    } onSuccess {
-      assert(false, "should not have been a success")
-    }
-
-    assert(branch === "failure")
-  }  
 }

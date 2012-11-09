@@ -6,6 +6,9 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class ValidatedSuite extends FunSuite {
+  import shifter.validations.base._
+  import shifter.validations.requests._
+
   test("success & error & error & success") {
     val error1 = Failure("some error")
     val error2 = Failure("some other error")

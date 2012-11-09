@@ -1,4 +1,4 @@
-package shifter.validations
+package shifter.validations.base
 
 sealed abstract class Validated[+E] {
   def and[F >: E, That](that: Validated[F])(implicit cf: FailureComposer[F, That]): Validated[That] =
@@ -20,22 +20,12 @@ sealed abstract class Validated[+E] {
     case Failure(_) => that 
   }
 
-  def onFailure[F >: E](f: F => Unit): Validated[E] = this
-  def onSuccess(f: => Unit): Validated[E] = this
-
   final def & [F >: E, That](that: Validated[F])(implicit cf: FailureComposer[F, That]) = and(that)(cf)
   final def | [F >: E](that: Validated[F]) = or(that)
 }
 
-case class Failure[+E](error: E) extends Validated[E] {
-  override def onFailure[F >: E](f: F => Unit) = 
-    { f(error); this }
-}
-
-case object Success extends Validated[Nothing] {
-  override def onSuccess(f: => Unit) = 
-    { f; this }
-}
+case class Failure[+E](error: E) extends Validated[E]
+case object Success extends Validated[Nothing]
 
 
 object Validated {

@@ -156,6 +156,12 @@ package object reflection {
     if(erasure.isInstance(value)) 
       Some(value.asInstanceOf[T]) 
 
+    else if (value.isInstanceOf[java.math.BigDecimal] && m.erasure == classOf[BigDecimal])
+      Some(BigDecimal(value.asInstanceOf[java.math.BigDecimal]).asInstanceOf[T])
+
+    else if (value.isInstanceOf[java.math.BigInteger] && m.erasure == classOf[BigInt])
+      Some(BigInt(value.asInstanceOf[java.math.BigInteger].toString).asInstanceOf[T])
+
     else if (value.isInstanceOf[String] && wantsNumber) 
       value match {
 	case NumberFormat(_*) =>

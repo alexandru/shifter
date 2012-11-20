@@ -26,4 +26,14 @@ class CastToSuite extends FunSuite {
     assert(castTo[Boolean]("aaa") === None)
     assert(castTo[Boolean]("aaa") === None)
   }
+
+  test("Java BigDecimal -> Scala BigDecimal") {
+    val dec = new java.math.BigDecimal("1.1")
+    assert(castTo[BigDecimal](dec) === Some(BigDecimal("1.1")))
+  }
+
+  test("Java BigInteger -> Scala BitInt") {
+    val dec = new java.math.BigInteger("123")
+    assert(castTo[BigInt](dec) === Some(BigInt("123")))
+  }
 }

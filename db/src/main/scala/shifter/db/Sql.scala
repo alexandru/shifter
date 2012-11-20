@@ -1,6 +1,5 @@
 package shifter.db
 
-import shifter.lang._
 import java.util.Date
 import java.util.Calendar
 import java.io.InputStream
@@ -59,24 +58,32 @@ sealed class Sql(conn: Connection, query: String) {
 
   protected def preparedQuery: String = query
 
-  def update(): Int = 
-    using(conn.prepareStatement(preparedQuery)) { stm =>
+  def update(): Int = {
+    val stm = conn.prepareStatement(preparedQuery)
+    try {
       args.foldLeft(0) { (idx, obj) =>
 	setStatementValue(stm, idx, obj)
 	idx + 1
       }      
-
       stm.executeUpdate
     }
+    finally {
+      stm.close()
+    }
+  }
 
   def execute() {
-    using(conn.prepareStatement(preparedQuery)) { stm =>
+    val stm = conn.prepareStatement(preparedQuery)
+    try {
       args.foldLeft(0) { (idx, obj) =>
 	setStatementValue(stm, idx, obj)
 	idx + 1
       }      
 
-      stm.execute
+      stm.execute      
+    } 
+    finally {
+      stm.close()
     }
   }  
 
@@ -123,10 +130,9 @@ sealed class Sql(conn: Connection, query: String) {
       private[this] def colsCount = lazyResult._2
       private[this] def result = lazyResult._3
 
-      private[this] lazy val lazyResult = 
-	using(conn.prepareStatement(preparedQuery)) { 
-	  stm =>
-
+      private[this] lazy val lazyResult = {
+	val stm = conn.prepareStatement(preparedQuery)
+	try {
 	  args.foldLeft(0) { 
 	    (idx, obj) =>
 	      setStatementValue(stm, idx, obj)
@@ -137,8 +143,12 @@ sealed class Sql(conn: Connection, query: String) {
 	  val meta = rs.getMetaData
 	  val colsCount = meta.getColumnCount
 	  val names = (1 to colsCount).map(meta.getColumnName(_))(breakOut) : Vector[String]
-	  (names, colsCount, rs)
+	  (names, colsCount, rs)	  
 	}
+	finally {
+	  stm.close()
+	}
+      }
     }
 
   def withArgs(args: Any*) = 

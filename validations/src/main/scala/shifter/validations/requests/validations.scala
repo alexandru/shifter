@@ -6,7 +6,7 @@ object required extends MPValidation[String] {
   def apply(value: (String, MultiParams[String])) = {
     val (key, map) = value
     if (map.contains(key))
-      Success
+      Success 
     else
       failure(key -> "is required")
   }

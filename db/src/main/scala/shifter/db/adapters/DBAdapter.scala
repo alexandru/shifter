@@ -3,13 +3,35 @@ package shifter.db.adapters
 import shifter.lang.memoize
 import shifter.reflection._
 import shifter.lang.backports._
-import java.sql.Connection
-import java.sql.DriverManager
+import java.sql._
 
 
 class DBAdapter(val dbIdentifier: String) {
-  def initConnection(url: String, user: String, password: String): Connection = 
-    DriverManager.getConnection(url, user, password)
+  def initConnection(url: String, user: Option[String], password: Option[String], driver: Option[String]): Connection =
+    Try {
+      getConn(url, user, password)
+    }
+    .recover {
+      // attempt loading driver
+      case ex:SQLException if ex.getSQLState == "08001" =>
+	DriverManager.getDriver(url)
+    }
+    match {
+      case Failure(ex) => 
+        throw ex
+      case Success(_: Class[_]) | Success(_: Driver) =>
+	getConn(url, user, password)
+      case Success(conn: Connection) => 
+        conn
+    }
+
+  private[this] def getConn(url: String, user: Option[String], password: Option[String]) =
+    (user, password) match {
+      case (Some(u), Some(p)) =>
+	DriverManager.getConnection(url, u, p)
+      case _ =>
+	DriverManager.getConnection(url)
+    }    
 
   def listTables(conn: Connection): Seq[String] = {
     val rs = conn.getMetaData.getTables(null, null, "%", null)
@@ -65,8 +87,8 @@ object DBAdapter {
   def adapterForConnection(conn: Connection): DBAdapter = 
     adapterForUrl(conn.getMetaData.getURL)
 
-  def apply(url: String, user: String, password: String): Connection = 
-    adapterForUrl(url).initConnection(url, user, password)
+  def apply(url: String, user: Option[String], password: Option[String], driver: Option[String]): Connection = 
+    adapterForUrl(url).initConnection(url, user, password, driver)
 
   @volatile
   private[this] var registeredPackages = Set.empty[String]

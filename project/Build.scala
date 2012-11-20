@@ -15,7 +15,7 @@ object ShifterBuild extends Build {
 
 	scalaVersion in ThisBuild := "2.9.2",
 
-	crossScalaVersions in ThisBuild := Seq("2.9.1", "2.9.2"),
+	crossScalaVersions in ThisBuild := Seq("2.9.2"),
 
 	scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation"),
 

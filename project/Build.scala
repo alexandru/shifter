@@ -11,7 +11,7 @@ object ShifterBuild extends Build {
 
         organization in ThisBuild := "com.bionicspirit",
 
-	version in ThisBuild := "0.2.7",
+	version in ThisBuild := "0.2.8",
 
 	scalaVersion in ThisBuild := "2.9.2",
 

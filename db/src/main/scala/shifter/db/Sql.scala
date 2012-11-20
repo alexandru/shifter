@@ -78,8 +78,7 @@ sealed class Sql(conn: Connection, query: String) {
       args.foldLeft(0) { (idx, obj) =>
 	setStatementValue(stm, idx, obj)
 	idx + 1
-      }      
-
+      }
       stm.execute      
     } 
     finally {
@@ -99,7 +98,9 @@ sealed class Sql(conn: Connection, query: String) {
 	  true
 	}
 	else {
-	  noMore = false
+	  noMore = true
+	  if (!stm.isClosed)
+	    stm.close()
 	  false
 	}
 
@@ -130,8 +131,10 @@ sealed class Sql(conn: Connection, query: String) {
       private[this] def colsCount = lazyResult._2
       private[this] def result = lazyResult._3
 
-      private[this] lazy val lazyResult = {
-	val stm = conn.prepareStatement(preparedQuery)
+      private[this] val stm = 
+	conn.prepareStatement(preparedQuery)
+
+      private[this] val lazyResult = {
 	try {
 	  args.foldLeft(0) { 
 	    (idx, obj) =>
@@ -145,8 +148,10 @@ sealed class Sql(conn: Connection, query: String) {
 	  val names = (1 to colsCount).map(meta.getColumnName(_))(breakOut) : Vector[String]
 	  (names, colsCount, rs)	  
 	}
-	finally {
-	  stm.close()
+	catch {
+	  case ex: Throwable =>
+	    if (!stm.isClosed) stm.close()
+	    throw ex
 	}
       }
     }

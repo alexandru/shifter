@@ -25,7 +25,7 @@ class DBAdapter(val dbIdentifier: String) {
         conn
     }
 
-  private[this] def getConn(url: String, user: Option[String], password: Option[String]) =
+  protected def getConn(url: String, user: Option[String], password: Option[String]) =
     (user, password) match {
       case (Some(u), Some(p)) =>
 	DriverManager.getConnection(url, u, p)

@@ -6,10 +6,20 @@ import shifter.reflection._
 import shifter.lang._
 import shifter.db.adapters._
 
-
 class DBException(msg: String) extends SQLException(msg)
 
-case class DB(url: String, user: Option[String], password: Option[String], driver: Option[String]) {
+trait IDB {
+  def withSession[A](f: Connection => A): A
+
+  def withTransaction[A](f: Connection => A): A
+
+  def adapter: DBAdapter
+
+  def listTables(implicit conn: Connection): Seq[String] =
+    adapter.listTables(conn)
+}
+
+case class DB(url: String, user: Option[String], password: Option[String], driver: Option[String]) extends IDB {
   def withSession[A](f: Connection => A): A = {
     val underlying = adapter.initConnection(url, user, password, driver)
     try {
@@ -20,31 +30,28 @@ case class DB(url: String, user: Option[String], password: Option[String], drive
     }
   }
 
-  def withTransaction[A](f: Connection => A): A = 
+  def withTransaction[A](f: Connection => A): A =
     withSession {
       underlying =>
 
-      underlying.setAutoCommit(false)
+        underlying.setAutoCommit(false)
 
-      try {
-	val ret = f(underlying)
-	underlying.commit()
-	ret
-      } 
-      catch {
-	case ex: Throwable =>
-	  underlying.rollback()
-	  throw ex
-      }
-      finally {
-	underlying.setAutoCommit(true)
-      }
+        try {
+          val ret = f(underlying)
+          underlying.commit()
+          ret
+        }
+        catch {
+          case ex: Throwable =>
+            underlying.rollback()
+            throw ex
+        }
+        finally {
+          underlying.setAutoCommit(true)
+        }
     }
 
-  def listTables(implicit conn: Connection): Seq[String] = 
-    adapter.listTables(conn)
-
-  private[this] val adapter = 
+  lazy val adapter =
     DBAdapter.adapterForUrl(url)
 }
 
@@ -59,6 +66,6 @@ object DB {
   def apply(url: String, driver: String): DB =
     DB(url, None, None, Option(driver))
 
-  def apply(url: String, user: String, password: String, driver: String): DB = 
-    DB(url, Option(user), Option(password), Option(driver))  
+  def apply(url: String, user: String, password: String, driver: String): DB =
+    DB(url, Option(user), Option(password), Option(driver))
 }

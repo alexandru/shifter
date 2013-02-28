@@ -2,10 +2,6 @@ package shifter
 
 import java.net.URLDecoder._
 
-/**
- * Started by: Alexandru Nedelcu
- * Copyright @2013 Epigrams, Inc.
- */
 package object web {
   val IPFormat = "^(\\d{1,3}[.]\\d{1,3}[.]\\d{1,3}[.]\\d{1,3})$".r
 

@@ -8,10 +8,6 @@ import net.spy.memcached.ConnectionFactoryBuilder.Protocol
 import scala.concurrent.ExecutionContext.Implicits.global
 import collection.JavaConverters._
 
-/**
- * Started by: Alexandru Nedelcu
- * Copyright @2013 Epigrams, Inc.
- */
 class Memcached(addresses: String) extends Cache {
   def add(key: String, value: Any, exp: Int = 60) =
     if (isRunning)

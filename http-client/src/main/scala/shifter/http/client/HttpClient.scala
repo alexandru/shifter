@@ -3,10 +3,6 @@ package shifter.http.client
 import concurrent._
 import java.io.InputStream
 
-/**
- * Started by: Alexandru Nedelcu
- * Copyright @2013 Epigrams, Inc.
- */
 trait HttpClient {
   def get(
     method: String,

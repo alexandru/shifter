@@ -13,11 +13,6 @@ import scala.util.Success
 import scala.collection.JavaConverters._
 import shifter.cache.errors.{NotFoundInCacheError, CacheError}
 
-/**
- * Started by: Alexandru Nedelcu
- * Copyright @2013 Epigrams, Inc.
- */
-
 class WrappedMemcachedClient(conn: ConnectionFactory, addrs: jutil.List[InetSocketAddress]) extends MemcachedClient(conn, addrs) {
 
   def realAsyncGetBulk[T](keyIter: jutil.Iterator[String]): Future[Map[String, T]] = {

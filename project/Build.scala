@@ -13,11 +13,16 @@ object ShifterBuild extends Build {
 
 	version in ThisBuild := "0.2.9",
 
-	scalaVersion in ThisBuild := "2.9.2",
+	scalaVersion in ThisBuild := "2.10.0",
 
-	crossScalaVersions in ThisBuild := Seq("2.9.2"),
+	crossScalaVersions in ThisBuild := Seq("2.10.0"),
 
-	scalacOptions in ThisBuild ++= Seq("-unchecked", "-deprecation"),
+	scalacOptions in ThisBuild ++= Seq(
+          "-unchecked", "-deprecation",
+          "-unchecked", "-deprecation", "-feature",
+          "-language:existentials",
+          "-language:implicitConversions"
+        ),
 
 	licenses in ThisBuild := Seq("BSD-style" -> url("http://www.opensource.org/licenses/bsd-license.php")),
 
@@ -37,27 +42,17 @@ object ShifterBuild extends Build {
           </developers>),
 
 	resolvers in ThisBuild ++= Seq(
-	  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/")
+	  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+          "Spray Releases" at "http://repo.spray.io"
+        )
       )
     ) 
-    .aggregate(core, validations, config, logging, db, migrations) 
-    .dependsOn(core, validations, config, logging, db, migrations)
+    .aggregate(core, db, migrations, cache, httpClient, geoip, web) 
+    .dependsOn(core, db, migrations, cache, httpClient, geoip, web)
 
     lazy val core = Project(
       id = "shifter-core",
       base = file("core"))
-
-    lazy val validations = Project(
-      id = "shifter-validations",
-      base = file("validations")) dependsOn(core, db)
-
-    lazy val logging = Project(
-      id = "shifter-logging",
-      base = file("logging")) dependsOn(core)
-
-    lazy val config = Project(
-      id = "shifter-config",
-      base = file("config")) dependsOn(core)
 
     lazy val db = Project(
       id = "shifter-db",
@@ -66,4 +61,20 @@ object ShifterBuild extends Build {
     lazy val migrations = Project(
       id = "shifter-migrations",
       base = file("migrations")) dependsOn(core, db)
+
+    lazy val httpClient = Project(
+      id = "shifter-http-client",
+      base = file("http-client")) dependsOn(core)
+
+    lazy val cache = Project(
+      id = "shifter-cache",
+      base = file("cache")) dependsOn(core)
+
+    lazy val geoip = Project(
+      id = "shifter-geoip",
+      base = file("geoip")) dependsOn(core)
+
+    lazy val web = Project(
+      id = "shifter-web",
+      base = file("web")) dependsOn(core)
 }

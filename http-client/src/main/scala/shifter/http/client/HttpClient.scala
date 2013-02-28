@@ -2,27 +2,39 @@ package shifter.http.client
 
 import concurrent._
 import java.io.InputStream
+import com.ning.http.client.AsyncHttpClientConfig
+import com.ning.http.client.extra.ThrottleRequestFilter
 
 trait HttpClient {
-  def get(
-    method: String,
-    url: String,
-    data: Map[String, String] = Map.empty,
-    user: Option[String] = None,
-    password: Option[String] = None,
-    forceEncoding: Option[String] = None
-  ): Future[HttpResult]
-
-  def getStream(
+  def request(
     method: String,
     url: String,
     data: Map[String, String] = Map.empty,
     user: Option[String] = None,
     password: Option[String] = None
-  ): Future[HttpStreamResult]
+  ): Future[HttpClientResponse]
 
   def close()
 }
 
-case class HttpResult(status: Int, headers: Map[String, String], body: String)
-case class HttpStreamResult(status: Int, headers: Map[String, String], body: InputStream)
+object HttpClient {
+  def apply(): HttpClient =
+    apply(HttpClientConfig())
+
+  def apply(config: HttpClientConfig): HttpClient = {
+    val builder = new AsyncHttpClientConfig.Builder()
+
+    val ningConfig = builder
+      .setMaximumConnectionsTotal(config.maxTotalConnections)
+      .setMaximumConnectionsPerHost(config.maxConnectionsPerHost)
+      .addRequestFilter(new ThrottleRequestFilter(config.maxTotalConnections))
+      .setRequestTimeoutInMs(config.requestTimeoutMs)
+      .setConnectionTimeoutInMs(config.connectionTimeoutMs)
+      .setAllowPoolingConnection(true)
+      .setAllowSslConnectionPool(true)
+      .setFollowRedirects(config.followRedirects)
+      .build
+
+    new NingHttpClient(ningConfig)
+  }
+}

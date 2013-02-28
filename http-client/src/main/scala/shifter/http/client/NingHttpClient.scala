@@ -2,7 +2,6 @@ package shifter.http.client
 
 import concurrent.{Promise, Future, ExecutionContext}
 import com.ning.http.client._
-import extra.ThrottleRequestFilter
 import com.ning.http.util.Base64
 import util._
 import collection.JavaConverters._
@@ -10,8 +9,9 @@ import util.Success
 import ExecutionContext.Implicits.global
 
 
-class NingHttpClient extends HttpClient {
-  def get(method: String, url: String, data: Map[String, String], user: Option[String], password: Option[String], forceEncoding: Option[String]): Future[HttpResult] = {
+class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends HttpClient {
+
+  def request(method: String, url: String, data: Map[String, String], user: Option[String], password: Option[String]): Future[HttpClientResponse] = {
     val request = prepareRequest(method, url, data)
     val futureResponse = makeRequest(url, request, user, password)
 
@@ -24,31 +24,7 @@ class NingHttpClient extends HttpClient {
         headers += (header -> headersJavaMap.getFirstValue(header))
       }
 
-      val body = forceEncoding match {
-        case Some(enc) =>
-          response.getResponseBody(enc)
-        case None =>
-          response.getResponseBody
-      }
-
-      HttpResult(response.getStatusCode, headers, body)
-    }
-  }
-
-  def getStream(method: String, url: String, data: Map[String, String], user: Option[String], password: Option[String]): Future[HttpStreamResult] = {
-    val request = prepareRequest(method, url, data)
-    val futureResponse = makeRequest(url, request, user, password)
-
-    futureResponse.map { response =>
-      val headersJavaMap = response.getHeaders
-
-      var headers = Map.empty[String, String]
-      for (header <- headersJavaMap.keySet.asScala) {
-        // sometimes getJoinedValue() would be more correct.
-        headers += (header -> headersJavaMap.getFirstValue(header))
-      }
-
-      HttpStreamResult(response.getStatusCode, headers, response.getResponseBodyAsStream)
+      new HttpClientResponse(response.getStatusCode, headers, response.getResponseBodyAsBytes)
     }
   }
 
@@ -141,19 +117,7 @@ class NingHttpClient extends HttpClient {
     promise.future
   }
 
-  private[this] val client = {
-    val builder = new AsyncHttpClientConfig.Builder()
-
-    val clientConfig = builder
-      .setMaximumConnectionsTotal(1000)
-      .setMaximumConnectionsPerHost(200)
-      .addRequestFilter(new ThrottleRequestFilter(200))
-      .setRequestTimeoutInMs(10000)
-      .setAllowPoolingConnection(true)
-      .setAllowSslConnectionPool(true)
-      .setFollowRedirects(true)
-      .build
-
-    new AsyncHttpClient(clientConfig)
-  }
+  private[this] val client = new AsyncHttpClient(config)
 }
+
+

@@ -6,10 +6,10 @@ import org.apache.commons.codec.binary.Base64
 import concurrent.{ExecutionContext, Future}
 import org.slf4j.LoggerFactory
 import collection.mutable.ArrayBuffer
+import concurrent.ExecutionContext.Implicits.global
+
 
 trait BaseUrlsRouter extends Filter {
-  implicit def executionContext: ExecutionContext
-
   def handle: PartialFunction[Request, Future[Response]]
 
   final def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {

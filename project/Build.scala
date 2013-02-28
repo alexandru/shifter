@@ -76,5 +76,5 @@ object ShifterBuild extends Build {
 
     lazy val web = Project(
       id = "shifter-web",
-      base = file("web")) dependsOn(core)
+      base = file("web")) dependsOn(core)  
 }

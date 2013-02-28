@@ -1,5 +1,7 @@
 package shifter
 
+import scala.language.reflectiveCalls
+
 package object lang {
 
   def memoize[T: Manifest](group: Any, args: Any*)(process: => T): T =

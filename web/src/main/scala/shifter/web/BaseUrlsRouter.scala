@@ -3,29 +3,50 @@ package shifter.web
 import javax.servlet._
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.apache.commons.codec.binary.Base64
-import concurrent.{ExecutionContext, Future}
+import concurrent.Future
 import org.slf4j.LoggerFactory
 import collection.mutable.ArrayBuffer
 import concurrent.ExecutionContext.Implicits.global
 
 
 trait BaseUrlsRouter extends Filter {
-  def handle: PartialFunction[Request, Future[Response]]
+
+  def applicableFor(request: Request): Boolean = true
+  def routes: PartialFunction[Request, Future[Response]]
+
+  protected def requestTimeout: Int = 10000
+
+  protected def triggeredTimeoutResponse(request: Request): Response =
+    HttpRequestTimeout("408 Timeout", "text/plain")
+
+  protected def onRequestEvent(request: Request) {
+    // does nothing by default
+  }
+
+  protected def onResponseEvent(request: Request, response: Response) {
+    // does nothing by default
+  }
+
+  protected def onRequestTimeout(request: Request) {
+    // does nothing by default
+  }
 
   final def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
     val req = Request(request.asInstanceOf[HttpServletRequest])
     val resp = response.asInstanceOf[HttpServletResponse]
 
-    if (! handle.isDefinedAt(req)) {
+    if (!applicableFor(req) || !routes.isDefinedAt(req)) {
       chain.doFilter(request, response)
       return
     }
 
-    val future: Future[Response] = handle(req)
+    onRequestEvent(req)
+    val future: Future[Response] = routes(req)
+
     val ctx = req.underlying.startAsync(request, response)
     val committed = Array(false)
 
-    ctx.setTimeout(10000) // 10 secs timeout window
+    ctx.setTimeout(requestTimeout)
 
     ctx.addListener(new AsyncListener {
       def onError(event: AsyncEvent) {}
@@ -38,7 +59,7 @@ trait BaseUrlsRouter extends Filter {
         committed.synchronized {
           if (!committed(0)) {
             committed(0) = true
-            writeResponse(request, resp, chain, HttpRequestTimeout("408 Timeout", "text/plain"))
+            writeResponse(request, resp, chain, req, triggeredTimeoutResponse(req))
             ctx.complete()
           }
         }
@@ -52,7 +73,7 @@ trait BaseUrlsRouter extends Filter {
           if (!committed(0)) {
             committed(0) = true
 
-            writeResponse(request, resp, chain, HttpError(
+            writeResponse(request, resp, chain, req, HttpError(
               status = 500,
               body = "500 Internal Server Error",
               contentType = "text/plain"
@@ -74,7 +95,7 @@ trait BaseUrlsRouter extends Filter {
         committed.synchronized {
           if (!committed(0)) {
             committed(0) = true
-            writeResponse(request, resp, chain, value)
+            writeResponse(request, resp, chain, req, value)
             ctx.complete()
           }
         }
@@ -95,8 +116,10 @@ trait BaseUrlsRouter extends Filter {
         resp.setHeader("Connection", Option(request.getHeader("Connection")).getOrElse("close"))
   }
 
-  private[this] final def writeResponse(req: ServletRequest, resp: HttpServletResponse, chain: FilterChain, result: Any) {
+  private[this] final def writeResponse(req: ServletRequest, resp: HttpServletResponse, chain: FilterChain, request: Request, result: Response) {
     if (!resp.isCommitted) {
+      onResponseEvent(request, result)
+
       result match {
         case StreamResponse(status, headers, body) =>
           resp.setStatus(status)
@@ -170,9 +193,6 @@ trait BaseUrlsRouter extends Filter {
           resp.setHeader("Location", url)
           resp.setContentLength(0)
           writeHeaders(req, resp, Map.empty)
-
-        case _ =>
-          chain.doFilter(req, resp)
       }
     }
   }

@@ -3,6 +3,7 @@ package shifter.geoip
 import java.io.{FileOutputStream, BufferedOutputStream, File}
 import com.maxmind.geoip.LookupService
 import util.Try
+import java.util.zip.GZIPInputStream
 
 class GeoIP(resourcePath: String) {
   private[this] val tmpFile = {
@@ -12,7 +13,12 @@ class GeoIP(resourcePath: String) {
   }
 
   private[this] val service = {
-    val res = this.getClass.getResourceAsStream(resourcePath)
+    val res =
+      if (resourcePath.endsWith(".gz"))
+        new GZIPInputStream(this.getClass.getResourceAsStream(resourcePath))
+      else
+        this.getClass.getResourceAsStream(resourcePath)
+
     val out = new BufferedOutputStream(new FileOutputStream(tmpFile))
     val buffer = new Array[Byte](10000)
     var bytes = 0
@@ -56,5 +62,5 @@ class GeoIP(resourcePath: String) {
 
 object GeoIP {
   def withLiteCity() =
-    new GeoIP("/shifter/geoip/GeoLiteCity.dat")
+    new GeoIP("/shifter/geoip/GeoLiteCity.dat.gz")
 }

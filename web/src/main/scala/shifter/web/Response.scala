@@ -25,7 +25,6 @@ case class HttpError(
 ) extends Response
 
 case class HttpRedirect(url: String, status: Int = 302) extends Response
-case object Chain extends Response
 case object Pixel extends Response
 
 abstract class ErrorBuilder(code: Int) {

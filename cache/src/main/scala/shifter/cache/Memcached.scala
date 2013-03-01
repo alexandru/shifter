@@ -4,48 +4,49 @@ import concurrent.Future
 import errors.{NotFoundInCacheError, CacheClientNotRunning}
 import java.util.concurrent.TimeUnit
 import net.spy.memcached.{WrappedMemcachedClient, AddrUtil, FailureMode, ConnectionFactoryBuilder}
-import net.spy.memcached.ConnectionFactoryBuilder.Protocol
+import net.spy.memcached.ConnectionFactoryBuilder.{Protocol => SpyProtocol}
 import scala.concurrent.ExecutionContext.Implicits.global
 import collection.JavaConverters._
+import net.spy.memcached.auth.{PlainCallbackHandler, AuthDescriptor}
 
-class Memcached(addresses: String) extends Cache {
+class Memcached(config: MemcachedConfiguration) extends Cache {
   def add(key: String, value: Any, exp: Int = 60) =
     if (isRunning)
-      instance.add(key, exp, value).get().asInstanceOf[Boolean]
+      instance.add(withPrefix(key), exp, value).get().asInstanceOf[Boolean]
     else
       false
 
   def fireAdd(key: String, value: Any, exp: Int = 60) {
     if (isRunning)
-      instance.add(key, exp, value)
+      instance.add(withPrefix(key), exp, value)
   }
 
   def set(key: String, value: Any, exp: Int = 60) =
     if (isRunning)
-      instance.set(key, exp, value).get().asInstanceOf[Boolean]
+      instance.set(withPrefix(key), exp, value).get().asInstanceOf[Boolean]
     else
       false
 
   def fireSet(key: String, value: Any, exp: Int = 60) {
     if (isRunning)
-      instance.set(key, exp, value)
+      instance.set(withPrefix(key), exp, value)
   }
 
   def get[A](key: String): Option[A] =
     if (isRunning)
-      Option(instance.get(key)).map(x => x.asInstanceOf[A])
+      Option(instance.get(withPrefix(key))).map(x => x.asInstanceOf[A])
     else
       None
 
   def getAsync[A](key: String): Future[A] =
     if (isRunning)
-      instance.realAsyncGet[A](key)
+      instance.realAsyncGet[A](withPrefix(key))
     else
       Future.failed(CacheClientNotRunning)
 
   def getAsyncOpt[A](key: String): Future[Option[A]] =
     if (isRunning)
-      instance.realAsyncGet[A](key).map(x => Option(x)).recover {
+      instance.realAsyncGet[A](withPrefix(key)).map(x => Option(x)).recover {
         case _: NotFoundInCacheError =>
           None
       }
@@ -53,29 +54,50 @@ class Memcached(addresses: String) extends Cache {
       Future.successful(None)
 
   def getBulk(keys: Seq[String]): Map[String, Any] = {
-    val values: java.util.Map[String, AnyRef] = instance.getBulk(keys.iterator.asJava)
+    val values: java.util.Map[String, AnyRef] =
+      instance.getBulk(keys.map(k => withPrefix(k)).iterator.asJava)
+
     values.asScala.toMap.asInstanceOf[Map[String, Any]].filter {
       case (k,v) => v != null
     }
   }
 
   def getAsyncBulk(keys: Seq[String]): Future[Map[String, Any]] =
-    instance.realAsyncGetBulk[Any](keys.iterator.asJava)
+    instance.realAsyncGetBulk[Any](keys.map(k => withPrefix(k)).iterator.asJava)
 
   def shutdown() {
     isRunning = false
     instance.shutdown(500, TimeUnit.SECONDS)
   }
 
+  private[this] def withPrefix(key: String) =
+    config.keysPrefix.map(p => p + "-" + key).getOrElse(key)
+
   @volatile
   private[this] var isRunning = true
   private[this] val instance = {
-    val conn = new ConnectionFactoryBuilder()
-      .setProtocol(Protocol.BINARY)
-      .setDaemon(true)
-      .setFailureMode(FailureMode.Retry).build()
+    val conn = {
+      val builder = new ConnectionFactoryBuilder()
+        .setProtocol(
+          if (config.protocol == Protocol.Binary)
+            SpyProtocol.BINARY
+          else
+            SpyProtocol.TEXT
+        )
+        .setDaemon(true)
+        .setFailureMode(FailureMode.Retry)
 
-    val addrs = AddrUtil.getAddresses(addresses)
-    new WrappedMemcachedClient(conn, addrs)
+      config.authentication match {
+        case Some(credentials) =>
+          builder.setAuthDescriptor(
+            new AuthDescriptor(Array("PLAIN"),
+              new PlainCallbackHandler(credentials.username, credentials.password)))
+        case None =>
+          builder
+      }
+    }
+
+    val addresses = AddrUtil.getAddresses(config.addresses)
+    new WrappedMemcachedClient(conn.build(), addresses)
   }
 }

@@ -29,7 +29,7 @@ class HttpClientResponse(val status: Int, val headers: Map[String, String], byte
   lazy val contentEncoding: String = {
     getHeader("content-type") match {
       case Some(EncodingFormat(charset)) => charset.toUpperCase
-      case None => "UTF-8"
+      case _ => "UTF-8"
     }
   }
 

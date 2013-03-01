@@ -9,7 +9,7 @@ object ShifterBuild extends Build {
     settings = Project.defaultSettings ++ Seq(
       name := "shifter",
 
-      organization in ThisBuild := "com.bionicspirit",
+      organization in ThisBuild := "shifter",
 
       version in ThisBuild := "0.3.9",
 

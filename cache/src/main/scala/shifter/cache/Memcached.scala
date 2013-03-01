@@ -57,13 +57,18 @@ class Memcached(config: MemcachedConfiguration) extends Cache {
     val values: java.util.Map[String, AnyRef] =
       instance.getBulk(keys.map(k => withPrefix(k)).iterator.asJava)
 
-    values.asScala.toMap.asInstanceOf[Map[String, Any]].filter {
-      case (k,v) => v != null
+    values.asScala.toMap.asInstanceOf[Map[String, Any]].collect {
+      case (k,v) if v != null =>
+        (withoutPrefix(k), v)
     }
   }
 
   def getAsyncBulk(keys: Seq[String]): Future[Map[String, Any]] =
     instance.realAsyncGetBulk[Any](keys.map(k => withPrefix(k)).iterator.asJava)
+      .map(_.collect {
+        case (k,v) if v != null =>
+          (withoutPrefix(k), v)
+      })
 
   def shutdown() {
     isRunning = false
@@ -72,6 +77,9 @@ class Memcached(config: MemcachedConfiguration) extends Cache {
 
   private[this] def withPrefix(key: String) =
     config.keysPrefix.map(p => p + "-" + key).getOrElse(key)
+  private[this] def withoutPrefix(key: String) =
+    config.keysPrefix.map(p => if (key.startsWith(p + "-")) key.drop(p.length + 1) else key)
+      .getOrElse(key)
 
   @volatile
   private[this] var isRunning = true

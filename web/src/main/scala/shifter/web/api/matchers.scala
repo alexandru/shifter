@@ -1,4 +1,4 @@
-package shifter.web
+package shifter.web.api
 
 
 object Path {

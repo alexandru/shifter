@@ -1,9 +1,8 @@
 package shifter.cache
 
-import concurrent.Future
+import concurrent.{ExecutionContext, Future}
 import concurrent.stm._
 import errors.NotFoundInCacheError
-import scala.concurrent.ExecutionContext.Implicits.global
 
 
 /**
@@ -34,7 +33,7 @@ class InMemoryCache extends Cache {
     }
   }
 
-  def fireAdd(key: String, value: Any, exp: Int) {
+  def fireAdd(key: String, value: Any, exp: Int)(implicit ec: ExecutionContext) {
     Future {
       atomic { implicit txn =>
         if (!cache().exists(elem => elem.key == key && !elem.isExpired))
@@ -50,7 +49,7 @@ class InMemoryCache extends Cache {
     true
   }
 
-  def fireSet(key: String, value: Any, exp: Int) {
+  def fireSet(key: String, value: Any, exp: Int)(implicit ec: ExecutionContext) {
     Future {
       cache.single.transform { list =>
         cleanup(list).filterNot(_.key == key) :+ Element(key, value, currentTime + exp)
@@ -61,11 +60,11 @@ class InMemoryCache extends Cache {
   def get[A](key: String): Option[A] =
     cache.single.get.find(x => x.key == key && !x.isExpired).map(_.value.asInstanceOf[A])
 
-  def getAsync[A](key: String): Future[A] =
+  def getAsync[A](key: String)(implicit ec: ExecutionContext): Future[A] =
     get[A](key).map(x => Future.successful(x))
       .getOrElse(Future.failed(new NotFoundInCacheError(key)))
 
-  def getAsyncOpt[A](key: String): Future[Option[A]] =
+  def getAsyncOpt[A](key: String)(implicit ec: ExecutionContext): Future[Option[A]] =
     Future.successful(get[A](key))
 
   def getBulk(keys: Seq[String]): Map[String, Any] =
@@ -75,7 +74,7 @@ class InMemoryCache extends Cache {
     }
       .toMap
 
-  def getAsyncBulk(keys: Seq[String]): Future[Map[String, Any]] =
+  def getAsyncBulk(keys: Seq[String])(implicit ec: ExecutionContext): Future[Map[String, Any]] =
     Future.successful(getBulk(keys))
 
   def shutdown() {

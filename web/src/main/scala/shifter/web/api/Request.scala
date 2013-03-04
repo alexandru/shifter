@@ -1,4 +1,4 @@
-package shifter.web
+package shifter.web.api
 
 import javax.servlet.http._
 import scala.util.Try
@@ -90,11 +90,11 @@ case class Request(underlying: HttpServletRequest) {
     paramsGetMulti.get(key).getOrElse(Seq.empty[String])
       .headOption.getOrElse(default)
 
-  lazy val path: String =
-    Seq(underlying.getServletPath, underlying.getPathInfo)
-      .collect {
-      case k: String => k
-    }.mkString("/")
+  lazy val path: String = {
+    val servletPath = Option(underlying.getServletPath)
+    val pathInfo = Option(underlying.getPathInfo)
+    Seq(servletPath, pathInfo).flatten.foldLeft("")(_+_)
+  }
 
   lazy val query: Option[String] =
     Option(underlying.getQueryString)

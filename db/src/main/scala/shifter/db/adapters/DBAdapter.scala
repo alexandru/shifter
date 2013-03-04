@@ -64,7 +64,7 @@ object DBAdapter {
         (acc, cls) =>
           if (acc.isEmpty)
             toInstance(cls) match {
-              case Some(inst) if inst.dbIdentifier == dbIdentifier =>
+              case Success(inst) if inst.dbIdentifier == dbIdentifier =>
                 Some(inst)
               case _ => None
             }

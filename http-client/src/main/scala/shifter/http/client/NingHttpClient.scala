@@ -6,12 +6,11 @@ import com.ning.http.util.Base64
 import util._
 import collection.JavaConverters._
 import util.Success
-import ExecutionContext.Implicits.global
 
 
 class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends HttpClient {
 
-  def request(method: String, url: String, data: Map[String, String], user: Option[String], password: Option[String]): Future[HttpClientResponse] = {
+  def request(method: String, url: String, data: Map[String, String], user: Option[String], password: Option[String])(implicit ec: ExecutionContext): Future[HttpClientResponse] = {
     val request = prepareRequest(method, url, data)
     val futureResponse = makeRequest(url, request, user, password)
 

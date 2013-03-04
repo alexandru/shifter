@@ -153,6 +153,6 @@ final class MigratorSession(migrator: Migrator) {
 
   private[this] def persistVersion(v: Int) = migrator.persistVersion(v)
 
-  private[this] def initMigration(cls: Class[Migration]) = 
-    migrator.initMigration(cls)
+  private[this] def initMigration(cls: Class[Migration]) =
+    migrator.initMigration(cls).toOption
 }

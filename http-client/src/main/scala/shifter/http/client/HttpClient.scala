@@ -1,7 +1,6 @@
 package shifter.http.client
 
 import concurrent._
-import java.io.InputStream
 import com.ning.http.client.AsyncHttpClientConfig
 import com.ning.http.client.extra.ThrottleRequestFilter
 
@@ -12,7 +11,7 @@ trait HttpClient {
     data: Map[String, String] = Map.empty,
     user: Option[String] = None,
     password: Option[String] = None
-  ): Future[HttpClientResponse]
+  )(implicit ec: ExecutionContext): Future[HttpClientResponse]
 
   def close()
 }

@@ -1,11 +1,10 @@
 package shifter.cache
 
-import concurrent.Future
+import concurrent.{ExecutionContext, Future}
 import errors.{NotFoundInCacheError, CacheClientNotRunning}
 import java.util.concurrent.TimeUnit
 import net.spy.memcached.{WrappedMemcachedClient, AddrUtil, FailureMode, ConnectionFactoryBuilder}
 import net.spy.memcached.ConnectionFactoryBuilder.{Protocol => SpyProtocol}
-import scala.concurrent.ExecutionContext.Implicits.global
 import collection.JavaConverters._
 import net.spy.memcached.auth.{PlainCallbackHandler, AuthDescriptor}
 
@@ -16,7 +15,7 @@ class Memcached(config: MemcachedConfiguration) extends Cache {
     else
       false
 
-  def fireAdd(key: String, value: Any, exp: Int = 60) {
+  def fireAdd(key: String, value: Any, exp: Int = 60)(implicit ec: ExecutionContext) {
     if (isRunning)
       instance.add(withPrefix(key), exp, value)
   }
@@ -27,7 +26,7 @@ class Memcached(config: MemcachedConfiguration) extends Cache {
     else
       false
 
-  def fireSet(key: String, value: Any, exp: Int = 60) {
+  def fireSet(key: String, value: Any, exp: Int = 60)(implicit ec: ExecutionContext) {
     if (isRunning)
       instance.set(withPrefix(key), exp, value)
   }
@@ -38,13 +37,13 @@ class Memcached(config: MemcachedConfiguration) extends Cache {
     else
       None
 
-  def getAsync[A](key: String): Future[A] =
+  def getAsync[A](key: String)(implicit ec: ExecutionContext): Future[A] =
     if (isRunning)
       instance.realAsyncGet[A](withPrefix(key))
     else
       Future.failed(CacheClientNotRunning)
 
-  def getAsyncOpt[A](key: String): Future[Option[A]] =
+  def getAsyncOpt[A](key: String)(implicit ec: ExecutionContext): Future[Option[A]] =
     if (isRunning)
       instance.realAsyncGet[A](withPrefix(key)).map(x => Option(x)).recover {
         case _: NotFoundInCacheError =>
@@ -63,7 +62,7 @@ class Memcached(config: MemcachedConfiguration) extends Cache {
     }
   }
 
-  def getAsyncBulk(keys: Seq[String]): Future[Map[String, Any]] =
+  def getAsyncBulk(keys: Seq[String])(implicit ec: ExecutionContext): Future[Map[String, Any]] =
     instance.realAsyncGetBulk[Any](keys.map(k => withPrefix(k)).iterator.asJava)
       .map(_.collect {
         case (k,v) if v != null =>

@@ -11,11 +11,13 @@ object ShifterBuild extends Build {
 
       organization in ThisBuild := "shifter",
 
-      version in ThisBuild := "0.3.11",
+      version in ThisBuild := "0.3.14",
 
       scalaVersion in ThisBuild := "2.10.0",
 
       crossScalaVersions in ThisBuild := Seq("2.10.0"),
+
+      compileOrder in ThisBuild := CompileOrder.JavaThenScala,
 
       scalacOptions in ThisBuild ++= Seq(
         "-unchecked", "-deprecation",
@@ -43,12 +45,13 @@ object ShifterBuild extends Build {
 
       resolvers in ThisBuild ++= Seq(
         "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-        "Spray Releases" at "http://repo.spray.io"
+        "Spray Releases" at "http://repo.spray.io",
+        "Spy" at "http://files.couchbase.com/maven2/"
       )
     )
   )
-    .aggregate(core, db, migrations, cache, httpClient, geoip, web)
-    .dependsOn(core, db, migrations, cache, httpClient, geoip, web)
+  .aggregate(core, db, migrations, cache, httpClient, geoip, web)
+  .dependsOn(core, db, migrations, cache, httpClient, geoip, web)
 
   lazy val core = Project(
     id = "shifter-core",
@@ -72,7 +75,7 @@ object ShifterBuild extends Build {
 
   lazy val geoip = Project(
     id = "shifter-geoip",
-    base = file("geoip")) dependsOn (core)
+    base = file("geoip")) dependsOn (httpClient)
 
   lazy val web = Project(
     id = "shifter-web",

@@ -1,8 +1,8 @@
-package shifter
+package shifter.web
 
 import java.net.URLDecoder._
 
-package object web {
+package object api {
   val IPFormat = "^(\\d{1,3}[.]\\d{1,3}[.]\\d{1,3}[.]\\d{1,3})$".r
 
   def urlDecode(data: String): Map[String, String] = {

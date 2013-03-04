@@ -7,6 +7,7 @@ libraryDependencies ++= Seq(
   "com.yammer.metrics" % "metrics-core" % "2.2.0",
   "com.yammer.metrics" % "metrics-jetty" % "2.2.0",
   "com.yammer.metrics" % "metrics-servlet" % "2.2.0",
+  "com.yammer.metrics" % "metrics-graphite" % "2.2.0",
   "io.spray" %%  "spray-json" % "1.2.3",
   "org.scala-stm" %% "scala-stm" % "0.7",
   "commons-codec" % "commons-codec" % "1.5",

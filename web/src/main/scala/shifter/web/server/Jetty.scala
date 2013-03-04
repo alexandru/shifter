@@ -8,6 +8,8 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool
 import org.eclipse.jetty.webapp.WebAppContext
 import java.io._
 import scala.Some
+import com.yammer.metrics.reporting.GraphiteReporter
+import java.util.concurrent.TimeUnit
 
 
 object Jetty extends Logging {
@@ -17,6 +19,13 @@ object Jetty extends Logging {
   }
   
   def start(config: Configuration): Server = {
+    for (gHost <- config.metrics.graphiteServerHost;
+         gPort <- config.metrics.graphiteServerPort;
+         gPrefix <- config.metrics.graphiteServerPrefix) {
+      logger.info("Configuring Graphite reporting")
+      GraphiteReporter.enable(1, TimeUnit.MINUTES, gHost, gPort, gPrefix)
+    }
+
     logger.info(
       "Starting Jetty on %s:%d with minThreads=%d, maxThreads=%d, killOnFatalError=%s and isInstrumented=%s".format(
           config.host, config.port, config.minThreads, config.maxThreads,

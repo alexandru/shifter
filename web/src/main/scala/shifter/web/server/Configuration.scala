@@ -3,6 +3,7 @@ package shifter.web.server
 import com.typesafe.config.{ConfigException, ConfigFactory}
 import shifter.reflection.{toClass, isSubclass}
 import com.typesafe.config.ConfigException.BadValue
+import util.Try
 
 case class Configuration(
   host: String,
@@ -23,7 +24,11 @@ case class MetricsConfiguration(
   mapping: String,
   realm: String,
   username: String,
-  password: String
+  password: String,
+  graphiteEnabled: Boolean,
+  graphiteServerHost: Option[String],
+  graphiteServerPort: Option[Int],
+  graphiteServerPrefix: Option[String]
 )
 
 
@@ -55,7 +60,11 @@ object Configuration {
         mapping = values.getString("http.server.metrics.mapping"),
         realm = values.getString("http.server.metrics.realm"),
         username = values.getString("http.server.metrics.username"),
-        password = values.getString("http.server.metrics.password")
+        password = values.getString("http.server.metrics.password"),
+        graphiteEnabled = Try(values.getBoolean("http.server.metrics.graphiteEnabled")).getOrElse(false),
+        graphiteServerHost = Try(values.getString("http.server.metrics.graphiteServerHost")).toOption,
+        graphiteServerPort = Try(values.getInt("http.server.metrics.graphiteServerPort")).toOption,
+        graphiteServerPrefix = Try(values.getString("http.server.metrics.graphiteServerPrefix")).toOption
       )
     )
   }

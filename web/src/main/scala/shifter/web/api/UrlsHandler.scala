@@ -1,108 +1,27 @@
-package shifter.web
+package shifter.web.api
 
-import javax.servlet._
+import javax.servlet.{FilterConfig, FilterChain, ServletRequest, Filter}
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
-import org.apache.commons.codec.binary.Base64
-import concurrent.Future
-import org.slf4j.LoggerFactory
 import collection.mutable.ArrayBuffer
-import concurrent.ExecutionContext.Implicits.global
+import org.apache.commons.codec.binary.Base64
+import com.typesafe.scalalogging.slf4j.Logging
+import com.yammer.metrics.Metrics
+import java.util.concurrent.TimeUnit
+import shifter.web.server.Configuration
 
-
-trait BaseUrlsRouter extends Filter {
-
+trait UrlsHandler extends Filter with Logging {
   def applicableFor(request: Request): Boolean = true
-  def routes: PartialFunction[Request, Future[Response]]
-
-  protected def requestTimeout: Int = 10000
-
-  protected def triggeredTimeoutResponse(request: Request): Response =
-    HttpRequestTimeout("408 Timeout", "text/plain")
 
   protected def onRequestEvent(request: Request) {
-    // does nothing by default
+    activeRequests.map(_.inc())
+    requests.map(_.mark())
   }
 
   protected def onResponseEvent(request: Request, response: Response) {
-    // does nothing by default
+    activeRequests.map(_.dec())
   }
 
-  protected def onRequestTimeout(request: Request) {
-    // does nothing by default
-  }
-
-  final def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-    val req = Request(request.asInstanceOf[HttpServletRequest])
-    val resp = response.asInstanceOf[HttpServletResponse]
-
-    if (!applicableFor(req) || !routes.isDefinedAt(req)) {
-      chain.doFilter(request, response)
-      return
-    }
-
-    onRequestEvent(req)
-    val future: Future[Response] = routes(req)
-
-    val ctx = req.underlying.startAsync(request, response)
-    val committed = Array(false)
-
-    ctx.setTimeout(requestTimeout)
-
-    ctx.addListener(new AsyncListener {
-      def onError(event: AsyncEvent) {}
-
-      def onComplete(event: AsyncEvent) {}
-
-      def onStartAsync(event: AsyncEvent) {}
-
-      def onTimeout(event: AsyncEvent) {
-        committed.synchronized {
-          if (!committed(0)) {
-            committed(0) = true
-            writeResponse(request, resp, chain, req, triggeredTimeoutResponse(req))
-            ctx.complete()
-          }
-        }
-      }
-    })
-
-    // dealing with failures (exceptions thrown)
-    future.onFailure {
-      case ex =>
-        committed.synchronized {
-          if (!committed(0)) {
-            committed(0) = true
-
-            writeResponse(request, resp, chain, req, HttpError(
-              status = 500,
-              body = "500 Internal Server Error",
-              contentType = "text/plain"
-            ))
-
-            ctx.complete()
-            logger.error("Couldn't finish processing the request", ex)
-          }
-        }
-
-        if (ex.isInstanceOf[Error] || ex.getCause.isInstanceOf[Error]) {
-          logger.error("Last error was fatal, shutting down server")
-          Runtime.getRuntime.exit(1000)
-        }
-    }
-
-    future.onSuccess {
-      case value =>
-        committed.synchronized {
-          if (!committed(0)) {
-            committed(0) = true
-            writeResponse(request, resp, chain, req, value)
-            ctx.complete()
-          }
-        }
-    }
-  }
-
-  private[this] def writeHeaders(req: ServletRequest, resp: HttpServletResponse, ourHeaders: Map[String, String]) {
+  protected[api] def writeHeaders(req: ServletRequest, resp: HttpServletResponse, ourHeaders: Map[String, String]) {
     val request = req.asInstanceOf[HttpServletRequest]
     ourHeaders.foreach { case (key, value) => resp.setHeader(key, value) }
 
@@ -116,7 +35,7 @@ trait BaseUrlsRouter extends Filter {
         resp.setHeader("Connection", Option(request.getHeader("Connection")).getOrElse("close"))
   }
 
-  private[this] final def writeResponse(req: ServletRequest, resp: HttpServletResponse, chain: FilterChain, request: Request, result: Response) {
+  protected[api] final def writeResponse(req: ServletRequest, resp: HttpServletResponse, chain: FilterChain, request: Request, result: Response) {
     if (!resp.isCommitted) {
       onResponseEvent(request, result)
 
@@ -200,5 +119,19 @@ trait BaseUrlsRouter extends Filter {
   def init(filterConfig: FilterConfig) {}
   def destroy() {}
 
-  private[this] lazy val logger = LoggerFactory.getLogger(this.getClass)
+  // METRICS
+
+  protected[api] lazy val httpConfig = Configuration.load()
+
+  private[this] lazy val activeRequests =
+    if (httpConfig.isInstrumented)
+      Some(Metrics.newCounter(this.getClass, "active-requests"))
+    else
+      None
+
+  private[this] val requests =
+    if (httpConfig.isInstrumented)
+      Some(Metrics.newMeter(this.getClass, "requests", "requests", TimeUnit.SECONDS))
+    else
+      None
 }

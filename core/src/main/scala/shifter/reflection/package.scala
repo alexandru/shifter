@@ -5,6 +5,7 @@ import java.util.zip.ZipInputStream
 import collection.JavaConverters._
 import annotation.tailrec
 import scala.reflect.Manifest
+import util.{Failure, Try}
 
 
 package object reflection {
@@ -19,11 +20,15 @@ package object reflection {
     classFiles.flatMap(p => toClass(p))
   }
 
-  def findSubTypes[T : Manifest](packages: Set[String]): Set[Class[T]] = {
+  def isSubclass[T : Manifest](cls: Class[_]) = {
     val m = manifest[T].runtimeClass
+    m != cls && m.isAssignableFrom(cls)
+  }
+
+  def findSubTypes[T : Manifest](packages: Set[String]): Set[Class[T]] = {
     val classes = allTypesIn(packages)
 
-    val found = classes.filter(c => m != c && m.isAssignableFrom(c))
+    val found = classes.filter(isSubclass[T])
     found.asInstanceOf[Set[Class[T]]]
   }
 
@@ -102,7 +107,7 @@ package object reflection {
       case _: NoClassDefFoundError => None
     }
 
-  def toInstance[T](cls: Class[T], anyArgs: Any*): Option[T] = {
+  def toInstance[T](cls: Class[T], anyArgs: Any*): Try[T] = {
     @tailrec
     def checkEquiv(required: Seq[Class[_]], given: Seq[Class[_]]): Boolean =
       if (required.size != given.size) false
@@ -128,15 +133,17 @@ package object reflection {
 
       constructor match {
         case Some(cons) =>
-          if (cons.getParameterTypes().length == 0)
-            Some(cons.newInstance().asInstanceOf[T])
+          if (cons.getParameterTypes.length == 0)
+            Try(cons.newInstance().asInstanceOf[T])
           else
-            Some(cons.newInstance(args :_*).asInstanceOf[T])
-        case _ => None
+            Try(cons.newInstance(args :_*).asInstanceOf[T])
+        case _ =>
+          Try(throw new RuntimeException("No constructor found for class: " + cls.getName))
       }
     }
     catch {
-      case _: Throwable => None
+      case ex: Throwable =>
+        Failure(ex)
     }
   }
 

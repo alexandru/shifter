@@ -25,6 +25,7 @@ case class MetricsConfiguration(
   realm: String,
   username: String,
   password: String,
+  graphiteEnabled: Boolean,
   graphiteServerHost: Option[String],
   graphiteServerPort: Option[Int],
   graphiteServerPrefix: Option[String]
@@ -60,6 +61,7 @@ object Configuration {
         realm = values.getString("http.server.metrics.realm"),
         username = values.getString("http.server.metrics.username"),
         password = values.getString("http.server.metrics.password"),
+        graphiteEnabled = Try(values.getBoolean("http.server.metrics.graphiteEnabled")).getOrElse(false),
         graphiteServerHost = Try(values.getString("http.server.metrics.graphiteServerHost")).toOption,
         graphiteServerPort = Try(values.getInt("http.server.metrics.graphiteServerPort")).toOption,
         graphiteServerPrefix = Try(values.getString("http.server.metrics.graphiteServerPrefix")).toOption

@@ -1,7 +1,7 @@
 package shifter.web.api
 
 import java.net.URLEncoder
-import java.util.{TimeZone, Date}
+import java.util.{Calendar, TimeZone, Date}
 
 
 case class Cookie(
@@ -40,14 +40,31 @@ object Cookie {
 
     def expiresAsRFC =
       cookie.expiresSecs.map { ts =>
-        val dt = new Date(System.currentTimeMillis() / 1000 + ts)
-        dateFormatter.format(dt)
+        val dt = convertTSToGMTDate(System.currentTimeMillis() + ts * 1000)
+        dateFormatter.format(dt) + " GMT"
       }
   }
 
-  private[this] val dateFormatter = {
-    val obj = new java.text.SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz")
-    obj.setTimeZone(TimeZone.getTimeZone("GMT"))
-    obj
+  private[this] def convertTSToGMTDate(millis: Long): Date = {
+    val tz: TimeZone = TimeZone.getDefault
+    val c: Calendar = Calendar.getInstance(tz)
+    var localMillis: Long = millis
+    var offset: Int = 0
+    var time: Int = 0
+    c.set(1970, Calendar.JANUARY, 1, 0, 0, 0)
+    while (localMillis > Integer.MAX_VALUE) {
+      c.add(Calendar.MILLISECOND, Integer.MAX_VALUE)
+      localMillis -= Integer.MAX_VALUE
+    }
+    c.add(Calendar.MILLISECOND, localMillis.asInstanceOf[Int])
+    time = c.get(Calendar.MILLISECOND)
+    time += c.get(Calendar.SECOND) * 1000
+    time += c.get(Calendar.MINUTE) * 60 * 1000
+    time += c.get(Calendar.HOUR_OF_DAY) * 60 * 60 * 1000
+    offset = tz.getOffset(c.get(Calendar.ERA), c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.DAY_OF_WEEK), time)
+    new Date(millis - offset)
   }
+
+  private[this] val dateFormatter =
+    new java.text.SimpleDateFormat("EEE, dd-MMM-yyyy HH:mm:ss")
 }

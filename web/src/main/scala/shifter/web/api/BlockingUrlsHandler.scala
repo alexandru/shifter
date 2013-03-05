@@ -6,31 +6,30 @@ import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 trait BlockingUrlsHandler extends UrlsHandler {
 
-  def routes: PartialFunction[Request, Response]
+  def routes: PartialFunction[HttpRawRequest, HttpResponse[_]]
 
   final def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-    val req = Request(request.asInstanceOf[HttpServletRequest])
-    val resp = response.asInstanceOf[HttpServletResponse]
+    val rawRequest = new HttpRawRequest(request.asInstanceOf[HttpServletRequest])
+    val servletResponse = response.asInstanceOf[HttpServletResponse]
 
-    if (!applicableFor(req) || !routes.isDefinedAt(req)) {
+    if (!applicableFor(rawRequest) || !routes.isDefinedAt(rawRequest)) {
       chain.doFilter(request, response)
       return
     }
 
-    onRequestEvent(req)
+    onRequestEvent(rawRequest)
     try {
-      val value = routes(req)
-      writeResponse(request, resp, chain, req, value)
+      val ourResponse = routes(rawRequest)
+      writeResponse(request, servletResponse, chain, rawRequest, ourResponse)
     }
     catch {
       case ex: Throwable =>
         logger.error("Couldn't finish processing the request", ex)
 
-        writeResponse(request, resp, chain, req, HttpError(
+        writeResponse(request, servletResponse, chain, rawRequest, HttpError(
           status = 500,
-          body = "500 Internal Server Error",
-          contentType = "text/plain"
-        ))
+          body = "500 Internal Server Error"
+        ).withHeader("Content-Type" -> "text/plain"))
 
         if (ex.isInstanceOf[Error] || ex.getCause.isInstanceOf[Error]) {
           logger.error("Last error was fatal, shutting down server")

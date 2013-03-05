@@ -4,10 +4,23 @@ import java.net.URLDecoder._
 import java.io.InputStream
 import javax.servlet.http.HttpServletResponse
 import org.apache.commons.codec.binary.Base64
+import twirl.api.Html
 
 package object api {
-  def Ok(body: String, headers: Map[String, String] = Map.empty): HttpSimpleResponse =
-    HttpSimpleResponse(200, body = body, headers = headers.map(kv => (kv._1, Seq(kv._2))))
+  def Ok(body: String, contentType: String = "", headers: Map[String, String] = Map.empty): HttpSimpleResponse = {
+    val headersMulti = if (!contentType.isEmpty)
+      headers.updated("Content-Type", contentType)
+        .map(kv => (kv._1, Seq(kv._2)))
+    else
+      headers.map(kv => (kv._1, Seq(kv._2)))
+
+    HttpSimpleResponse(200, body = body, headers = headersMulti)
+  }
+
+  def Ok(body: Html): HttpSimpleResponse = {
+    val html = body.toString()
+    HttpSimpleResponse(200, body=html, headers=Map("Content-Type" -> Seq(body.contentType)))
+  }
 
   def OkStream(body: InputStream, headers: Map[String, String] = Map.empty): HttpStreamedResponse =
     HttpStreamedResponse(200, body = body, headers = headers.map(kv => (kv._1, Seq(kv._2))))

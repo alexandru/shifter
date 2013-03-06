@@ -1,14 +1,12 @@
 package shifter.web.server.internal
 
 import shifter.web.api._
-import shifter.web.api.Request
 import shifter.web.server.MetricsConfiguration
-
 
 class MetricsAuthenticationFilter(config: MetricsConfiguration)
     extends BlockingUrlsHandler with BasicAuthSupport {
 
-  def routes: PartialFunction[Request, Response] = {
+  def routes: PartialFunction[HttpRawRequest, HttpResponse[_]] = {
     case req if isForMetrics(req.path) && !isAuthenticated(req, config.username, config.password) =>
       HttpUnauthenticated(config.realm)
   }

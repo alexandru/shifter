@@ -11,42 +11,41 @@ import java.util.concurrent.TimeUnit
 trait AsyncUrlsHandler extends UrlsHandler {
   implicit def context: ExecutionContext
 
-  def routes: PartialFunction[Request, Future[Response]]
+  def routes: PartialFunction[HttpRawRequest, Future[HttpResponse[_]]]
 
   protected def requestTimeout: Int = 10000
 
-  protected def triggeredTimeoutResponse(request: Request): Response =
-    HttpRequestTimeout("408 Timeout", "text/plain")
+  protected def triggeredTimeoutResponse(request: HttpRequest[_]): HttpResponse[_] =
+    HttpRequestTimeout("408 Timeout").withHeader("Content-Type" -> "text/plain")
 
-  protected def onRequestTimeout(request: Request) {
+  protected def onRequestTimeout(request: HttpRequest[_]) {
     timeouts.map(_.mark())
   }
 
   final def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
-    val req = Request(request.asInstanceOf[HttpServletRequest])
+    val ourRequest = new HttpRawRequest(request.asInstanceOf[HttpServletRequest])
     val resp = response.asInstanceOf[HttpServletResponse]
 
-    if (!applicableFor(req) || !routes.isDefinedAt(req)) {
+    if (!applicableFor(ourRequest) || !routes.isDefinedAt(ourRequest)) {
       chain.doFilter(request, response)
       return
     }
 
-    onRequestEvent(req)
-    val future: Future[Response] = routes(req)
+    onRequestEvent(ourRequest)
+    val future: Future[HttpResponse[_]] = routes(ourRequest)
 
     if (future.isCompleted) {
       future.value.get match {
         case Success(value) =>
-          writeResponse(request, resp, chain, req, value)
+          writeResponse(request, resp, chain, ourRequest, value)
 
         case Failure(ex) =>
           logger.error("Couldn't finish processing the request", ex)
 
-          writeResponse(request, resp, chain, req, HttpError(
+          writeResponse(request, resp, chain, ourRequest, HttpError(
             status = 500,
-            body = "500 Internal Server Error",
-            contentType = "text/plain"
-          ))
+            body = "500 Internal Server Error"
+          ).withHeader("Content-Type" -> "text/plain"))
 
           if (ex.isInstanceOf[Error] || ex.getCause.isInstanceOf[Error]) {
             logger.error("Last error was fatal, shutting down server")
@@ -55,8 +54,8 @@ trait AsyncUrlsHandler extends UrlsHandler {
       }
     }
     else {
-      val ctx = req.underlying.startAsync(request, response)
-      val committed = Array(false)
+      val ctx = ourRequest.underlying.startAsync(request, response)
+      val committed = Array(x = false)
 
       ctx.setTimeout(requestTimeout)
 
@@ -71,7 +70,7 @@ trait AsyncUrlsHandler extends UrlsHandler {
           committed.synchronized {
             if (!committed(0)) {
               committed(0) = true
-              writeResponse(request, resp, chain, req, triggeredTimeoutResponse(req))
+              writeResponse(request, resp, chain, ourRequest, triggeredTimeoutResponse(ourRequest))
               ctx.complete()
             }
           }
@@ -85,11 +84,10 @@ trait AsyncUrlsHandler extends UrlsHandler {
             if (!committed(0)) {
               committed(0) = true
 
-              writeResponse(request, resp, chain, req, HttpError(
+              writeResponse(request, resp, chain, ourRequest, HttpError(
                 status = 500,
-                body = "500 Internal Server Error",
-                contentType = "text/plain"
-              ))
+                body = "500 Internal Server Error"
+              ).addHeader("Content-Type", "text/plain"))
 
               ctx.complete()
               logger.error("Couldn't finish processing the request", ex)
@@ -107,7 +105,7 @@ trait AsyncUrlsHandler extends UrlsHandler {
           committed.synchronized {
             if (!committed(0)) {
               committed(0) = true
-              writeResponse(request, resp, chain, req, value)
+              writeResponse(request, resp, chain, ourRequest, value)
               ctx.complete()
             }
           }

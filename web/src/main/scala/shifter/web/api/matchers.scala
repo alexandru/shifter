@@ -1,29 +1,41 @@
 package shifter.web.api
 
+import shifter.web.api.{HttpMethod => m}
 
-object Path {
-  def unapply(req: Request) = {
-    val segments = req.path.split("/").filterNot(_.isEmpty).toList
-    Some(segments)
-  }
-}
+abstract class PathMatcher[T, U <: HttpRequest[T]](isMethodValid: Set[HttpMethod.Value], parser: RequestParser[T, U]) {
+  def builder(raw: HttpRawRequest): HttpLazyRequest[T, U] =
+    new HttpLazyRequest(raw, parser)
 
-abstract class PathMatcher(method: String) {
-  def unapply(req: Request) =
-    if (req.method == method) {
-      val segments = req.path.split("/").filterNot(_.isEmpty).toList
-      Some(segments)
+  def unapply(raw: HttpRawRequest) =
+    if (isMethodValid(raw.method) && parser.canBeParsed(raw)) {
+      val segments = raw.path.split("/").filterNot(_.isEmpty).toList
+      Some((segments, builder(raw)))
     }
     else
       None
 }
 
-object GET extends PathMatcher("GET")
+object PATH {
+  def unapply(req: HttpRawRequest) = {
+    val segments = req.path.split("/").filterNot(_.isEmpty).toList
+    Some(segments)
+  }
+}
 
-object POST extends PathMatcher("POST")
+object GET extends PathMatcher(Set(m.GET), HttpRequestWithoutBody)
+object HEAD extends PathMatcher(Set(m.HEAD), HttpRequestWithoutBody)
+object OPTIONS extends PathMatcher(Set(m.OPTIONS), HttpRequestWithoutBody)
 
-object PUT extends PathMatcher("PUT")
+object POST extends PathMatcher(Set(m.POST), HttpFormRequest)
+object POSTForm extends PathMatcher(Set(m.POST), HttpFormRequest)
+object POSTMultiPart extends PathMatcher(Set(m.POST), HttpMultiPartFormRequest)
+object POSTJson extends PathMatcher(Set(m.POST), HttpJsonRequest)
 
-object DELETE extends PathMatcher("DELETE")
+object ALL  extends PathMatcher(HttpMixedFormRequest.validMethods, HttpRequestWithoutBody)
+object FORM extends PathMatcher(HttpMixedFormRequest.validMethods, HttpMixedFormRequest)
 
-object OPTIONS extends PathMatcher("OPTIONS")
+object PUT extends PathMatcher(Set(m.PUT), HttpFormRequest)
+object PUTForm extends PathMatcher(Set(m.PUT), HttpFormRequest)
+object PUTMultiPart extends PathMatcher(Set(m.PUT), HttpMultiPartFormRequest)
+object PUTJson extends PathMatcher(Set(m.PUT), HttpJsonRequest)
+

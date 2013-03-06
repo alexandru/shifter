@@ -19,7 +19,7 @@ class GeoIP(file: File) {
   def search(addr: String): Option[GeoIPLocation] =
     Try(Option(service.getLocation(addr))).toOption.flatten.map { loc =>
       GeoIPLocation(
-        countryCode = loc.countryCode,
+        countryCode = loc.countryCode.toLowerCase,
         countryName = Option(loc.countryName),
         city = Option(loc.city),
         latitude = Option(loc.latitude),

@@ -1,6 +1,5 @@
 package shifter.web.api
 
-import scala.Some
 
 trait HttpRequest[T] {
   def method: HttpMethod.Value

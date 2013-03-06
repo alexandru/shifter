@@ -1,7 +1,5 @@
 package shifter.web.api
 
-import shifter.web.api._
-import scala.Some
 import util.Try
 
 case class HttpMixedFormRequest(

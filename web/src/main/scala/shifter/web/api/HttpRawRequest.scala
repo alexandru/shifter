@@ -18,9 +18,9 @@ class HttpRawRequest(val underlying: HttpServletRequest)
     Seq(servletPath, pathInfo).flatten.foldLeft("")(_+_)
   }
 
-  lazy val domain: String = headers.get("HOST") match {
-    case Some(DomainRegex(name)) => name
-    case _ => ""
+  lazy val domain: String = underlying.getServerName match {
+    case DomainRegex(name) => name
+    case _ => underlying.getServerName
   }
 
   lazy val port: Int = underlying.getRemotePort

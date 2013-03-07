@@ -4,7 +4,7 @@
 Common infrastructure for our web-services built on top of the JVM and
 Scala.
 
-Warning: Highly unstable.
+Warning: Highly unstable, sometimes broken.
 
 ## Quick Description
 

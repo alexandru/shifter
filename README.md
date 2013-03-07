@@ -4,6 +4,8 @@
 Common infrastructure for the Epigrams web-services built on top of
 the JVM and Scala.
 
+Warning: Highly unstable.
+
 ## Quick Description
 
 The project is made of several smaller projects, that can be used independently:

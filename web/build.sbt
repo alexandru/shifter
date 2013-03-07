@@ -11,7 +11,6 @@ libraryDependencies ++= Seq(
   "io.spray" %% "twirl-api" % "0.6.1",
   "io.spray" %%  "spray-json" % "1.2.3",
   "org.scala-stm" %% "scala-stm" % "0.7",
-  "commons-codec" % "commons-codec" % "1.5",
   "commons-io" % "commons-io" % "1.3.2",
   "commons-fileupload" % "commons-fileupload" % "1.2.2",
   "org.eclipse.jetty" % "jetty-webapp" % "8.1.9.v20130131",

@@ -65,13 +65,13 @@ resolvers += "Epigrams Snapshots" at "http://maven.epigrams.co/snapshots/"
 For specifying all sub-projects as dependencies:
 
 ```scala
-libraryDependencies += "shifter" %% "shifter" % "0.3.18"
+libraryDependencies += "shifter" %% "shifter" % "0.3.19"
 ```
 
 For specifying individual subprojects:
 
 ```scala
-libraryDependencies += "shifter" %% "shifter-web" % "0.3.18"
+libraryDependencies += "shifter" %% "shifter-web" % "0.3.19"
 ```
 
 **NOTE:** this document may get out of date and the latest version may not
@@ -100,7 +100,7 @@ For specifying all sub-projects as dependencies:
 <dependency>
    <groupId>shifter</groupId>
    <artifactId>shifter_2.10</artifactId>
-   <version>0.3.18</version>
+   <version>0.3.19</version>
 </dependency>
 ```
 
@@ -110,7 +110,7 @@ For specifying specific sub-projects (e.g. shifter-db):
 <dependency>
    <groupId>shifter</groupId>
    <artifactId>shifter-db_2.10</artifactId>
-   <version>0.3.18</version>
+   <version>0.3.19</version>
 </dependency>
 ```
 

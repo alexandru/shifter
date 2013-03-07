@@ -3,6 +3,7 @@ package shifter.http.client
 import concurrent.{Promise, Future, ExecutionContext}
 import com.ning.http.client._
 import com.ning.http.util.Base64
+import extra.ThrottleRequestFilter
 import util._
 import collection.JavaConverters._
 import util.Success
@@ -10,9 +11,9 @@ import util.Success
 
 class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends HttpClient {
 
-  def request(method: String, url: String, data: Map[String, String], user: Option[String], password: Option[String])(implicit ec: ExecutionContext): Future[HttpClientResponse] = {
+  def request(method: String, url: String, data: Map[String, String], headers: Map[String, String])(implicit ec: ExecutionContext): Future[HttpClientResponse] = {
     val request = prepareRequest(method, url, data)
-    val futureResponse = makeRequest(url, request, user, password)
+    val futureResponse = makeRequest(url, request, headers)
 
     futureResponse.map { response =>
       val headersJavaMap = response.getHeaders
@@ -23,7 +24,7 @@ class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends Htt
         headers += (header -> headersJavaMap.getFirstValue(header))
       }
 
-      new HttpClientResponse(response.getStatusCode, headers, response.getResponseBodyAsBytes)
+      new HttpClientResponse(response.getStatusCode, headers, response.getResponseBodyAsStream)
     }
   }
 
@@ -54,7 +55,7 @@ class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends Htt
     }
 
   private[this] def makeRequest(url: String, request: AsyncHttpClient#BoundRequestBuilder,
-                                user: Option[String], password: Option[String]): Future[Response] = {
+                                headers: Map[String, String]): Future[Response] = {
     val promise = Promise[Response]()
     val builder = new Response.ResponseBuilder()
 
@@ -107,10 +108,8 @@ class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends Htt
     }
 
     // executing request, with auth headers if given
-    for (u <- user; p <- password) {
-      val authorization = "Basic " + Base64.encode((u + ":" + p).getBytes("UTF-8"))
-      request.setHeader("Authorization", authorization)
-    }
+    for ((k,v) <- headers)
+      request.setHeader(k, v)
 
     request.execute(httpHandler)
     promise.future
@@ -119,4 +118,25 @@ class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends Htt
   private[this] val client = new AsyncHttpClient(config)
 }
 
+object NingHttpClient {
+  def apply(): NingHttpClient =
+    apply(HttpClientConfig())
+
+  def apply(config: HttpClientConfig): NingHttpClient = {
+    val builder = new AsyncHttpClientConfig.Builder()
+
+    val ningConfig = builder
+      .setMaximumConnectionsTotal(config.maxTotalConnections)
+      .setMaximumConnectionsPerHost(config.maxConnectionsPerHost)
+      .addRequestFilter(new ThrottleRequestFilter(config.maxTotalConnections))
+      .setRequestTimeoutInMs(config.requestTimeoutMs)
+      .setConnectionTimeoutInMs(config.connectionTimeoutMs)
+      .setAllowPoolingConnection(true)
+      .setAllowSslConnectionPool(true)
+      .setFollowRedirects(config.followRedirects)
+      .build
+
+    new NingHttpClient(ningConfig)
+  }
+}
 

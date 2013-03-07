@@ -40,14 +40,6 @@ class HttpRawRequest(val underlying: HttpServletRequest)
         acc.updated(key.toUpperCase, values)
     }
 
-  lazy val userInfo = UserInfo(
-    ip = remoteRealIP,
-    forwardedFor = remoteForwardedFor,
-    via = remoteVia,
-    agent = userAgent,
-    geoip = GeoIPService.search(remoteRealIP)
-  )
-
   lazy val cookies: Map[String, Cookie] =
     underlying.getCookies.map { c =>
       val expiresSecs = if (c.getMaxAge < 0)

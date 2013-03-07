@@ -71,6 +71,14 @@ trait HttpRequest[T] {
       .head
       .toLowerCase
   }
+
+  final lazy val userInfo = UserInfo(
+    ip = remoteRealIP,
+    forwardedFor = remoteForwardedFor,
+    via = remoteVia,
+    agent = userAgent,
+    geoip = GeoIPService.search(remoteRealIP)
+  )
 }
 
 

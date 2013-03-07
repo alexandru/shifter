@@ -1,7 +1,7 @@
 # Shifter
 
 
-Common infrastructure for the Epigrams web-services built on top of
+Common infrastructure for the our web-services built on top of
 the JVM and Scala.
 
 Warning: Highly unstable.

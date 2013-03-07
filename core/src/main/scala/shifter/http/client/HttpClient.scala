@@ -1,7 +1,6 @@
 package shifter.http.client
 
 import concurrent._
-import org.apache.commons.codec.binary.Base64
 
 trait HttpClient {
   // To Implement
@@ -24,7 +23,7 @@ trait HttpClient {
   def request(method: String, url: String, data: Map[String, String], user: Option[String], password: Option[String])(implicit ec: ExecutionContext): Future[HttpClientResponse] = {
     val headers =
       for (u <- user; p <- password) yield {
-        val auth = "Basic " + Base64.encodeBase64((u + ":" + p).getBytes("UTF-8"))
+        val auth = "Basic " + Base64.encode((u + ":" + p).getBytes("UTF-8"))
         Map("Authorization" -> auth)
       }
 

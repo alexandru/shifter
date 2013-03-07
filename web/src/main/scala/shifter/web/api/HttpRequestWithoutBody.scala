@@ -10,8 +10,7 @@ case class HttpRequestWithoutBody(
   query: Option[String],
   remoteAddress: String,
   headers: Map[String, Seq[String]],
-  cookies: Map[String, Cookie],
-  userInfo: UserInfo
+  cookies: Map[String, Cookie]
 )
 extends HttpRequest[None.type]
 
@@ -28,7 +27,6 @@ object HttpRequestWithoutBody extends RequestParser[None.type, HttpRequestWithou
       url = raw.url,
       query = raw.query,
       remoteAddress = raw.remoteAddress,
-      userInfo = raw.userInfo,
       headers = raw.headers,
       cookies = raw.cookies
     ))

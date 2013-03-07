@@ -10,7 +10,6 @@ case class HttpFormRequest(
   query: Option[String],
   headers: Map[String, Seq[String]],
   remoteAddress: String,
-  userInfo: UserInfo,
   cookies: Map[String, Cookie],
   body: Map[String, Seq[String]]
 )
@@ -54,7 +53,6 @@ object HttpFormRequest extends RequestParser[Map[String, Seq[String]], HttpFormR
         query = raw.query,
         headers = raw.headers,
         remoteAddress = raw.remoteAddress,
-        userInfo = raw.userInfo,
         cookies = raw.cookies,
         body = params
       ))

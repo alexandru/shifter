@@ -12,7 +12,6 @@ case class HttpJsonRequest(
   query: Option[String],
   headers: Map[String, Seq[String]],
   remoteAddress: String,
-  userInfo: UserInfo,
   cookies: Map[String, Cookie],
   body: JsValue
 )
@@ -48,7 +47,6 @@ object HttpJsonRequest extends RequestParser[JsValue, HttpJsonRequest] {
         query = raw.query,
         headers = raw.headers,
         remoteAddress = raw.remoteAddress,
-        userInfo = raw.userInfo,
         cookies = raw.cookies,
         body = json
       ))

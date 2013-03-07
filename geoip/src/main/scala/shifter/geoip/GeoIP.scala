@@ -4,7 +4,7 @@ import java.io.{BufferedInputStream, FileOutputStream, File}
 import com.maxmind.geoip.LookupService
 import java.util.zip.GZIPInputStream
 import util.Try
-import shifter.http.client.HttpClient
+import shifter.http.client.{HttpClient, BlockingHttpClient}
 import concurrent.{Future, Await}
 import concurrent.duration._
 import concurrent.ExecutionContext.Implicits.global
@@ -37,17 +37,26 @@ class GeoIP(file: File) {
 }
 
 object GeoIP extends Logging {
-  def withLiteCity() =
-    new GeoIP(fetchGeoLiteCity)
+  def withLiteCity(): GeoIP = {
+    val client = new BlockingHttpClient
+    try {
+      withLiteCity(client)
+    }
+    finally {
+      client.close()
+    }
+  }
 
-  private[this] def fetchGeoLiteCity: File = {
+  def withLiteCity(httpClient: HttpClient): GeoIP =
+    new GeoIP(fetchGeoLiteCity(httpClient))
+
+  private[this] def fetchGeoLiteCity(httpClient: HttpClient): File = {
     val tmpDir = new File(Option(System.getProperty("java.io.tmpdir")).getOrElse("/tmp"))
     val liteCityFile = new File(tmpDir, "Shifter.0.3.14-GeoLiteCity-Auto-jM6gBmhgTop.dat.gz")
 
     if (!liteCityFile.exists()) {
       logger.info("Fetching GeoLiteCIty.dat.gz")
 
-      val client = HttpClient()
       val out = new FileOutputStream(liteCityFile)
 
       try {
@@ -55,14 +64,14 @@ object GeoIP extends Logging {
         val url2 = "http://maven.epigrams.co/data/GeoCityLite.dat.gz"
 
 
-        val fr1 = client.request("GET", url1).map {
+        val fr1 = httpClient.request("GET", url1).map {
           case resp if resp.status != 200 =>
             throw new RuntimeException("Could not fetch " + url1)
           case resp =>
             logger.info("Fetched GeoLiteCity: " + url1)
             resp
         }
-        val fr2 = client.request("GET", url2).map {
+        val fr2 = httpClient.request("GET", url2).map {
           case resp if resp.status != 200 =>
             throw new RuntimeException("Could not fetch " + url2)
           case resp =>
@@ -96,7 +105,6 @@ object GeoIP extends Logging {
       }
       finally {
         Try(out.close())
-        Try(client.close())
       }
     }
 

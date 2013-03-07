@@ -1,7 +1,5 @@
 package shifter.web.api
 
-import shifter.web.api._
-import scala.Some
 import util.Try
 
 case class HttpMixedFormRequest(
@@ -14,7 +12,6 @@ case class HttpMixedFormRequest(
   query: Option[String],
   headers: Map[String, Seq[String]],
   remoteAddress: String,
-  userInfo: UserInfo,
   cookies: Map[String, Cookie],
   body: Map[String, Seq[String]]
 )
@@ -60,7 +57,6 @@ object HttpMixedFormRequest extends RequestParser[Map[String, Seq[String]], Http
         query = raw.query,
         headers = raw.headers,
         remoteAddress = raw.remoteAddress,
-        userInfo = raw.userInfo,
         cookies = raw.cookies,
         body = params
       ))

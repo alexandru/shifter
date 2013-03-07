@@ -15,7 +15,6 @@ class HttpLazyRequest[T, U <: HttpRequest[T]](raw: HttpRawRequest, parser: Reque
   def query = raw.query
   def headers = raw.headers
   def remoteAddress = raw.remoteAddress
-  def userInfo = raw.userInfo
   def cookies = raw.cookies
 
   def get = {

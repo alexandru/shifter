@@ -26,5 +26,5 @@ object IPUtils {
   }
 
   def isIPv4Public(ip: String) =
-    isIPv4Valid(ip) && isIPv4Private(ip)
+    isIPv4Valid(ip) && !isIPv4Private(ip)
 }

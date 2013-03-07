@@ -13,6 +13,7 @@ libraryDependencies ++= Seq(
   "org.scala-stm" %% "scala-stm" % "0.7",
   "commons-io" % "commons-io" % "1.3.2",
   "commons-fileupload" % "commons-fileupload" % "1.2.2",
+  "commons-codec" % "commons-codec" % "1.5",
   "org.eclipse.jetty" % "jetty-webapp" % "8.1.9.v20130131",
   "org.eclipse.jetty" % "jetty-server" % "8.1.9.v20130131",
   "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" % "provided;test;runtime" artifacts (Artifact("javax.servlet", "jar", "jar")),

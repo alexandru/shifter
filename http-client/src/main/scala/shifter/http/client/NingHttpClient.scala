@@ -2,7 +2,6 @@ package shifter.http.client
 
 import concurrent.{Promise, Future, ExecutionContext}
 import com.ning.http.client._
-import com.ning.http.util.Base64
 import extra.ThrottleRequestFilter
 import util._
 import collection.JavaConverters._
@@ -108,10 +107,11 @@ class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends Htt
     }
 
     // executing request, with auth headers if given
-    for ((k,v) <- headers)
-      request.setHeader(k, v)
+    val withHeaders = headers.foldLeft(request) { (acc, elem) =>
+      acc.addHeader(elem._1, elem._2)
+    }
 
-    request.execute(httpHandler)
+    withHeaders.execute(httpHandler)
     promise.future
   }
 

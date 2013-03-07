@@ -1,8 +1,8 @@
 # Shifter
 
 
-Common infrastructure for the Epigrams web-services built on top of
-the JVM and Scala.
+Common infrastructure for our web-services built on top of the JVM and
+Scala.
 
 Warning: Highly unstable.
 
@@ -59,7 +59,7 @@ The following dependencies are used:
 First add the proper resolvers:
 
 ```scala
-resolvers += "Epigrams Releases" at "http://maven.epigrams.co/releases/"
+resolvers += "BionicSpirit Releases" at "http://maven.bionicspirit.com/"
 ```
 
 For specifying all sub-projects as dependencies:
@@ -71,7 +71,7 @@ libraryDependencies += "shifter" %% "shifter" % "0.3.23"
 For specifying individual subprojects:
 
 ```scala
-libraryDependencies += "shifter" %% "shifter-web" % "0.3.23"
+libraryDependencies += "shifter" %% "shifter-cache % "0.3.23"
 ```
 
 **NOTE:** this document may get out of date and the latest version may not
@@ -84,8 +84,8 @@ First add the repository resolvers:
 ```xml
 <repositories>
   <repository>
-    <id>Epigrams Releases</id>
-    <url>http://maven.epigrams.co/releases/</url>
+    <id>BionicSpirit Releases</id>
+    <url>http://maven.bionicspirit.com/releases/</url>
   </repository>
 </repositories>
 ```

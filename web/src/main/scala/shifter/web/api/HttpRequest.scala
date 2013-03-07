@@ -1,6 +1,5 @@
 package shifter.web.api
 
-import scala.Some
 
 trait HttpRequest[T] {
   def method: HttpMethod.Value
@@ -47,18 +46,15 @@ trait HttpRequest[T] {
   lazy val remoteVia = header("VIA").getOrElse("")
 
   lazy val remoteRealIP =
-    header("CF-CONNECTING-IP").getOrElse {
-      val givenIp = header("X-REAL-IP").getOrElse(remoteAddress)
-
-      if (!remoteForwardedFor.isEmpty)
-        remoteForwardedFor.split(',').headOption match {
-          case Some(IPFormat(ip)) =>
-            ip
-          case _ =>
-            givenIp
+    header("X-FORWARDED-FOR") match {
+      case Some(value) if !value.isEmpty =>
+        value.split("\\s*,\\s*").find(IPUtils.isIPv4Public) match {
+          case Some(ip) => ip
+          case None =>
+            remoteAddress
         }
-      else
-        givenIp
+      case _ =>
+        remoteAddress
     }
 
   lazy val userAgent =
@@ -72,6 +68,14 @@ trait HttpRequest[T] {
       .head
       .toLowerCase
   }
+
+  final lazy val userInfo = UserInfo(
+    ip = remoteRealIP,
+    forwardedFor = remoteForwardedFor,
+    via = remoteVia,
+    agent = userAgent,
+    geoip = GeoIPService.search(remoteRealIP)
+  )
 }
 
 

@@ -17,7 +17,6 @@ case class HttpMultiPartFormRequest(
   query: Option[String],
   headers: Map[String, Seq[String]],
   remoteAddress: String,
-  userInfo: UserInfo,
   cookies: Map[String, Cookie],
   body: MultiPartBody
 )
@@ -73,7 +72,6 @@ object HttpMultiPartFormRequest extends RequestParser[MultiPartBody, HttpMultiPa
         query = raw.query,
         headers = raw.headers,
         remoteAddress = raw.remoteAddress,
-        userInfo = raw.userInfo,
         cookies = raw.cookies,
         body = MultiPartBody(
           params = params,

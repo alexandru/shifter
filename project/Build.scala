@@ -11,7 +11,7 @@ object ShifterBuild extends Build {
 
       organization in ThisBuild := "shifter",
 
-      version in ThisBuild := "0.3.18",
+      version in ThisBuild := "0.3.23",
 
       scalaVersion in ThisBuild := "2.10.0",
 
@@ -20,7 +20,6 @@ object ShifterBuild extends Build {
       compileOrder in ThisBuild := CompileOrder.JavaThenScala,
 
       scalacOptions in ThisBuild ++= Seq(
-        "-unchecked", "-deprecation",
         "-unchecked", "-deprecation", "-feature",
         "-language:existentials",
         "-language:implicitConversions"
@@ -75,9 +74,9 @@ object ShifterBuild extends Build {
 
   lazy val geoip = Project(
     id = "shifter-geoip",
-    base = file("geoip")) dependsOn (httpClient)
+    base = file("geoip")) dependsOn (core)
 
   lazy val web = Project(
     id = "shifter-web",
-    base = file("web")) dependsOn (core, geoip)
+    base = file("web")) dependsOn (core, geoip, httpClient)
 }

@@ -4,6 +4,7 @@ import java.io.{InputStream, ByteArrayInputStream, UnsupportedEncodingException}
 import collection.mutable.ArrayBuffer
 import java.util
 import util.concurrent.atomic.AtomicReference
+import scala.util.Try
 
 class HttpClientResponse(val status: Int, val headers: Map[String, String], inputStream: InputStream) {
   private[this] val consumed = new AtomicReference(false)
@@ -15,17 +16,43 @@ class HttpClientResponse(val status: Int, val headers: Map[String, String], inpu
 
       consumed.set(true)
 
-      val chunkBuffer = Array.fill(1024 * 4)(0.toByte)
-      val buffer = ArrayBuffer.empty[Byte]
-      var bytesRead = -1
+      val contentLength = headers.find(_._1.toUpperCase == "CONTENT-LENGTH")
+        .flatMap(x => Try(x._2.toInt).toOption)
 
-      do {
-        bytesRead = inputStream.read(chunkBuffer)
-        if (bytesRead > 0)
-          buffer.append(chunkBuffer : _*)
-      } while(bytesRead > -1)
+      contentLength match {
+        case Some(length) =>
+          val buffer = Array.fill(length)(0.toByte)
+          var remaining = length
+          var offset = 0
+          var bytesRead = -1
 
-      buffer.toArray
+          do {
+            assert(offset < length)
+
+            bytesRead = inputStream.read(buffer, offset, remaining)
+            if (bytesRead > 0) {
+              offset += bytesRead
+              remaining -= bytesRead
+            }
+          } while (bytesRead > -1 && remaining > 0)
+
+          inputStream.close()
+          buffer
+
+        case _ =>
+          val chunkBuffer = Array.fill(1024 * 4)(0.toByte)
+          val buffer = ArrayBuffer.empty[Byte]
+          var bytesRead = -1
+
+          do {
+            bytesRead = inputStream.read(chunkBuffer)
+            if (bytesRead > 0)
+              buffer.append(chunkBuffer.take(bytesRead) : _*)
+          } while(bytesRead > -1)
+
+          inputStream.close()
+          buffer.toArray
+      }
     }
 
   def bodyAsArray =

@@ -11,7 +11,7 @@ object ShifterBuild extends Build {
 
       organization in ThisBuild := "shifter",
 
-      version in ThisBuild := "0.3.20",
+      version in ThisBuild := "0.3.21",
 
       scalaVersion in ThisBuild := "2.10.0",
 
@@ -20,7 +20,6 @@ object ShifterBuild extends Build {
       compileOrder in ThisBuild := CompileOrder.JavaThenScala,
 
       scalacOptions in ThisBuild ++= Seq(
-        "-unchecked", "-deprecation",
         "-unchecked", "-deprecation", "-feature",
         "-language:existentials",
         "-language:implicitConversions"

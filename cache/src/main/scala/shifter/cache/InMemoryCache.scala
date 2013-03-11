@@ -3,81 +3,110 @@ package shifter.cache
 import concurrent.{ExecutionContext, Future}
 import concurrent.stm._
 import errors.NotFoundInCacheError
+import java.util.concurrent.atomic.AtomicLong
+import util.Random
 
 
 /**
  * Simple and dumb implementation of an in-memory cache.
  */
-class InMemoryCache extends Cache {
-  private[this] val cache = Ref(Vector.empty[Element])
-  private[this] val MaxElements = 200
-  private[this] def currentTime = System.currentTimeMillis() / 1000
-
-  private[this] case class Element(key: String, value: Any, expiresTS: Long) {
-    def isExpired =
-      (System.currentTimeMillis() / 1000) >= expiresTS
-  }
-
-  private[this] def cleanup(list: Vector[Element]) =
-    if (list.length < MaxElements)
-      list
-    else
-      list.sortWith((a,b) => a.expiresTS >= b.expiresTS).take(MaxElements).filterNot(_.isExpired)
-
-  def add(key: String, value: Any, exp: Int): Boolean = atomic { implicit txn =>
-    if (cache().exists(elem => elem.key == key && !elem.isExpired))
-      false
-    else {
-      cache() = cleanup(cache()) :+ Element(key, value, currentTime + exp)
-      true
+class InMemoryCache(maxElems: Int = 5000) extends Cache {
+  def add(key: String, value: Any, exp: Int): Boolean = {
+    val previous = cache.single.getAndTransform { map =>
+      if (!map.contains(key) || isExpired(map(key)))
+        map.updated(key, Elem(
+          value = value,
+          expiresTS = System.currentTimeMillis() + exp * 1000
+        ))
+      else
+        map
     }
+
+    val isAdded = !previous.contains(key) || isExpired(previous(key))
+    val count = previous.size + (if (isAdded) 1 else 0)
+    cleanup(count)
+    isAdded
   }
 
   def fireAdd(key: String, value: Any, exp: Int)(implicit ec: ExecutionContext) {
-    Future {
-      atomic { implicit txn =>
-        if (!cache().exists(elem => elem.key == key && !elem.isExpired))
-          cache() = cleanup(cache() :+ Element(key, value, currentTime + exp))
-      }
-    }
+    Future(add(key, value, exp))
   }
 
   def set(key: String, value: Any, exp: Int): Boolean = {
-    cache.single.transform { list =>
-      cleanup(list).filterNot(_.key == key) :+ Element(key, value, currentTime + exp)
-    }
+    val map = cache.single.transformAndGet { map => map.updated(key, Elem(
+      value = value,
+      expiresTS = System.currentTimeMillis() + exp * 1000
+    ))}
+
+    cleanup(map.size)
     true
   }
 
   def fireSet(key: String, value: Any, exp: Int)(implicit ec: ExecutionContext) {
-    Future {
-      cache.single.transform { list =>
-        cleanup(list).filterNot(_.key == key) :+ Element(key, value, currentTime + exp)
-      }
+    Future(set(key, value, exp))
+  }
+
+  def get[A](key: String): Option[A] = {
+    cache.single.get.get(key) match {
+      case Some(elem) if !isExpired(elem) =>
+        Option(elem.value).asInstanceOf[Option[A]]
+      case _ =>
+        None
     }
   }
 
-  def get[A](key: String): Option[A] =
-    cache.single.get.find(x => x.key == key && !x.isExpired).map(_.value.asInstanceOf[A])
-
   def getAsync[A](key: String)(implicit ec: ExecutionContext): Future[A] =
-    get[A](key).map(x => Future.successful(x))
-      .getOrElse(Future.failed(new NotFoundInCacheError(key)))
+    cache.single.get.get(key) match {
+      case Some(elem) if !isExpired(elem) && elem.value != null =>
+        Future.successful(elem.value.asInstanceOf[A])
+      case _ =>
+        Future.failed(new NotFoundInCacheError(key))
+    }
 
   def getAsyncOpt[A](key: String)(implicit ec: ExecutionContext): Future[Option[A]] =
-    Future.successful(get[A](key))
-
-  def getBulk(keys: Seq[String]): Map[String, Any] =
-    cache.single.get.collect {
-      case elem if keys.contains(elem.key) && !elem.isExpired =>
-        (elem.key, elem.value)
+    cache.single.get.get(key) match {
+      case Some(elem) if !isExpired(elem) =>
+        Future.successful(Option(elem.value).asInstanceOf[Option[A]])
+      case _ =>
+        Future.successful(None)
     }
-      .toMap
+
+  def getBulk(keys: Seq[String]): Map[String, Any] = {
+    val keysSet = keys.toSet
+    cache.single.get.collect {
+      case (key, value) if keysSet(key) && !isExpired(value) =>
+        (key, value.value)
+    }
+  }
 
   def getAsyncBulk(keys: Seq[String])(implicit ec: ExecutionContext): Future[Map[String, Any]] =
     Future.successful(getBulk(keys))
 
   def shutdown() {
-    cache.single.transform(x => Vector.empty)
+    cache.single.set(Map.empty)
   }
+
+  private[this] def cleanup(size: Int) {
+    if (size > maxElems || System.currentTimeMillis() - lastCleanup.get() > 10000) {
+      lastCleanup.set(System.currentTimeMillis())
+
+      cache.single.transform { map =>
+        val filtered = map.filter(elem => !isExpired(elem._2))
+        Random.shuffle(filtered).take(maxElems).toMap
+      }
+    }
+  }
+
+  private[this] def isExpired(elem: Elem) = {
+    val current = System.currentTimeMillis()
+    current > elem.expiresTS
+  }
+
+  private[this] case class Elem(
+    value: Any,
+    expiresTS: Long
+  )
+
+  private[this] val lastCleanup = new AtomicLong(System.currentTimeMillis())
+  private[this] val cache = Ref(Map.empty[String, Elem])
 }

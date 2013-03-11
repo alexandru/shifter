@@ -3,11 +3,12 @@ package shifter.s3logger
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
+import java.util.concurrent.atomic.AtomicInteger
 
 
 @RunWith(classOf[JUnitRunner])
 class S3LoggerSuite extends FunSuite with TestHelpers {
-  test("stress-test, log 100000 items, forced rotate") {
+  test("log 100000 items, forced rotate") {
     withLogger(60 * 60) { logger =>
 
       (0 until 10)
@@ -15,13 +16,13 @@ class S3LoggerSuite extends FunSuite with TestHelpers {
           startThread(logger, "hello" + nr.toString, 10000))
         .foreach(_.join())
 
-      logger.rotate(forced = false)
+      assert(!logger.rotate(forced = false))
       assert(listKeys.length === 0)
 
-      logger.rotate(forced = false)
+      assert(!logger.rotate(forced = false))
       assert(listKeys.length === 0)
 
-      logger.rotate(forced = true)
+      assert(logger.rotate(forced = true))
       assert(listKeys.length === 1)
 
       val validLines = (0 until 10).map(nr => "hello" + nr.toString).toSet
@@ -59,7 +60,7 @@ class S3LoggerSuite extends FunSuite with TestHelpers {
       thread3.join()
 
       Thread.sleep(1000)
-      logger.rotate(forced = false)
+      assert(logger.rotate(forced = false))
       assert(listKeys.length === 1)
 
       val thread4 = startThread(logger, "hello1", 10000)

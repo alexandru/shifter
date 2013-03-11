@@ -13,7 +13,21 @@ trait TestHelpers {
     val thread = new Thread(new Runnable {
       def run() {
         (0 until count).foreach { x =>
-          logger.write((line + "\n").getBytes("UTF-8"))
+          logger.write(line)
+        }
+      }
+    })
+
+    thread.run()
+    thread
+  }
+
+  def startThreadWithCB(logger: S3Logger, line: String, count: Int)(cb: => Unit): Thread = {
+    val thread = new Thread(new Runnable {
+      def run() {
+        (0 until count).foreach { x =>
+          logger.write(line)
+          cb
         }
       }
     })
@@ -67,6 +81,23 @@ trait TestHelpers {
     }
   }
 
+  def withKey[T](key: String)(cb: BufferedReader => T) {
+    withS3Client { s3client =>
+      val (_, _, bucket) = getCredentials
+      val request = s3client.getObject(bucket, key)
+      val ins = new BufferedReader(
+        new InputStreamReader(
+          new GZIPInputStream(request.getObjectContent), "UTF-8"))
+
+      try {
+        cb(ins)
+      }
+      finally {
+        ins.close()
+      }
+    }
+  }
+
   def withSample[T](cb: (String, BufferedReader) => T) {
     withS3Client { s3client =>
       val (_, _, bucket) = getCredentials
@@ -100,7 +131,6 @@ trait TestHelpers {
       collection = "test",
       localDirectory = "/tmp",
       interval = intervalSecs.seconds,
-      initialDelay = 60.seconds,
       maxSizeMB = 100,
       aws = Some(AWSConfiguration(
         accessKey = access,

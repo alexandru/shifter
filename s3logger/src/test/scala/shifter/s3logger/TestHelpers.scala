@@ -130,7 +130,7 @@ trait TestHelpers {
     val config = Configuration(
       collection = "test",
       localDirectory = "/tmp",
-      interval = intervalSecs.seconds,
+      expiry = intervalSecs.seconds,
       maxSizeMB = 100,
       aws = Some(AWSConfiguration(
         accessKey = access,

@@ -93,7 +93,7 @@ class S3ActiveLogger private[s3logger] (config: Configuration) extends S3Logger 
         case Some(obj) =>
           val currentSizeInMB = obj.sizeInBytes / (1024 * 1024)
           val currentTS = System.currentTimeMillis()
-          val interval = config.interval.toMillis
+          val interval = config.expiry.toMillis
           val isExpired = currentTS - createdTS.get() >= interval
 
           (isExpired && obj.sizeInBytes > 0) || currentSizeInMB >= config.maxSizeMB

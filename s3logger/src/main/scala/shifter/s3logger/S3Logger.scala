@@ -2,7 +2,7 @@ package shifter.s3logger
 
 trait S3Logger {
   def write(content: Array[Byte])
-  def rotate(forced: Boolean)
+  def rotate(forced: Boolean): Boolean
 
   def write(line: String) {
     if (line.endsWith("\n"))

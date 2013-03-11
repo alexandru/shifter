@@ -7,26 +7,13 @@ import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.auth.BasicAWSCredentials
 import java.util.{UUID, Calendar}
 import java.util.zip.GZIPOutputStream
-import java.util.concurrent.{TimeUnit, Executors}
+import java.util.concurrent.Executors
 import java.util.concurrent.atomic.{AtomicLong, AtomicReference}
 import collection.immutable.Queue
 import annotation.tailrec
-import concurrent.duration._
+
 
 class S3ActiveLogger private[s3logger] (config: Configuration) extends S3Logger {
-  locally {
-    if (config.rotateInBackground) {
-      val rotateCmd = new Runnable {
-        def run() {
-          rotate(forced = false)
-        }
-      }
-
-      executor.scheduleAtFixedRate(rotateCmd, config.initialDelay.toMillis,
-        60.seconds.toMillis, TimeUnit.MILLISECONDS)
-    }
-  }
-
   def write(content: Array[Byte]) {
     // inspect queue content
     val (ts, _) = queueRef.get()
@@ -75,22 +62,23 @@ class S3ActiveLogger private[s3logger] (config: Configuration) extends S3Logger 
       }
   }
 
-  def rotate(forced: Boolean) {
+  def rotate(forced: Boolean): Boolean =
     rotateLock.synchronized {
       // uploading previously failed instances
       compressFiles()
       uploadToS3()
       flushQueueContent()
 
-      val shouldUpload = forced || isReadyForUpload
-      val doRotate = shouldUpload && rotateCurrent()
+      val shouldRotate = forced || isReadyForUpload
 
-      if (doRotate) {
+      if (shouldRotate && rotateCurrent()) {
         compressFiles()
         uploadToS3()
+        true
       }
+      else
+        false
     }
-  }
 
   def shutdown() {
     executor.shutdown()

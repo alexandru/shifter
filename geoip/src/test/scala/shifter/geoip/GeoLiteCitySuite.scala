@@ -9,7 +9,7 @@ class GeoLiteCitySuite extends FunSuite {
   test("lookup") {
 
     val geoip = GeoIP.withLiteCity()
-    val location = geoip.search("5.12.239.145")
+    val location = geoip.search("188.26.33.60")
 
     assert(location.isDefined)
 

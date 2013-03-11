@@ -140,7 +140,7 @@ class InMemoryCacheSuite extends FunSuite {
       cache.set("key4", Value("value4"))
       cache.set("key5", Value("value5"))
 
-      val future = cache.getAsyncBulk(Seq("key1", "key2", "key3", "key4"))
+      val future = cache.getAsyncBulk(Seq("key1", "key2", "key3", "key4", "key5"))
         .map(_.asInstanceOf[Map[String, Value]])
 
       val values = Await.result(future, 1.second)

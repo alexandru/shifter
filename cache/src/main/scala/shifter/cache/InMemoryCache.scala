@@ -9,6 +9,12 @@ import util.Random
 
 /**
  * Simple and dumb implementation of an in-memory cache.
+ *
+ * Can store a maximum amount of elements as specified in the constructor.
+ * When that limit is reached, the cleanup process is executed.
+ *
+ * On cleanup the expired elements are filtered out. If there are more than
+ * maxElems that are still fresh, then it drops elements randomly.
  */
 class InMemoryCache(maxElems: Int = 5000) extends Cache {
   def add(key: String, value: Any, exp: Int): Boolean = {

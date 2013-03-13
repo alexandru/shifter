@@ -10,8 +10,6 @@ trait S3Logger {
     else
       write((line + "\n").getBytes("UTF-8"))
   }
-
-  def shutdown()
 }
 
 object S3Logger {

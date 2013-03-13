@@ -7,7 +7,6 @@ import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.auth.BasicAWSCredentials
 import java.util.{UUID, Calendar}
 import java.util.zip.GZIPOutputStream
-import java.util.concurrent.Executors
 import java.util.concurrent.atomic.{AtomicLong, AtomicReference}
 import collection.immutable.Queue
 import annotation.tailrec
@@ -40,18 +39,19 @@ class S3ActiveLogger private[s3logger] (config: Configuration) extends S3Logger 
   private[this] def flushQueueContent() {
     val item = queueRef.get()
 
+    // non blocking
     if (!queueRef.compareAndSet(item, (0, Queue.empty)))
       flushQueueContent()
 
     else
       withHandler { out =>
         val queue = item._2
-        var addedSize = 0L
 
-        queue.foreach { content =>
-          out.write(content)
-          addedSize += content.length
-        }
+        val addedSize =
+          queue.foldLeft(0L) { (processed, line) =>
+            out.write(line)
+            processed + line.length
+          }
 
         out.flush()
 
@@ -74,16 +74,10 @@ class S3ActiveLogger private[s3logger] (config: Configuration) extends S3Logger 
       if (shouldRotate && rotateCurrent()) {
         compressFiles()
         uploadToS3()
-        true
       }
       else
         false
     }
-
-  def shutdown() {
-    executor.shutdown()
-    rotate(forced = true)
-  }
 
   private[this] def isReadyForUpload: Boolean =
     writeLock.synchronized {
@@ -137,25 +131,27 @@ class S3ActiveLogger private[s3logger] (config: Configuration) extends S3Logger 
           val src = new File(path)
           assert(src.exists())
 
-          val out = new GZIPOutputStream(new FileOutputStream(destination))
-          val in = new BufferedInputStream(new FileInputStream(src))
+          if (src.length() > 0) {
+            val out = new GZIPOutputStream(new FileOutputStream(destination))
+            val in = new BufferedInputStream(new FileInputStream(src))
 
-          try {
-            val buffer = Array.fill(1024 * 4)(0.toByte)
-            var bytesRead = -1
+            try {
+              val buffer = Array.fill(1024 * 4)(0.toByte)
+              var bytesRead = -1
 
-            do {
-              bytesRead = in.read(buffer)
-              if (bytesRead > 0) {
-                out.write(buffer, 0, bytesRead)
-              }
-            } while (bytesRead > -1)
+              do {
+                bytesRead = in.read(buffer)
+                if (bytesRead > 0) {
+                  out.write(buffer, 0, bytesRead)
+                }
+              } while (bytesRead > -1)
 
-            processed = destination.getAbsolutePath :: processed
-          }
-          finally {
-            out.close()
-            in.close()
+              processed = destination.getAbsolutePath :: processed
+            }
+            finally {
+              out.close()
+              in.close()
+            }
           }
         }
 
@@ -168,7 +164,7 @@ class S3ActiveLogger private[s3logger] (config: Configuration) extends S3Logger 
           throw ex
       }
 
-      forCompress.length > 0
+      processed.length > 0
     }
 
   private[this] def rotateCurrent(): Boolean =
@@ -303,8 +299,5 @@ class S3ActiveLogger private[s3logger] (config: Configuration) extends S3Logger 
     val s3Credentials = new BasicAWSCredentials(aws.accessKey, aws.secretKey)
     new AmazonS3Client(s3Credentials)
   }
-
-  private[this] lazy val executor =
-    Executors.newScheduledThreadPool(1)
 }
 

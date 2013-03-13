@@ -146,7 +146,6 @@ trait TestHelpers {
       cb(logger)
     }
     finally {
-      logger.shutdown()
       deleteAllKeys()
     }
   }

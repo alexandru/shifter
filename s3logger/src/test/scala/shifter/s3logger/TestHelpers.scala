@@ -101,7 +101,8 @@ trait TestHelpers {
   def withSample[T](cb: (String, BufferedReader) => T) {
     withS3Client { s3client =>
       val (_, _, bucket) = getCredentials
-      val list = s3client.listObjects(bucket).getObjectSummaries.asScala.map(_.getKey)
+      val list = s3client.listObjects(bucket).getObjectSummaries
+        .asScala.map(_.getKey).filter(_.startsWith("test"))
 
       Random.shuffle(list).headOption match {
         case Some(key) =>

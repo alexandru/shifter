@@ -3,7 +3,8 @@ package shifter.cache
 import concurrent.{ExecutionContext, Future}
 import errors.{NotFoundInCacheError, CacheClientNotRunning}
 import java.util.concurrent.TimeUnit
-import net.spy.memcached.{WrappedMemcachedClient, AddrUtil, FailureMode, ConnectionFactoryBuilder}
+import net.spy.memcached.{WrappedMemcachedClient, AddrUtil, ConnectionFactoryBuilder}
+import net.spy.memcached.{FailureMode => SpyFailureMode}
 import net.spy.memcached.ConnectionFactoryBuilder.{Protocol => SpyProtocol}
 import collection.JavaConverters._
 import net.spy.memcached.auth.{PlainCallbackHandler, AuthDescriptor}
@@ -92,7 +93,15 @@ class Memcached(config: MemcachedConfiguration) extends Cache {
             SpyProtocol.TEXT
         )
         .setDaemon(true)
-        .setFailureMode(FailureMode.Retry)
+        .setFailureMode(config.failureMode match {
+          case FailureMode.Retry =>
+            SpyFailureMode.Retry
+          case FailureMode.Cancel =>
+            SpyFailureMode.Cancel
+          case FailureMode.Redistribute =>
+            SpyFailureMode.Redistribute
+        })
+        .setOpTimeout(config.operationTimeout.toMillis)
 
       config.authentication match {
         case Some(credentials) =>

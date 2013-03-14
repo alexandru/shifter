@@ -18,7 +18,7 @@ class S3ActiveLogger private[s3logger] (config: Configuration) extends S3Logger 
     val (ts, _) = queueRef.get()
     val currentTS = System.currentTimeMillis()
 
-    if (ts > 0 && currentTS > ts + 1000)
+    if (ts > 0 && currentTS > ts + config.syncMillis)
       flushQueueContent()
     writeToQueue(content)
   }
@@ -103,11 +103,8 @@ class S3ActiveLogger private[s3logger] (config: Configuration) extends S3Logger 
           val file = new File(path)
           assert(file.exists())
 
-          val s3Key = "%s/%s".format(
-            config.collection,
-            file.getName.replace(".for-upload.log.gz", ".log.gz").replace("--slash--", "/")
-              .replace("." + secret, "")
-          )
+          val s3Key = file.getName.replace(".for-upload.log.gz", ".log.gz").replace("--slash--", "/")
+            .replace("." + secret, "")
 
           s3Client.putObject(aws.bucketName, s3Key, file)
           file.delete()
@@ -221,7 +218,8 @@ class S3ActiveLogger private[s3logger] (config: Configuration) extends S3Logger 
   private[this] def getFile(suffix: String): File = {
     val now = Calendar.getInstance()
 
-    val logTS = "dt=%d-%02d-%02d--slash--%d%02d%02d%02d%02d%02d-%s".format(
+    val logTS = "%s--slash--dt=%d-%02d-%02d--slash--%d%02d%02d%02d%02d%02d-%s".format(
+      config.collection,
       now.get(Calendar.YEAR),
       now.get(Calendar.MONTH) + 1,
       now.get(Calendar.DAY_OF_MONTH),

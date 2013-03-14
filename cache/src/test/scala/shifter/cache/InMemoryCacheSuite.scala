@@ -9,11 +9,12 @@ import concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
+
 @RunWith(classOf[JUnitRunner])
-class MemcachedSuite extends FunSuite {
+class InMemoryCacheSuite extends FunSuite {
 
   test("add") {
-    withCache("add") { cache =>
+    withCache() { cache =>
       cache.add("hello", Value("world"))
 
       val stored = cache.get[Value]("hello")
@@ -26,7 +27,7 @@ class MemcachedSuite extends FunSuite {
   }
 
   test("set") {
-    withCache("set") { cache =>
+    withCache() { cache =>
       cache.set("mutable", Value("value1"))
       val stored = cache.get[Value]("mutable")
       assert(stored === Some(Value("value1")))
@@ -38,14 +39,14 @@ class MemcachedSuite extends FunSuite {
   }
 
   test("missing get") {
-    withCache("missing-get") { cache =>
+    withCache() { cache =>
       val stored = cache.get[Value]("missing-get")
       assert(stored === None)
     }
   }
 
   test("fireAdd") {
-    withCache("fireAdd") { cache =>
+    withCache() { cache =>
       cache.fireAdd("hello", Value("world"))
       Thread.sleep(300)
       assert(cache.get[Value]("hello") === Some(Value("world")))
@@ -57,21 +58,21 @@ class MemcachedSuite extends FunSuite {
   }
 
   test("fireSet") {
-     withCache("fireSet") { cache =>
-       cache.fireSet("mutable", Value("value1"))
-       Thread.sleep(300)
-       val stored = cache.get[Value]("mutable")
-       assert(stored === Some(Value("value1")))
+    withCache() { cache =>
+      cache.fireSet("mutable", Value("value1"))
+      Thread.sleep(300)
+      val stored = cache.get[Value]("mutable")
+      assert(stored === Some(Value("value1")))
 
-       cache.fireSet("mutable", Value("value2"))
-       Thread.sleep(300)
-       val stored2 = cache.get[Value]("mutable")
-       assert(stored2 === Some(Value("value2")))
-     }
+      cache.fireSet("mutable", Value("value2"))
+      Thread.sleep(300)
+      val stored2 = cache.get[Value]("mutable")
+      assert(stored2 === Some(Value("value2")))
+    }
   }
 
   test("getAsync") {
-    withCache("getAsync") { cache =>
+    withCache() { cache =>
       cache.set("hello", Value("world"))
 
       val stored = Await.result(cache.getAsync[Value]("hello"), 1.second)
@@ -89,7 +90,7 @@ class MemcachedSuite extends FunSuite {
   }
 
   test("getAsyncOpt") {
-    withCache("getAsyncOpt") { cache =>
+    withCache() { cache =>
       cache.set("hello", Value("world"))
 
       val stored = Await.result(cache.getAsyncOpt[Value]("hello"), 1.second)
@@ -101,7 +102,7 @@ class MemcachedSuite extends FunSuite {
   }
 
   test("getBulk") {
-    withCache("getBulk") { cache =>
+    withCache() { cache =>
       cache.set("key1", Value("value1"))
       cache.set("key2", Value("value2"))
 
@@ -115,7 +116,7 @@ class MemcachedSuite extends FunSuite {
   }
 
   test("getBulkAsync") {
-    withCache("getBulk") { cache =>
+    withCache() { cache =>
       cache.set("key1", Value("value1"))
       cache.set("key2", Value("value2"))
 
@@ -131,6 +132,23 @@ class MemcachedSuite extends FunSuite {
     }
   }
 
+  test("maxElems") {
+    withCache(3) { cache =>
+      cache.set("key1", Value("value1"))
+      cache.set("key2", Value("value2"))
+      cache.set("key3", Value("value3"))
+      cache.set("key4", Value("value4"))
+      cache.set("key5", Value("value5"))
+
+      val future = cache.getAsyncBulk(Seq("key1", "key2", "key3", "key4", "key5"))
+        .map(_.asInstanceOf[Map[String, Value]])
+
+      val values = Await.result(future, 1.second)
+      assert(values.size === 3)
+    }
+  }
+
+
   val config = MemcachedConfiguration(
     addresses = "127.0.0.1:11211",
     authentication = None,
@@ -138,9 +156,8 @@ class MemcachedSuite extends FunSuite {
     protocol = Protocol.Binary
   )
 
-  def withCache[T](prefix: String)(cb: Cache => T): T = {
-    val cache = new Memcached(
-      config.copy(keysPrefix = config.keysPrefix.map(s => s + "-" + prefix)))
+  def withCache[T](maxElems: Int = 1000)(cb: Cache => T): T = {
+    val cache = new InMemoryCache(maxElems)
 
     try {
       cb(cache)

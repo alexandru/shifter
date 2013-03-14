@@ -52,10 +52,10 @@ object GeoIP extends Logging {
 
   private[this] def fetchGeoLiteCity(httpClient: HttpClient): File = {
     val tmpDir = new File(Option(System.getProperty("java.io.tmpdir")).getOrElse("/tmp"))
-    val liteCityFile = new File(tmpDir, "Shifter.0.3.14-GeoLiteCity-Auto-jM6gBmhgTop.dat.gz")
+    val liteCityFile = new File(tmpDir, "Shifter.0.3.14-GeoLiteCity-Auto-jM6gBmhgTop.dat")
 
     if (!liteCityFile.exists()) {
-      logger.info("Fetching GeoLiteCIty.dat.gz")
+      logger.info("Fetching GeoLiteCIty.dat")
 
       val out = new FileOutputStream(liteCityFile)
 
@@ -108,6 +108,7 @@ object GeoIP extends Logging {
       }
     }
 
+    liteCityFile.deleteOnExit()
     liteCityFile
   }
 }

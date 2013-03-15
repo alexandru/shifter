@@ -69,7 +69,7 @@ class MemcachedSuite extends FunSuite {
 
   test("asyncTransformAndGet highly concurrent") {
     withCache("asyncTransformAndGetConcurrent") { cache =>
-      val list = (0 until 3000).map(nr => cache.asyncTransformAndGet[Int]("value", 5) {
+      val list = (0 until 1000).map(nr => cache.asyncTransformAndGet[Int]("value", 5) {
         case None => 0
         case Some(i) => i + 1
       })
@@ -78,9 +78,9 @@ class MemcachedSuite extends FunSuite {
       val result = Await.result(future, 10.seconds)
 
       val sorted = result.sorted
-      assert(sorted.length === 3000)
+      assert(sorted.length === 1000)
 
-      sorted.zip(0 until 3000).foreach {
+      sorted.zip(0 until 1000).foreach {
         case (a, b) => assert(a === b)
       }
     }

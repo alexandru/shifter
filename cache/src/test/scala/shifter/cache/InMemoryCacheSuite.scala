@@ -26,6 +26,40 @@ class InMemoryCacheSuite extends FunSuite {
     }
   }
 
+  test("asyncAdd") {
+    withCache() { cache =>
+      val result = Await.result(cache.asyncAdd("hello", Value("world"), 2), 2.seconds)
+      assert(result === true)
+
+      val stored = cache.get[Value]("hello")
+      assert(stored === Some(Value("world")))
+
+      val result2 = Await.result(cache.asyncAdd("hello", Value("false")), 2.seconds)
+      assert(result2 === false)
+
+      val changed = cache.get[Value]("hello")
+      assert(changed === Some(Value("world")))
+    }
+  }
+
+  test("asyncTransformAndGet") {
+    withCache() { cache =>
+      val step1 = cache.asyncTransformAndGet("hello") { current: Option[String] =>
+        assert(current === None)
+        "world1"
+      }
+
+      assert(Await.result(step1, 1.second) === "world1")
+
+      val step2 = cache.asyncTransformAndGet("hello") { current: Option[String] =>
+        assert(current === Some("world1"))
+        "world2"
+      }
+
+      assert(Await.result(step2, 1.second) === "world2")
+    }
+  }
+
   test("set") {
     withCache() { cache =>
       cache.set("mutable", Value("value1"))

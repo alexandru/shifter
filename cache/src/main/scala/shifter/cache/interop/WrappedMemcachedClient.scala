@@ -3,15 +3,24 @@ package net.spy.memcached
 import java.util.concurrent.{Future => JFuture, TimeUnit, CountDownLatch, ConcurrentHashMap}
 import java.{util => jutil}
 import scala.concurrent.{ExecutionContext, Future, Promise}
-import net.spy.memcached.ops.{GetOperation, Operation, OperationStatus}
-import net.spy.memcached.internal.{BulkGetFuture, SingleElementInfiniteIterator, GetFuture}
+import ops._
+import internal.{OperationFuture, BulkGetFuture, SingleElementInfiniteIterator, GetFuture}
 import net.spy.memcached.transcoders.Transcoder
 import java.net.InetSocketAddress
 import net.spy.memcached.util.StringUtils
-import scala.util.Failure
-import scala.util.Success
 import scala.collection.JavaConverters._
 import shifter.cache.errors.{NotFoundInCacheError, CacheError}
+import scala.util.Failure
+import scala.Some
+import scala.util.Success
+import shifter.cache.interop._
+import java.util.concurrent.atomic.AtomicReference
+import annotation.tailrec
+import scala.util.Failure
+import scala.Some
+import shifter.cache.interop.AddStatus
+import scala.util.Success
+import shifter.cache.interop.GETSResult
 
 class WrappedMemcachedClient(conn: ConnectionFactory, addrs: jutil.List[InetSocketAddress]) extends MemcachedClient(conn, addrs) {
 
@@ -115,6 +124,49 @@ class WrappedMemcachedClient(conn: ConnectionFactory, addrs: jutil.List[InetSock
     promise.future
   }
 
+  def realAsyncAdd(key: String, value: Any, exp: Int): Future[AddStatus] = {
+    val tc = transcoder.asInstanceOf[Transcoder[Any]]
+    val co: CachedData = tc.encode(value)
+
+    val promise = Promise[AddStatus]()
+    val ref = new AtomicReference[(Option[Boolean], Option[Long])]((None, None))
+
+    @tailrec
+    def setIsSuccess(isSuccess: Boolean) {
+      val current = ref.get()
+      if (!ref.compareAndSet(current, (Some(isSuccess), current._2)))
+        setIsSuccess(isSuccess)
+    }
+
+    @tailrec
+    def setCASID(casID: Long) {
+      val current = ref.get()
+      if (!ref.compareAndSet(current, (current._1, Some(casID))))
+        setCASID(casID)
+    }
+
+    val op: Operation = opFact.store(StoreType.add, key, co.getFlags, exp, co.getData, new StoreOperation.Callback {
+      def receivedStatus(status: OperationStatus) {
+        setIsSuccess(status.isSuccess)
+      }
+
+      def gotData(key: String, cas: Long) {
+        setCASID(cas)
+      }
+
+      def complete() {
+        val (success, casID) = ref.get()
+        promise.complete(Success(AddStatus(
+          isSuccess = success.getOrElse(false),
+          casID = casID
+        )))
+      }
+    })
+
+    mconn.enqueueOperation(key, op)
+    promise.future
+  }
+
   def realAsyncGet[T](key: String)(implicit ec: ExecutionContext): Future[T] = {
     val latch = new CountDownLatch(1)
     val rv = new GetFuture[T](latch, operationTimeout, key)
@@ -145,6 +197,71 @@ class WrappedMemcachedClient(conn: ConnectionFactory, addrs: jutil.List[InetSock
     })
 
     rv.setOperation(op)
+    mconn.enqueueOperation(key, op)
+    promise.future
+  }
+
+  def realAsyncGets[T](key: String): Future[Option[GETSResult[T]]] = {
+    val promise = Promise[Option[GETSResult[T]]]()
+    val tc = transcoder.asInstanceOf[Transcoder[T]]
+
+    val op: Operation = opFact.gets(key, new GetsOperation.Callback {
+      def receivedStatus(status: OperationStatus) {
+        if (!status.isSuccess)
+          if (status.getMessage.toLowerCase.trim == "not found")
+            promise.complete(Success(None))
+          else
+            promise.complete(Failure(new CacheError(status.getMessage)))
+      }
+
+      def gotData(k: String, flags: Int, cas: Long, data: Array[Byte]) {
+        assert(key == k, "Wrong key returned")
+        assert(cas > 0, "CAS was less than zero:  " + cas)
+        assert(!promise.isCompleted, "Promise is already complete")
+
+        val value: T = tc.decode(new CachedData(flags, data, tc.getMaxSize))
+        promise.complete(Success(Some(GETSResult(value, cas))))
+      }
+
+      def complete() {}
+    })
+
+    mconn.enqueueOperation(key, op)
+    promise.future
+  }
+
+  def realAsyncCAS[T](key: String, casId: Long, exp: Int, value: T): Future[CASResult] = {
+    val tc = transcoder.asInstanceOf[Transcoder[T]]
+    val co: CachedData = tc.encode(value)
+    val promise = Promise[CASResult]()
+
+    val op: Operation = opFact.cas(StoreType.set, key, casId, co.getFlags, exp, co.getData, new StoreOperation.Callback {
+
+      def receivedStatus(status: OperationStatus) {
+        if (status.isInstanceOf[CASOperationStatus]) {
+          val response: CASResponse = status.asInstanceOf[CASOperationStatus].getCASResponse
+          promise.complete(Success(response match {
+            case CASResponse.OK => CAS_OK
+            case CASResponse.NOT_FOUND => CAS_NOT_FOUND
+            case CASResponse.EXISTS => CAS_EXISTS
+          }))
+        }
+        else if (status.isInstanceOf[CancelledOperationStatus]) {
+          promise.complete(Failure(new CacheError("cancelled")))
+        }
+        else if (status.isInstanceOf[TimedOutOperationStatus]) {
+          promise.complete(Failure(new CacheError("timed out")))
+        }
+        else {
+          promise.complete(Failure(new CacheError("Unhandled state: " + status)))
+        }
+      }
+
+      def gotData(key: String, cas: Long) {}
+
+      def complete() {}
+    })
+
     mconn.enqueueOperation(key, op)
     promise.future
   }

@@ -6,6 +6,11 @@ trait Cache {
   def add(key: String, value: Any, exp: Int = 10 * 60): Boolean
   def fireAdd(key: String, value: Any, exp: Int = 10 * 60)(implicit ec: ExecutionContext)
 
+  def asyncAdd(key: String, value: Any, exp: Int = 10 * 60)(implicit ec: ExecutionContext): Future[Boolean]
+  def asyncCAS[T](key: String, expecting: Option[T], newValue: T, exp: Int = 60)(implicit ec: ExecutionContext): Future[Boolean]
+
+  def asyncTransformAndGet[T](key: String, exp: Int = 60)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[T]
+
   def set(key: String, value: Any, exp: Int = 10 * 60): Boolean
   def fireSet(key: String, value: Any, exp: Int = 10 * 60)(implicit ec: ExecutionContext)
 

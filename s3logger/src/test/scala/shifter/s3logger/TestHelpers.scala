@@ -13,7 +13,7 @@ trait TestHelpers {
     val thread = new Thread(new Runnable {
       def run() {
         (0 until count).foreach { x =>
-          logger.write(line)
+          logger.write((line + "\n").getBytes("UTF-8"))
         }
       }
     })
@@ -26,7 +26,7 @@ trait TestHelpers {
     val thread = new Thread(new Runnable {
       def run() {
         (0 until count).foreach { x =>
-          logger.write(line)
+          logger.write(line.getBytes("UTF-8"))
           cb
         }
       }

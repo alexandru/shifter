@@ -34,9 +34,51 @@ class InMemoryCache(maxElems: Int = 5000) extends Cache {
     isAdded
   }
 
+  def asyncAdd(key: String, value: Any, exp: Int)(implicit ec: ExecutionContext): Future[Boolean] =
+    Future(add(key, value, exp))
+
   def fireAdd(key: String, value: Any, exp: Int)(implicit ec: ExecutionContext) {
     Future(add(key, value, exp))
   }
+
+  def asyncTransformAndGet[T](key: String, exp: Int)(cb: (Option[T]) => T)(implicit ec: ExecutionContext): Future[T] =
+    Future {
+      val next = cache.single.transformAndGet { map =>
+        val currentValue = map.get(key)
+
+        val expecting = if (currentValue.isDefined && !isExpired(currentValue.get))
+          currentValue.map(_.value.asInstanceOf[T])
+        else
+          None
+
+        val newValue = cb(expecting)
+        map.updated(key, Elem(newValue, System.currentTimeMillis() + exp * 1000))
+      }
+
+      val current = next(key)
+      current.value.asInstanceOf[T]
+    }
+
+  def asyncCAS[T](key: String, expecting: Option[T], newValue: T, exp: Int)(implicit ec: ExecutionContext): Future[Boolean] =
+    Future {
+      val previous = cache.single.getAndTransform { map =>
+        val keyExists = map.get(key).isDefined && !isExpired(map(key))
+        val shouldAdd = (expecting == None && !keyExists) ||
+          (expecting.isDefined && keyExists && map.get(key) == expecting)
+
+        if (shouldAdd)
+          map.updated(key, Elem(newValue, System.currentTimeMillis() + exp * 1000))
+        else
+          map
+      }
+
+      val keyExists = previous.get(key).isDefined && !isExpired(previous(key))
+      val isSuccess = (expecting == None && !keyExists) ||
+        (expecting.isDefined && keyExists && previous.get(key) == expecting)
+
+      cleanup(previous.size + 1)
+      isSuccess
+    }
 
   def set(key: String, value: Any, exp: Int): Boolean = {
     val map = cache.single.transformAndGet { map => map.updated(key, Elem(

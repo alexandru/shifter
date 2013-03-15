@@ -4,7 +4,7 @@ import errors.NotFoundInCacheError
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import concurrent.Await
+import concurrent.{Future, Await}
 import concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -22,6 +22,67 @@ class MemcachedSuite extends FunSuite {
       cache.add("hello", Value("changed"))
       val changed = cache.get[Value]("hello")
       assert(changed === Some(Value("world")))
+    }
+  }
+
+  test("asyncAdd") {
+    withCache("asyncAdd") { cache =>
+      val ts = System.currentTimeMillis()
+
+      val result = Await.result(cache.asyncAdd("hello", Value("world"), 2), 2.seconds)
+      assert(result === true)
+
+      val stored = cache.get[Value]("hello")
+      assert(stored === Some(Value("world")))
+
+      val result2 = Await.result(cache.asyncAdd("hello", Value("false"), 2), 2.seconds)
+      assert(result2 === false)
+
+      val changed = cache.get[Value]("hello")
+      assert(changed === Some(Value("world")))
+
+      // testing expiry
+      val sleepMillis = 2.seconds.toMillis - (System.currentTimeMillis() - ts)
+      if (sleepMillis > 0) Thread.sleep(sleepMillis)
+
+      assert(cache.get[Value]("hello") === None)
+    }
+  }
+
+  test("asyncTransformAndGet") {
+    withCache("asyncTransformAndGet") { cache =>
+      val step1 = cache.asyncTransformAndGet("hello", 3) { current: Option[String] =>
+        assert(current === None)
+        "world1"
+      }
+
+      assert(Await.result(step1, 1.second) === "world1")
+
+      val step2 = cache.asyncTransformAndGet("hello", 3) { current: Option[String] =>
+        assert(current === Some("world1"))
+        "world2"
+      }
+
+      assert(Await.result(step2, 1.second) === "world2")
+    }
+  }
+
+  test("asyncTransformAndGet highly concurrent") {
+    withCache("asyncTransformAndGetConcurrent") { cache =>
+      val list = (0 until 3000).map(nr => cache.asyncTransformAndGet[Int]("value", 5) {
+        case None => 0
+        case Some(i) => i + 1
+      })
+
+      val future = Future.sequence(list)
+      val result = Await.result(future, 10.seconds)
+
+      val sorted = result.sorted
+      assert(sorted.length === 3000)
+
+      sorted.zip(0 until 3000).foreach {
+        case (a, b) => assert(a === b)
+      }
     }
   }
 

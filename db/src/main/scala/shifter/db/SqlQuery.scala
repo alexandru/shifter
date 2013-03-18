@@ -52,7 +52,7 @@ object Row {
       None
 }
 
-sealed class Sql(conn: Connection, query: String) {
+sealed class SqlQuery(conn: Connection, query: String) {
 
   protected def args: Seq[Any] = Seq.empty[Any]
 
@@ -173,13 +173,13 @@ sealed class Sql(conn: Connection, query: String) {
     }
 
   def withArgs(args: Any*) =
-    Sql(conn, query, args)
+    SqlQuery(conn, query, args)
 
   def withNamedArgs(args: (String, Any)*) =
-    Sql(conn, query, args.toMap)
+    SqlQuery(conn, query, args.toMap)
 
-  def on(head: (String, Any), tail: (String, Any)*): Sql =
-    Sql(conn, query, (head +: tail).toMap)
+  def on(head: (String, Any), tail: (String, Any)*): SqlQuery =
+    SqlQuery(conn, query, (head +: tail).toMap)
 
   private[this] def setStatementValue(stm: PreparedStatement, idx: Int, obj: Any) {
     obj match {
@@ -218,24 +218,24 @@ sealed class Sql(conn: Connection, query: String) {
     new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 }
 
-object Sql {
-  def apply(conn: Connection, query: String, args: Seq[Any]): Sql =
+object SqlQuery {
+  def apply(conn: Connection, query: String, args: Seq[Any]): SqlQuery =
     new SqlWithIndexedArgs(conn, query, args)
 
-  def apply(conn: Connection, query: String, args: Map[String, Any]): Sql =
+  def apply(conn: Connection, query: String, args: Map[String, Any]): SqlQuery =
     new SqlWithNamedArgs(conn, query, args)
 
-  private class SqlWithIndexedArgs(conn: Connection, query: String, iArgs: Seq[Any]) extends Sql(conn, query) {
+  private class SqlWithIndexedArgs(conn: Connection, query: String, iArgs: Seq[Any]) extends SqlQuery(conn, query) {
     override protected val args = iArgs
 
     override def withArgs(args: Any*) =
-      Sql(conn, query, iArgs ++ args)
+      SqlQuery(conn, query, iArgs ++ args)
 
-    override def on(head: (String, Any), tail: (String, Any)*): Sql =
+    override def on(head: (String, Any), tail: (String, Any)*): SqlQuery =
       throw new SqlException("SQL template with indexed arguments cannot be converted to one with named arguments")
   }
 
-  private class SqlWithNamedArgs(conn: Connection, query: String, nArgs: Map[String, Any], parsed: (String, Vector[String])) extends Sql(conn, query) {
+  private class SqlWithNamedArgs(conn: Connection, query: String, nArgs: Map[String, Any], parsed: (String, Vector[String])) extends SqlQuery(conn, query) {
     def this(conn: Connection, query: String, nArgs: Map[String, Any]) =
       this(conn, query, nArgs, parseQuery(query))
 
@@ -257,7 +257,7 @@ object Sql {
       else
         new SqlWithNamedArgs(conn, query, nArgs ++ args.toMap, parsed)
 
-    override def on(head: (String, Any), tail: (String, Any)*): Sql = {
+    override def on(head: (String, Any), tail: (String, Any)*): SqlQuery = {
       val addArgs = tail.toMap + head
       new SqlWithNamedArgs(conn, query, nArgs ++ addArgs, parsed)
     }
@@ -328,6 +328,6 @@ object Sql {
 }
 
 object SQL {
-  def apply(query: String)(implicit db: Connection): Sql =
-    new Sql(db, query)
+  def apply(query: String)(implicit db: Connection): SqlQuery =
+    new SqlQuery(db, query)
 }

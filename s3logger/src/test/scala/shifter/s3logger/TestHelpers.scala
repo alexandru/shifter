@@ -13,7 +13,7 @@ trait TestHelpers {
     val thread = new Thread(new Runnable {
       def run() {
         (0 until count).foreach { x =>
-          logger.write(line)
+          logger.write((line + "\n").getBytes("UTF-8"))
         }
       }
     })
@@ -26,7 +26,7 @@ trait TestHelpers {
     val thread = new Thread(new Runnable {
       def run() {
         (0 until count).foreach { x =>
-          logger.write(line)
+          logger.write(line.getBytes("UTF-8"))
           cb
         }
       }
@@ -45,10 +45,10 @@ trait TestHelpers {
           Some(key, value)
     }
 
-    assert(env.get("AWS_TEST_ACCESSKEY").isDefined)
-    assert(env.get("AWS_TEST_SECRETKEY").isDefined)
+    assert(env.get("GEKKO_AWS_ACCESSKEY").isDefined)
+    assert(env.get("GEKKO_AWS_SECRETKEY").isDefined)
 
-    val s3Credentials = new BasicAWSCredentials(env("AWS_TEST_ACCESSKEY"), env("AWS_TEST_SECRETKEY"))
+    val s3Credentials = new BasicAWSCredentials(env("GEKKO_AWS_ACCESSKEY"), env("GEKKO_AWS_SECRETKEY"))
     val client = new AmazonS3Client(s3Credentials)
 
     try {
@@ -160,11 +160,11 @@ trait TestHelpers {
           Some(key, value)
     }
 
-    assert(env.get("AWS_TEST_ACCESSKEY").isDefined)
-    assert(env.get("AWS_TEST_SECRETKEY").isDefined)
-    assert(env.get("AWS_TEST_BUCKETNAME").isDefined)
+    assert(env.get("GEKKO_AWS_ACCESSKEY").isDefined)
+    assert(env.get("GEKKO_AWS_SECRETKEY").isDefined)
+    assert(env.get("GEKKO_AWS_BUCKETNAME").isDefined)
 
-    (env("AWS_TEST_ACCESSKEY"), env("AWS_TEST_SECRETKEY"), env("AWS_TEST_BUCKETNAME"))
+    (env("GEKKO_AWS_ACCESSKEY"), env("GEKKO_AWS_SECRETKEY"), env("GEKKO_AWS_BUCKETNAME"))
   }
 
   def getBucketName =

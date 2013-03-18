@@ -15,7 +15,7 @@ resolvers += "BionicSpirit Releases" at "http://maven.bionicspirit.com/"
 Add the dependency:
 
 ```scala
-dependencies += "shifter" %% "shifter-cache" % "0.3.41"
+dependencies += "shifter" %% "shifter-cache" % "0.3.42"
 ```
 
 ## Creating an instance

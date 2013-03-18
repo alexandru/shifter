@@ -29,33 +29,39 @@ class InMemoryCache(maxElems: Int = 5000) extends Cache {
   }
 
   def add[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Boolean] =
-    Future {
-      val previous = cache.single.getAndTransform { map =>
-        if (!map.contains(key) || isExpired(map(key)))
-          map.updated(key, Elem(
-            value = value,
-            expiresTS = System.currentTimeMillis() + millis(exp)
-          ))
-        else
-          map
+    if (value != null)
+      Future {
+        val previous = cache.single.getAndTransform { map =>
+          if (!map.contains(key) || isExpired(map(key)))
+            map.updated(key, Elem(
+              value = value,
+              expiresTS = System.currentTimeMillis() + millis(exp)
+            ))
+          else
+            map
+        }
+
+        val isAdded = !previous.contains(key) || isExpired(previous(key))
+        val count = previous.size + (if (isAdded) 1 else 0)
+        cleanup(count)
+
+        isAdded
       }
-
-      val isAdded = !previous.contains(key) || isExpired(previous(key))
-      val count = previous.size + (if (isAdded) 1 else 0)
-      cleanup(count)
-
-      isAdded
-    }
+  else
+      Future.successful(false)
 
   def set[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Unit] =
-    Future {
-      val map = cache.single.transformAndGet { map => map.updated(key, Elem(
-        value = value,
-        expiresTS = System.currentTimeMillis() + millis(exp)
-      ))}
+    if (value != null)
+      Future {
+        val map = cache.single.transformAndGet { map => map.updated(key, Elem(
+          value = value,
+          expiresTS = System.currentTimeMillis() + millis(exp)
+        ))}
 
-      cleanup(map.size)
-    }
+        cleanup(map.size)
+      }
+    else
+      Future.successful(())
 
   def delete(key: String)(implicit ec: ExecutionContext): Future[Boolean] =
     Future {

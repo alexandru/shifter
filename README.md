@@ -1,8 +1,8 @@
 # Shifter
 
 
-Common infrastructure for the our web-services built on top of
-the JVM and Scala.
+Common infrastructure for web-services built on top of the JVM and
+Scala.
 
 Warning: Highly unstable.
 
@@ -54,61 +54,3 @@ The following dependencies are used:
 * [Yammer Metrics](http://metrics.codahale.com/) for gathering runtime stats from our servers
 * [Jetty 8](http://jetty.codehaus.org/jetty/) as the web server
 
-## Usage from SBT
-
-First add the proper resolvers:
-
-```scala
-resolvers += "Epigrams Releases" at "http://maven.epigrams.co/releases/"
-```
-
-For specifying all sub-projects as dependencies:
-
-```scala
-libraryDependencies += "shifter" %% "shifter" % "0.3.23"
-```
-
-For specifying individual subprojects:
-
-```scala
-libraryDependencies += "shifter" %% "shifter-web" % "0.3.23"
-```
-
-**NOTE:** this document may get out of date and the latest version may not
-be the one specified.
-
-## Usage from Maven
-
-First add the repository resolvers:
-
-```xml
-<repositories>
-  <repository>
-    <id>Epigrams Releases</id>
-    <url>http://maven.epigrams.co/releases/</url>
-  </repository>
-</repositories>
-```
-
-For specifying all sub-projects as dependencies:
-
-```xml
-<dependency>
-   <groupId>shifter</groupId>
-   <artifactId>shifter_2.10</artifactId>
-   <version>0.3.23</version>
-</dependency>
-```
-
-For specifying specific sub-projects (e.g. shifter-db):
-
-```xml
-<dependency>
-   <groupId>shifter</groupId>
-   <artifactId>shifter-db_2.10</artifactId>
-   <version>0.3.23</version>
-</dependency>
-```
-
-**NOTE:** this document may get out of date and the latest version may not
-be the one specified.

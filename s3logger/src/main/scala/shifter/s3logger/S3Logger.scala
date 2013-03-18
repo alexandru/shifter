@@ -1,15 +1,10 @@
 package shifter.s3logger
 
+import support.{S3ActiveLogger, S3NoopLogger, UploadedFileInfo, S3LoggerException}
+
 trait S3Logger {
   def write(content: Array[Byte])
-  def rotate(forced: Boolean): Boolean
-
-  def write(line: String) {
-    if (line.endsWith("\n"))
-      write(line.getBytes("UTF-8"))
-    else
-      write((line + "\n").getBytes("UTF-8"))
-  }
+  def rotate(forced: Boolean): Seq[UploadedFileInfo]
 }
 
 object S3Logger {

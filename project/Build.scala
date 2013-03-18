@@ -11,11 +11,11 @@ object ShifterBuild extends Build {
 
       organization in ThisBuild := "shifter",
 
-      version in ThisBuild := "0.3.29",
+      version in ThisBuild := "0.3.41",
 
       scalaVersion in ThisBuild := "2.10.0",
 
-      crossScalaVersions in ThisBuild := Seq("2.10.0"),
+      crossScalaVersions in ThisBuild := Seq("2.10.0", "2.10.1"),
 
       compileOrder in ThisBuild := CompileOrder.JavaThenScala,
 

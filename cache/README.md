@@ -6,7 +6,7 @@ Depends on Scala 2.10
 
 ## Usage from SBT
 
-Add the resolver:
+For quick experiments add the resolver (don't rely on it btw):
 
 ```scala
 resolvers += "BionicSpirit Releases" at "http://maven.bionicspirit.com/"
@@ -22,6 +22,7 @@ dependencies += "shifter" %% "shifter-cache" % "0.3.42"
 
 ```scala
 import shifter.cache._
+import shifter.cache.memcached.Configuration
 
 // we need an implicit execution context when creating an instance
 import concurrent.ExecutionContext.Implicits.global

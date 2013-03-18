@@ -30,6 +30,16 @@ class MemcachedSuite extends FunSuite {
     }
   }
 
+  test("add-null") {
+    withCache("add-null") { cache =>
+      val op1 = cache.add("hello", null, 5.seconds).await
+      assert(op1 === false)
+
+      val stored = cache.get[Value]("hello").await
+      assert(stored === None)
+    }
+  }
+
   test("get") {
     withCache("get") { cache =>
       val value = cache.get[Value]("missing").await
@@ -59,6 +69,16 @@ class MemcachedSuite extends FunSuite {
       Thread.sleep(3000)
 
       assert(cache.get[Value]("hello").await === None)
+    }
+  }
+
+  test("set-null") {
+    withCache("set-null") { cache =>
+      val op1 = cache.add("hello", null, 5.seconds).await
+      assert(op1 === false)
+
+      val stored = cache.get[Value]("hello").await
+      assert(stored === None)
     }
   }
 

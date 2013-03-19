@@ -6,10 +6,18 @@ Depends on Scala 2.10
 
 ## Usage from SBT
 
-For quick experiments add the resolver (don't rely on it btw):
+Add these resolvers:
 
 ```scala
-resolvers += "BionicSpirit Releases" at "http://maven.bionicspirit.com/"
+resolvers ++= Seq(
+  // just in case you don't have it already
+  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+  // for SpyMemcached (shifter-cache dependency)
+  "Spy" at "http://files.couchbase.com/maven2/",
+  // for Shifter
+  "BionicSpirit Releases" at "http://maven.bionicspirit.com/releases/",
+  "BionicSpirit Snapshots at "http://maven.bionicspirit.com/snapshots/"
+)
 ```
 
 Add the dependency:

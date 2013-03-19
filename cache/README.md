@@ -16,7 +16,7 @@ resolvers ++= Seq(
   "Spy" at "http://files.couchbase.com/maven2/",
   // for Shifter
   "BionicSpirit Releases" at "http://maven.bionicspirit.com/releases/",
-  "BionicSpirit Snapshots at "http://maven.bionicspirit.com/snapshots/"
+  "BionicSpirit Snapshots" at "http://maven.bionicspirit.com/snapshots/"
 )
 ```
 

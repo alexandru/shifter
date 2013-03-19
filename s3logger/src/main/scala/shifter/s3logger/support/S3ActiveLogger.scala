@@ -1,7 +1,7 @@
 package shifter.s3logger.support
 
 import java.util.concurrent.atomic.AtomicReference
-import java.io.{BufferedOutputStream, FileOutputStream, File}
+import java.io._
 import java.util.zip.GZIPOutputStream
 import java.util.{UUID, Calendar}
 import annotation.tailrec
@@ -9,7 +9,8 @@ import util.Try
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.{AmazonServiceException, AmazonClientException}
-import shifter.s3logger.{S3Logger, Configuration}
+import shifter.s3logger.S3Logger
+import shifter.s3logger.Configuration
 
 
 /**
@@ -118,7 +119,8 @@ class S3ActiveLogger(config: Configuration) extends S3Logger {
           file.deleteOnExit()
 
           val fileStream = new FileOutputStream(file)
-          val out = new GZIPOutputStream(new BufferedOutputStream(fileStream))
+          val out =
+              new GZIPOutputStream(new BufferedOutputStream(fileStream))
           val handler = Handler(file, fileStream, out, System.currentTimeMillis())
 
           if (!handlerRef.compareAndSet(NoHandler, HandlerBorrowed)) {

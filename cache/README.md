@@ -15,14 +15,14 @@ resolvers += "BionicSpirit Releases" at "http://maven.bionicspirit.com/"
 Add the dependency:
 
 ```scala
-dependencies += "shifter" %% "shifter-cache" % "0.3.42"
+dependencies += "shifter" %% "shifter-cache" % "0.3.47-SNAPSHOT"
 ```
 
 ## Creating an instance
 
 ```scala
 import shifter.cache._
-import shifter.cache.memcached.Configuration
+import shifter.cache.memcached._
 
 // we need an implicit execution context when creating an instance
 import concurrent.ExecutionContext.Implicits.global

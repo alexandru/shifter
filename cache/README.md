@@ -6,10 +6,18 @@ Depends on Scala 2.10
 
 ## Usage from SBT
 
-For quick experiments add the resolver (don't rely on it btw):
+Add these resolvers:
 
 ```scala
-resolvers += "BionicSpirit Releases" at "http://maven.bionicspirit.com/"
+resolvers ++= Seq(
+  // just in case you don't have it already
+  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+  // for SpyMemcached (shifter-cache dependency)
+  "Spy" at "http://files.couchbase.com/maven2/",
+  // for Shifter
+  "BionicSpirit Releases" at "http://maven.bionicspirit.com/releases/",
+  "BionicSpirit Snapshots" at "http://maven.bionicspirit.com/snapshots/"
+)
 ```
 
 Add the dependency:
@@ -18,7 +26,16 @@ Add the dependency:
 dependencies += "shifter" %% "shifter-cache" % "0.3.47-SNAPSHOT"
 ```
 
-## Creating an instance
+## Usage
+
+Take a look at the [Cache](src/main/scala/shifter/cache/Cache.scala)
+trait.
+
+Note that every method on that trait is non-blocking and returns a
+[Future](http://docs.scala-lang.org/sips/pending/futures-promises.html)
+instead of a concrete answer.
+
+### Creating an Instance
 
 ```scala
 import shifter.cache._
@@ -51,7 +68,7 @@ instantiate a single instance when the process starts and shut it down
 only when the process exists or just don't shut it down if it's a true
 singleton.
 
-## Adding a value for a key in case the case doesn't exist
+### Adding a value for a key in case the case doesn't exist
 
 ```scala
 import concurrent.duration._
@@ -64,7 +81,7 @@ cache.add("some-key", "hello", 10.minutes) map {
 }
 ```
 
-## Setting the value for a key
+### Setting the value for a key
 
 ```scala
 cache.set("some-key", "hello", 10.minutes)
@@ -78,7 +95,7 @@ import concurrent.duration._
 cache.set("some-key", "hello", Duration.Inf)
 ```
 
-## Deleting a key from the cache store
+### Deleting a key from the cache store
 
 ```scala
 cache.delete("some-key") map {
@@ -89,7 +106,7 @@ cache.delete("some-key") map {
 }
 ```
 
-## Fetching values from cache
+### Fetching values 
 
 ```scala
 val str: Future[String] = 
@@ -127,7 +144,7 @@ val result: Future[Map[String, Any]] =
   cache.getBulk("key1" :: "key2" :: "key3" :: Nil)
 ```
 
-## Compare and Set
+### Compare and Set
 
 ```scala
 val success: Future[Boolean] = cache.cas(
@@ -139,7 +156,9 @@ val success: Future[Boolean] = cache.cas(
 ```
 
 Working with the `cas()` method may be too difficult. Much better is
-to use either `transformAndGet` or `getAndTransform`:
+to use either `transformAndGet` for transforming the existing value,
+returning the new stored value for the indicated key. This way you can
+implement an atomic counter for example:
 
 ```scala
 val generatedID: Future[Int] = cache.transformAndGet[Int]("ids") { 
@@ -149,6 +168,22 @@ val generatedID: Future[Int] = cache.transformAndGet[Int]("ids") {
 }
 ```
 
+You can also use `getAndTransform` for transforming the existing value
+associated with a key, returning the old value that was in place
+before the transformation occurred:
+
+```scala
+val generatedID: Future[Option[Int]] = cache.getAndTransform[Int]("ids") { 
+  case None => 0
+  case Some(current) =>
+    current + 1
+}
+```
+
+Note that `getAndTransform` can return `None` in case the key was
+missing from our cache.
+
 *Carefull* about these compare-and-set methods with Memcached, as
-lock-contention can kill all progress on a server.
+contention can kill you. These methods don't work so well in a highly
+concurrent environment.
 

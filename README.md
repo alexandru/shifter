@@ -61,17 +61,25 @@ Add these resolvers:
 
 ```
 resolvers ++= Seq(
-  // just in case you don't have it already
-  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-  // for SpyMemcached (shifter-cache dependency)
-  "Spy" at "http://files.couchbase.com/maven2/",
-  // for Shifter
   "BionicSpirit Releases" at "http://maven.bionicspirit.com/releases/",
   "BionicSpirit Snapshots at "http://maven.bionicspirit.com/snapshots/"
 )
 ```
 
-For individual subprojects:
+You may need other resolvers, depending on what subprojects you want,
+but right now you can get away with these:
+
+```scala
+resolvers ++= Seq(
+  // just in case you don't have it already
+  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+  // for SpyMemcached (shifter-cache dependency)
+  "Spy" at "http://files.couchbase.com/maven2/",
+  // for Shifter
+)
+```
+
+Specify the dependency for individual subprojects:
 
 ```scala
 dependencies += "shifter" %% "shifter-cache" % "0.3.47-SNAPSHOT"

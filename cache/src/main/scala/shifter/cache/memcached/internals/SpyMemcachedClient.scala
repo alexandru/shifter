@@ -41,7 +41,7 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
         assert(key == k, "Wrong key returned")
         assert(!promise.isCompleted, "Wrong state, promise should not be completed")
         val value: T = tc.decode(new CachedData(flags, data, tc.getMaxSize))
-        promise.complete(Success(SuccessfulResult(key, Some(value))))
+        promise.complete(Success(SuccessfulResult(key, Option(value))))
       }
 
       def complete() {
@@ -189,8 +189,8 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
         assert(cas > 0, "CAS was less than zero:  " + cas)
         assert(!promise.isCompleted, "promise is already complete")
 
-        val value: T = tc.decode(new CachedData(flags, data, tc.getMaxSize))
-        promise.complete(Success(SuccessfulResult(key, Some(value, cas))))
+        val value: Option[T] = Option(tc.decode(new CachedData(flags, data, tc.getMaxSize)))
+        promise.complete(Success(SuccessfulResult(key, value.map(v => (v, cas)))))
       }
 
       def complete() {

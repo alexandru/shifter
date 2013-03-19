@@ -40,7 +40,7 @@ case class Configuration(
   /**
    * Default operation timeout
    */
-  operationTimeout: Duration = 5.seconds
+  operationTimeout: FiniteDuration = 5.seconds
 )
 
 object Protocol extends Enumeration {

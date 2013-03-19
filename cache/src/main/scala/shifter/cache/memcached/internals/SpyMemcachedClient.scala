@@ -1,33 +1,37 @@
 package shifter.cache.memcached.internals
 
-import net.spy.memcached.{CASResponse, CachedData, MemcachedClient, ConnectionFactory}
+import net.spy.memcached._
 import java.{util => jutil}
 import java.net.InetSocketAddress
 import concurrent.{ExecutionContext, Promise, Future}
 import net.spy.memcached.transcoders.Transcoder
 import net.spy.memcached.ops._
-import scala.util.Success
-import concurrent.duration.{FiniteDuration, Duration}
+import scala.util.{Failure, Try, Success}
+import concurrent.duration._
 import shifter.cache.UnhandledStatusException
+import java.util.concurrent.{TimeUnit, ThreadFactory, Executors}
+import scala.Some
+import java.util.concurrent.atomic.AtomicReference
 
 
 class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSocketAddress])
     extends MemcachedClient(conn, addresses) {
 
-  def realAsyncGet[T](key: String)(implicit ec: ExecutionContext): Future[Result[Option[T]]] = {
+  def realAsyncGet[T](key: String, timeout: FiniteDuration)(implicit ec: ExecutionContext): Future[Result[Option[T]]] = {
     val promise = Promise[Result[Option[T]]]()
     val tc = transcoder.asInstanceOf[Transcoder[T]]
+    val result = new AtomicReference[Try[Result[Option[T]]]](null)
 
-    val op: Operation = opFact.get(key, new GetOperation.Callback {
+    val op: GetOperation = opFact.get(key, new GetOperation.Callback {
       def receivedStatus(opStatus: OperationStatus) {
         if (statusTranslation.isDefinedAt(opStatus))
           statusTranslation(opStatus) match {
             case CASNotFoundStatus =>
-              promise.complete(Success(SuccessfulResult(key, None)))
+              result.set(Success(SuccessfulResult(key, None)))
             case CASSuccessStatus =>
               // nothing
             case failure =>
-              promise.complete(Success(FailedResult(key, failure)))
+              result.set(Success(FailedResult(key, failure)))
           }
 
         else
@@ -39,25 +43,37 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
 
       def gotData(k: String, flags: Int, data: Array[Byte]) {
         assert(key == k, "Wrong key returned")
-        assert(!promise.isCompleted, "Wrong state, promise should not be completed")
+
+        val currentResult = result.get()
+        if (currentResult != null)
+          throw new IllegalStateException("Wrong state, promise should not be completed (%s)"
+            .format(currentResult.toString))
+
         val value: T = tc.decode(new CachedData(flags, data, tc.getMaxSize))
-        promise.complete(Success(SuccessfulResult(key, Option(value))))
+        result.set(Success(SuccessfulResult(key, Option(value))))
       }
 
       def complete() {
-        if (!promise.isCompleted)
-          promise.complete(Success(SuccessfulResult(key, None)))
+        val value = result.get()
+        promise.synchronized {
+          if (value != null)
+            promise.complete(value)
+          else
+            promise.complete(Success(SuccessfulResult(key, None)))
+        }
       }
     })
 
     mconn.enqueueOperation(key, op)
-    promise.future
+    futureWithTimeout(key, op, promise, timeout)
   }
 
-  def realAsyncSet[T](key: String, value: T, exp: Duration)(implicit ec: ExecutionContext): Future[Result[Long]] = {
+  def realAsyncSet[T](key: String, value: T, exp: Duration, timeout: FiniteDuration)(implicit ec: ExecutionContext): Future[Result[Long]] = {
     val tc = transcoder.asInstanceOf[Transcoder[T]]
     val co: CachedData = tc.encode(value)
+
     val promise = Promise[Result[Long]]()
+    val result = new AtomicReference[Try[Result[Long]]](null)
 
     val op: Operation = opFact.store(StoreType.set, key, co.getFlags, expiryToSeconds(exp).toInt, co.getData, new StoreOperation.Callback {
       def receivedStatus(opStatus: OperationStatus) {
@@ -66,7 +82,7 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
             case CASSuccessStatus =>
               // nothing
             case failure =>
-              promise.complete(Success(FailedResult(key, failure)))
+              result.set(Success(FailedResult(key, failure)))
           }
 
         else
@@ -77,19 +93,28 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
       }
 
       def gotData(key: String, cas: Long) {
-        promise.complete(Success(SuccessfulResult(key, cas)))
+        val currentResult = result.get()
+        if (currentResult != null)
+          throw new IllegalStateException("Wrong state, promise should not be completed (%s)"
+            .format(currentResult.toString))
+
+        result.set(Success(SuccessfulResult(key, cas)))
       }
 
       def complete() {
-        if (!promise.isCompleted)
-          throw new IllegalStateException("Promise should have been completed by now")
+        val value = result.get()
+        promise.synchronized {
+          if (value != null)
+            promise.complete(value)
+          else
+            promise.complete(Success(FailedResult(key, IllegalCompleteStatus)))
+        }
       }
     })
 
     mconn.enqueueOperation(key, op)
-    promise.future
+    futureWithTimeout(key, op, promise, timeout)
   }
-
 
   def realAsyncAdd[T](key: String, value: T, exp: Duration)(implicit ec: ExecutionContext): Future[Result[Option[Long]]] = {
     val tc = transcoder.asInstanceOf[Transcoder[T]]
@@ -266,5 +291,47 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
     // infinite duration (set to 365 days)
     case _ =>
       (System.currentTimeMillis() / 1000) + 31536000 // 60 * 60 * 24 * 365 -> 365 days in seconds
+  }
+
+  private[this] val scheduler = Executors.newScheduledThreadPool(1, new ThreadFactory {
+    def newThread(r: Runnable): Thread = {
+      val th = new Thread(r)
+      th.setDaemon(true)
+      th
+    }
+  })
+
+  override def shutdown() {
+    super.shutdown()
+    Try(scheduler.shutdown())
+  }
+
+  private[this] def futureWithTimeout[T](key: String, op: Operation, promise: Promise[Result[T]], atMost: FiniteDuration)(implicit ec: ExecutionContext): Future[Result[T]] = {
+    val runnable = new Runnable {
+      def run() {
+        promise.synchronized {
+          if (!promise.isCompleted)
+            if (op.hasErrored)
+              promise.complete(Failure(op.getException))
+            else if (op.isCancelled)
+              promise.complete(Success(FailedResult(key, CancelledStatus)))
+            else
+              promise.complete(Success(FailedResult(key, TimedOutStatus)))
+        }
+      }
+    }
+
+    scheduler.schedule(runnable, atMost.toMillis, TimeUnit.MILLISECONDS)
+    val future = promise.future
+
+    future.onComplete {
+      case Success(FailedResult(_, TimedOutStatus)) =>
+        Try(MemcachedConnection.opTimedOut(op))
+        Try(op.timeOut())
+      case _ =>
+        Try(MemcachedConnection.opSucceeded(op))
+    }
+
+    future
   }
 }

@@ -30,7 +30,7 @@ The project is made of several smaller projects, that can be used independently:
   with
   [Futures/Promises](http://docs.scala-lang.org/sips/pending/futures-promises.html),
   also contains a stupidly simple in-memory cache implementation of
-  the same interface  
+  the same interface (see the [README](https://github.com/alexandru/shifter/blob/master/cache/README.md) for samples)
 * **shifter-web** - for servicing web requests, built over Servlets 3.0 and Jetty
 
 The following dependencies are used:
@@ -53,4 +53,7 @@ The following dependencies are used:
   for processing requests
 * [Yammer Metrics](http://metrics.codahale.com/) for gathering runtime stats from our servers
 * [Jetty 8](http://jetty.codehaus.org/jetty/) as the web server
+
+
+
 

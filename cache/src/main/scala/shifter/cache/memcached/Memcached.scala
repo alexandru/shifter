@@ -19,35 +19,40 @@ trait Memcached extends Cache {
   protected def config: Configuration
 
   def add[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Boolean] =
-    instance.realAsyncAdd(withPrefix(key), value, exp) map {
-      case SuccessfulResult(givenKey, Some(_)) =>
-        assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
-        true
-      case SuccessfulResult(givenKey, None) =>
-        assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
-        false
-      case FailedResult(_, TimedOutStatus) =>
-        throw new TimeoutException
-      case FailedResult(_, CancelledStatus) =>
-        throw new TimeoutException
-      case FailedResult(_, failure) =>
-        throw new UnhandledStatusException(failure.getClass.getName)
-    }
+    if (value != null)
+      instance.realAsyncAdd(withPrefix(key), value, exp) map {
+        case SuccessfulResult(givenKey, Some(_)) =>
+          assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
+          true
+        case SuccessfulResult(givenKey, None) =>
+          assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
+          false
+        case FailedResult(_, TimedOutStatus) =>
+          throw new TimeoutException
+        case FailedResult(_, CancelledStatus) =>
+          throw new TimeoutException
+        case FailedResult(_, failure) =>
+          throw new UnhandledStatusException(failure.getClass.getName)
+      }
+    else
+      Future.successful(false)
 
-
-  def set[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Unit] =
-    instance.realAsyncSet(withPrefix(key), value, exp) map {
-      case SuccessfulResult(givenKey, _) =>
-        assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
-        ()
-      case FailedResult(_, TimedOutStatus) =>
-        throw new TimeoutException
-      case FailedResult(_, CancelledStatus) =>
-        throw new TimeoutException
-      case FailedResult(_, failure) =>
-        throw new UnhandledStatusException(failure.getClass.getName)
-    }
-
+  def set[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Unit] = {
+    if (value != null)
+      instance.realAsyncSet(withPrefix(key), value, exp) map {
+        case SuccessfulResult(givenKey, _) =>
+          assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
+          ()
+        case FailedResult(_, TimedOutStatus) =>
+          throw new TimeoutException
+        case FailedResult(_, CancelledStatus) =>
+          throw new TimeoutException
+        case FailedResult(_, failure) =>
+          throw new UnhandledStatusException(failure.getClass.getName)
+      }
+    else
+      Future.successful(())
+  }
 
   def delete(key: String)(implicit ec: ExecutionContext): Future[Boolean] =
     instance.realDelete(withPrefix(key)) map {
@@ -126,6 +131,7 @@ trait Memcached extends Cache {
     expecting match {
       case None =>
         add[T](key, newValue, exp)
+
       case Some(expectingValue) =>
         instance.realAsyncGets[T](withPrefix(key)) flatMap {
           case SuccessfulResult(givenKey, None) =>

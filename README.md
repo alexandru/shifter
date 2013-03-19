@@ -1,9 +1,10 @@
 # Shifter
 
+
 Common infrastructure for our web-services built on top of the JVM and
 Scala.
 
-Warning: Highly unstable, sometimes broken.
+Warning: Highly unstable, often breaks.
 
 ## Quick Description
 
@@ -29,7 +30,7 @@ The project is made of several smaller projects, that can be used independently:
   with
   [Futures/Promises](http://docs.scala-lang.org/sips/pending/futures-promises.html),
   also contains a stupidly simple in-memory cache implementation of
-  the same interface  
+  the same interface (see the [README](https://github.com/alexandru/shifter/blob/master/cache/README.md) for samples)
 * **shifter-web** - for servicing web requests, built over Servlets 3.0 and Jetty
 
 The following dependencies are used:
@@ -53,3 +54,31 @@ The following dependencies are used:
 * [Yammer Metrics](http://metrics.codahale.com/) for gathering runtime stats from our servers
 * [Jetty 8](http://jetty.codehaus.org/jetty/) as the web server
 
+
+## Usage From SBT
+
+Add these resolvers:
+
+```
+resolvers ++= Seq(
+  // just in case you don't have it already
+  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+  // for SpyMemcached (shifter-cache dependency)
+  "Spy" at "http://files.couchbase.com/maven2/",
+  // for Shifter
+  "BionicSpirit Releases" at "http://maven.bionicspirit.com/releases/",
+  "BionicSpirit Snapshots at "http://maven.bionicspirit.com/snapshots/"
+)
+```
+
+For individual subprojects:
+
+```scala
+dependencies += "shifter" %% "shifter-cache" % "0.3.47-SNAPSHOT"
+```
+
+Or for the whole project, pulling in all required dependencies:
+
+```scala
+dependencies += "shifter" %% "shifter" % "0.3.47-SNAPSHOT"
+```

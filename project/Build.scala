@@ -2,6 +2,12 @@ import sbt._
 import Keys._
 
 object ShifterBuild extends Build {
+
+  lazy val projectVersion = {
+    import scala.io.Source
+    Source.fromFile("VERSION").getLines.mkString("\n").trim
+  }
+
   lazy val root = Project(
     id = "shifter",
     base = file("."),
@@ -11,7 +17,7 @@ object ShifterBuild extends Build {
 
       organization in ThisBuild := "shifter",
 
-      version in ThisBuild := "0.3.41",
+      version in ThisBuild := projectVersion,
 
       scalaVersion in ThisBuild := "2.10.0",
 

@@ -1,13 +1,14 @@
 package shifter.cache
 
 import memcached._
-import org.scalatest.FunSuite
+import org.scalatest.{BeforeAndAfter, FunSuite}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import concurrent.duration._
 import shifter.concurrency._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.Some
+import concurrent.Await
 
 
 @RunWith(classOf[JUnitRunner])
@@ -223,13 +224,14 @@ class MemcachedSuite extends FunSuite {
     authentication = None,
     keysPrefix = Some("my-tests"),
     protocol = Protocol.Binary,
-    failureMode = FailureMode.Retry
+    failureMode = FailureMode.Retry,
+    operationTimeout = 15.seconds
   )
 
   def withCache[T](prefix: String)(cb: Cache => T): T = {
-    System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SunLogger")
-    java.util.logging.Logger.getLogger("net.spy.memcached")
-      .setLevel(java.util.logging.Level.WARNING)
+    //System.setProperty("net.spy.log.LoggerImpl", "net.spy.memcached.compat.log.SunLogger")
+    //java.util.logging.Logger.getLogger("net.spy.memcached")
+    //  .setLevel(java.util.logging.Level.WARNING)
 
     val cache = Memcached(
       config.copy(keysPrefix = config.keysPrefix.map(s => s + "-" + prefix)))

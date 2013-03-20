@@ -1,7 +1,7 @@
 package shifter.cache
 
 /**
- * Super-class for errors thrown in case specific cache-related
+ * Super-class for errors thrown when specific cache-store related
  * errors occur.
  */
 class CacheException(msg: String) extends RuntimeException(msg)
@@ -9,13 +9,13 @@ class CacheException(msg: String) extends RuntimeException(msg)
 /**
  * Thrown in case a cache store related operation times out.
  */
-class TimeoutException extends CacheException("timed out")
+class TimeoutException(key: String) extends CacheException(key)
 
 /**
  * Thrown in case a cache store related operation is cancelled
  * (like due to closed / broken connections)
  */
-class CancelledException extends CacheException("cancelled")
+class CancelledException(key: String) extends CacheException(key)
 
 /**
  * Gets thrown in case the implementation is wrong and

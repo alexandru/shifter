@@ -1,23 +1,28 @@
 package shifter.concurrency
 
-import concurrent.{Await, ExecutionContext, Future}
+import concurrent.{Promise, Await, ExecutionContext, Future}
 import util.{Failure, Success, Try}
 import concurrent.duration.{FiniteDuration, Duration}
 
 trait FutureExtensions[A] extends Any {
-  def future: Future[A]
+  val future: Future[A]
 
   def await(implicit timeout: Duration): A =
     Await.result(future, timeout)
 
-  def timeout(message: Try[A], exp: Duration)(implicit ec: ExecutionContext): Future[A] =
-    exp match {
-      case duration: FiniteDuration =>
-        val timeoutPromise = Promise.timeout(message, duration)
-        Future.firstCompletedOf(future :: timeoutPromise :: Nil)(ec)
-      case _ =>
-        future
+  def timeout(exp: FiniteDuration)(cb: => Try[A])(implicit ec: ExecutionContext): Future[A] = {
+    val timeoutPromise = Promise[A]()
+    val timeoutTask = scheduler.runOnce(exp.toMillis) {
+      timeoutPromise.tryComplete(cb)
     }
+
+    future.onComplete {
+      case _ =>
+        scheduler.cancel(timeoutTask)
+    }
+
+    Future.firstCompletedOf(Seq(future, timeoutPromise.future))
+  }
 
   def lightMap[S](f: A => S)(implicit ec: ExecutionContext): Future[S] =
     if (future.isCompleted)

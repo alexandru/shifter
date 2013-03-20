@@ -20,7 +20,7 @@ trait Memcached extends Cache {
 
   def add[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Boolean] =
     if (value != null)
-      instance.realAsyncAdd(withPrefix(key), value, exp) map {
+      instance.realAsyncAdd(withPrefix(key), value, exp, config.operationTimeout) map {
         case SuccessfulResult(givenKey, Some(_)) =>
           assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
           true
@@ -55,7 +55,7 @@ trait Memcached extends Cache {
   }
 
   def delete(key: String)(implicit ec: ExecutionContext): Future[Boolean] =
-    instance.realDelete(withPrefix(key)) map {
+    instance.realAsyncDelete(withPrefix(key), config.operationTimeout) map {
       case SuccessfulResult(givenKey, result) =>
         assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
         result
@@ -133,13 +133,13 @@ trait Memcached extends Cache {
         add[T](key, newValue, exp)
 
       case Some(expectingValue) =>
-        instance.realAsyncGets[T](withPrefix(key)) flatMap {
+        instance.realAsyncGets[T](withPrefix(key), config.operationTimeout) flatMap {
           case SuccessfulResult(givenKey, None) =>
             Future.successful(false)
 
           case SuccessfulResult(givenKey, Some((value, casID))) =>
             if (value == expectingValue) {
-              instance.realAsyncCAS(withPrefix(key), casID, newValue, exp) map {
+              instance.realAsyncCAS(withPrefix(key), casID, newValue, exp, config.operationTimeout) map {
                 case SuccessfulResult(_, bool) =>
                   bool
                 case FailedResult(_, TimedOutStatus) =>
@@ -163,7 +163,7 @@ trait Memcached extends Cache {
     }
 
   def transformAndGet[T](key: String, exp: Duration = defaultExpiry)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[T] =
-    instance.realAsyncGets[T](withPrefix(key)).flatMap {
+    instance.realAsyncGets[T](withPrefix(key), config.operationTimeout).flatMap {
       case SuccessfulResult(_, None) =>
         val result = cb(None)
         add(key, result, exp) flatMap {
@@ -175,7 +175,7 @@ trait Memcached extends Cache {
       case SuccessfulResult(_, Some((current, casID))) =>
         val result = cb(Some(current))
 
-        instance.realAsyncCAS(withPrefix(key), casID, result, exp) flatMap {
+        instance.realAsyncCAS(withPrefix(key), casID, result, exp, config.operationTimeout) flatMap {
           case SuccessfulResult(_, true) =>
             Future.successful(result)
           case SuccessfulResult(_, false) =>
@@ -197,7 +197,7 @@ trait Memcached extends Cache {
     }
 
   def getAndTransform[T](key: String, exp: Duration = defaultExpiry)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[Option[T]] =
-    instance.realAsyncGets[T](withPrefix(key)).flatMap {
+    instance.realAsyncGets[T](withPrefix(key), config.operationTimeout).flatMap {
       case SuccessfulResult(_, None) =>
         val result = cb(None)
         add(key, result, exp) flatMap {
@@ -210,7 +210,7 @@ trait Memcached extends Cache {
       case SuccessfulResult(_, Some((current, casID))) =>
         val result = cb(Some(current))
 
-        instance.realAsyncCAS(withPrefix(key), casID, result, exp) flatMap {
+        instance.realAsyncCAS(withPrefix(key), casID, result, exp, config.operationTimeout) flatMap {
           case SuccessfulResult(_, true) =>
             Future.successful(Some(current))
           case SuccessfulResult(_, false) =>

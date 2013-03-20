@@ -23,7 +23,7 @@ resolvers ++= Seq(
 Add the dependency:
 
 ```scala
-dependencies += "shifter" %% "shifter-cache" % "0.3.47-SNAPSHOT"
+dependencies += "shifter" %% "shifter-cache" % "0.3.49-SNAPSHOT"
 ```
 
 ## Usage

@@ -1,7 +1,6 @@
 package shifter.cache.memcached
 
 import concurrent.duration._
-import java.util.logging.Level
 
 case class Configuration(
   /**
@@ -39,7 +38,10 @@ case class Configuration(
   failureMode: FailureMode.Value = FailureMode.Retry,
 
   /**
-   * Default operation timeout
+   * Default operation timeout.
+   *
+   * When the limit is reached, the Future responses finish
+   * with Failure(TimeoutException)
    */
   operationTimeout: FiniteDuration = 5.seconds
 )

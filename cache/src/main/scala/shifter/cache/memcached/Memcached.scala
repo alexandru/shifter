@@ -20,7 +20,7 @@ trait Memcached extends Cache {
 
   def add[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Boolean] =
     if (value != null)
-      instance.realAsyncAdd(withPrefix(key), value, exp) map {
+      instance.realAsyncAdd(withPrefix(key), value, exp, config.operationTimeout) map {
         case SuccessfulResult(givenKey, Some(_)) =>
           assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
           true
@@ -30,7 +30,7 @@ trait Memcached extends Cache {
         case FailedResult(_, TimedOutStatus) =>
           throw new TimeoutException
         case FailedResult(_, CancelledStatus) =>
-          throw new TimeoutException
+          throw new CancelledException
         case FailedResult(_, failure) =>
           throw new UnhandledStatusException(failure.getClass.getName)
       }
@@ -39,14 +39,14 @@ trait Memcached extends Cache {
 
   def set[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Unit] = {
     if (value != null)
-      instance.realAsyncSet(withPrefix(key), value, exp) map {
+      instance.realAsyncSet(withPrefix(key), value, exp, config.operationTimeout) map {
         case SuccessfulResult(givenKey, _) =>
           assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
           ()
         case FailedResult(_, TimedOutStatus) =>
           throw new TimeoutException
         case FailedResult(_, CancelledStatus) =>
-          throw new TimeoutException
+          throw new CancelledException
         case FailedResult(_, failure) =>
           throw new UnhandledStatusException(failure.getClass.getName)
       }
@@ -55,20 +55,20 @@ trait Memcached extends Cache {
   }
 
   def delete(key: String)(implicit ec: ExecutionContext): Future[Boolean] =
-    instance.realDelete(withPrefix(key)) map {
+    instance.realAsyncDelete(withPrefix(key), config.operationTimeout) map {
       case SuccessfulResult(givenKey, result) =>
         assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
         result
       case FailedResult(_, TimedOutStatus) =>
         throw new TimeoutException
       case FailedResult(_, CancelledStatus) =>
-        throw new TimeoutException
+        throw new CancelledException
       case FailedResult(_, failure) =>
         throw new UnhandledStatusException(failure.getClass.getName)
     }
 
   def apply[T](key: String)(implicit ec: ExecutionContext): Future[T] =
-    instance.realAsyncGet[T](withPrefix(key)) map {
+    instance.realAsyncGet[T](withPrefix(key), config.operationTimeout) map {
       case SuccessfulResult(givenKey, Some(value)) =>
         assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
         value
@@ -78,20 +78,20 @@ trait Memcached extends Cache {
       case FailedResult(_, TimedOutStatus) =>
         throw new TimeoutException
       case FailedResult(_, CancelledStatus) =>
-        throw new TimeoutException
+        throw new CancelledException
       case FailedResult(_, failure) =>
         throw new UnhandledStatusException(failure.getClass.getName)
     }
 
   def get[T](key: String)(implicit ec: ExecutionContext): Future[Option[T]] =
-    instance.realAsyncGet[T](withPrefix(key)) map {
+    instance.realAsyncGet[T](withPrefix(key), config.operationTimeout) map {
       case SuccessfulResult(givenKey, option) =>
         assert(givenKey == withPrefix(key), "wrong key returned: " + givenKey)
         option
       case FailedResult(_, TimedOutStatus) =>
         throw new TimeoutException
       case FailedResult(_, CancelledStatus) =>
-        throw new TimeoutException
+        throw new CancelledException
       case FailedResult(_, failure) =>
         throw new UnhandledStatusException(failure.getClass.getName)
     }
@@ -104,7 +104,7 @@ trait Memcached extends Cache {
 
   def getBulk(keys: Traversable[String])(implicit ec: ExecutionContext): Future[Map[String, Any]] = {
     val givenKeys = keys.toSet
-    val futures = givenKeys.map(key => instance.realAsyncGet[Any](withPrefix(key)))
+    val futures = givenKeys.map(key => instance.realAsyncGet[Any](withPrefix(key), config.operationTimeout))
     val bulkQuery = Future.sequence(futures)
 
     bulkQuery.map{ list =>
@@ -118,7 +118,7 @@ trait Memcached extends Cache {
         case FailedResult(_, TimedOutStatus) =>
           throw new TimeoutException
         case FailedResult(_, CancelledStatus) =>
-          throw new TimeoutException
+          throw new CancelledException
         case FailedResult(_, failure) =>
           throw new UnhandledStatusException(failure.getClass.getName)
       }
@@ -133,13 +133,13 @@ trait Memcached extends Cache {
         add[T](key, newValue, exp)
 
       case Some(expectingValue) =>
-        instance.realAsyncGets[T](withPrefix(key)) flatMap {
+        instance.realAsyncGets[T](withPrefix(key), config.operationTimeout) flatMap {
           case SuccessfulResult(givenKey, None) =>
             Future.successful(false)
 
           case SuccessfulResult(givenKey, Some((value, casID))) =>
             if (value == expectingValue) {
-              instance.realAsyncCAS(withPrefix(key), casID, newValue, exp) map {
+              instance.realAsyncCAS(withPrefix(key), casID, newValue, exp, config.operationTimeout) map {
                 case SuccessfulResult(_, bool) =>
                   bool
                 case FailedResult(_, TimedOutStatus) =>
@@ -156,14 +156,14 @@ trait Memcached extends Cache {
           case FailedResult(_, TimedOutStatus) =>
             throw new TimeoutException
           case FailedResult(_, CancelledStatus) =>
-            throw new TimeoutException
+            throw new CancelledException
           case FailedResult(_, failure) =>
             throw new UnhandledStatusException(failure.getClass.getName)
         }
     }
 
   def transformAndGet[T](key: String, exp: Duration = defaultExpiry)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[T] =
-    instance.realAsyncGets[T](withPrefix(key)).flatMap {
+    instance.realAsyncGets[T](withPrefix(key), config.operationTimeout).flatMap {
       case SuccessfulResult(_, None) =>
         val result = cb(None)
         add(key, result, exp) flatMap {
@@ -175,7 +175,7 @@ trait Memcached extends Cache {
       case SuccessfulResult(_, Some((current, casID))) =>
         val result = cb(Some(current))
 
-        instance.realAsyncCAS(withPrefix(key), casID, result, exp) flatMap {
+        instance.realAsyncCAS(withPrefix(key), casID, result, exp, config.operationTimeout) flatMap {
           case SuccessfulResult(_, true) =>
             Future.successful(result)
           case SuccessfulResult(_, false) =>
@@ -191,13 +191,13 @@ trait Memcached extends Cache {
       case FailedResult(_, TimedOutStatus) =>
         throw new TimeoutException
       case FailedResult(_, CancelledStatus) =>
-        throw new TimeoutException
+        throw new CancelledException
       case FailedResult(_, failure) =>
         throw new UnhandledStatusException(failure.getClass.getName)
     }
 
   def getAndTransform[T](key: String, exp: Duration = defaultExpiry)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[Option[T]] =
-    instance.realAsyncGets[T](withPrefix(key)).flatMap {
+    instance.realAsyncGets[T](withPrefix(key), config.operationTimeout).flatMap {
       case SuccessfulResult(_, None) =>
         val result = cb(None)
         add(key, result, exp) flatMap {
@@ -210,7 +210,7 @@ trait Memcached extends Cache {
       case SuccessfulResult(_, Some((current, casID))) =>
         val result = cb(Some(current))
 
-        instance.realAsyncCAS(withPrefix(key), casID, result, exp) flatMap {
+        instance.realAsyncCAS(withPrefix(key), casID, result, exp, config.operationTimeout) flatMap {
           case SuccessfulResult(_, true) =>
             Future.successful(Some(current))
           case SuccessfulResult(_, false) =>
@@ -218,7 +218,7 @@ trait Memcached extends Cache {
           case FailedResult(_, TimedOutStatus) =>
             throw new TimeoutException
           case FailedResult(_, CancelledStatus) =>
-            throw new TimeoutException
+            throw new CancelledException
           case FailedResult(_, failure) =>
             throw new UnhandledStatusException(failure.getClass.getName)
         }
@@ -226,7 +226,7 @@ trait Memcached extends Cache {
       case FailedResult(_, TimedOutStatus) =>
         throw new TimeoutException
       case FailedResult(_, CancelledStatus) =>
-        throw new TimeoutException
+        throw new CancelledException
       case FailedResult(_, failure) =>
         throw new UnhandledStatusException(failure.getClass.getName)
     }

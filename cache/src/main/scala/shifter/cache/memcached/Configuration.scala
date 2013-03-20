@@ -1,6 +1,7 @@
 package shifter.cache.memcached
 
 import concurrent.duration._
+import java.util.logging.Level
 
 case class Configuration(
   /**

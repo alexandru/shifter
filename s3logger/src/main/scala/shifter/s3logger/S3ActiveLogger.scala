@@ -1,16 +1,18 @@
-package shifter.s3logger.support
+package shifter.s3logger
 
 import java.util.concurrent.atomic.AtomicReference
 import java.io._
 import java.util.zip.GZIPOutputStream
 import java.util.{UUID, Calendar}
 import annotation.tailrec
+import support._
+import support.Handler
+import support.HandlerAvailable
+import support.UploadedFileInfo
 import util.Try
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.{AmazonServiceException, AmazonClientException}
-import shifter.s3logger.S3Logger
-import shifter.s3logger.Configuration
 
 
 /**
@@ -39,12 +41,13 @@ class S3ActiveLogger(config: Configuration) extends S3Logger {
         doRotate(forced)
 
       case current@HandlerAvailable(handler) =>
+        val fileSize = getFileSize(handler)
         val shouldRotate =
-          handler.writes > 0 && (
+          fileSize > 20 && (
             forced ||
-            getElapsed(handler) >= rotateMillis ||
-            getFileSize(handler) >= maxSizeBytes
-          )
+              getElapsed(handler) >= rotateMillis ||
+              fileSize >= maxSizeBytes
+            )
 
         if (!shouldRotate)
           Seq.empty
@@ -140,8 +143,7 @@ class S3ActiveLogger(config: Configuration) extends S3Logger {
       cb(handler)
     }
     finally {
-      val returnHandler = handler.copy(writes = handler.writes + 1)
-      if (!handlerRef.compareAndSet(HandlerBorrowed, HandlerAvailable(returnHandler)))
+      if (!handlerRef.compareAndSet(HandlerBorrowed, HandlerAvailable(handler)))
         throw new IllegalStateException(
           "S3Logger's Handler is in state %s and should have been in HandlerBorrowed state"
             .format(handlerRef.get().getClass.getName))

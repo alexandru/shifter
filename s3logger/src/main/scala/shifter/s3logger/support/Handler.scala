@@ -6,6 +6,5 @@ case class Handler(
   file: File,
   fileStream: FileOutputStream,
   out: OutputStream,
-  createdTS: Long,
-  writes: Long = 0
+  createdTS: Long
 )

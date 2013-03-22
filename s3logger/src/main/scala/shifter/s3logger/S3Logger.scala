@@ -1,6 +1,6 @@
 package shifter.s3logger
 
-import support.{S3ActiveLogger, S3NoopLogger, UploadedFileInfo, S3LoggerException}
+import support.{UploadedFileInfo, S3LoggerException}
 
 trait S3Logger {
   def write(content: Array[Byte])
@@ -12,7 +12,7 @@ object S3Logger {
     if (config.isEnabled && !config.aws.isDefined)
       throw S3LoggerException("S3Logger is enabled, but AWS credentials are not defined")
     if (config.isEnabled)
-      new S3ActiveLogger(config)
+      new S3SynchronizedLogger(config)
     else
       new S3NoopLogger()
   }

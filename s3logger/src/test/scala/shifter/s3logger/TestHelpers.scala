@@ -7,20 +7,25 @@ import concurrent.duration._
 import java.io.{InputStreamReader, BufferedReader}
 import util.Random
 import java.util.zip.GZIPInputStream
+import java.util.concurrent.{ThreadFactory, Executors}
 
 trait TestHelpers {
-  def startThread(logger: S3Logger, line: String, count: Int): Thread = {
-    val thread = new Thread(new Runnable {
+  val executor = Executors.newCachedThreadPool(new ThreadFactory {
+    def newThread(r: Runnable): Thread = {
+      val th = new Thread(r)
+      th.setDaemon(true)
+      th
+    }
+  })
+
+  def startThread(logger: S3Logger, line: String, count: Int) =
+    executor.submit(new Runnable {
       def run() {
         (0 until count).foreach { x =>
           logger.write((line + "\n").getBytes("UTF-8"))
         }
       }
     })
-
-    thread.run()
-    thread
-  }
 
   def startThreadWithCB(logger: S3Logger, line: String, count: Int)(cb: => Unit): Thread = {
     val thread = new Thread(new Runnable {
@@ -124,7 +129,8 @@ trait TestHelpers {
     }
   }
 
-  def withLogger[T](intervalSecs: Int)(cb: S3Logger => T): T = {
+
+  def withSynchronizedLogger[T](intervalSecs: Int)(cb: S3Logger => T): T = {
     val (access, secret, bucket) = getCredentials
     deleteAllKeys()
 
@@ -141,7 +147,7 @@ trait TestHelpers {
       isEnabled = true
     )
 
-    val logger = S3Logger(config)
+    val logger = new S3SynchronizedLogger(config)
 
     try {
       cb(logger)

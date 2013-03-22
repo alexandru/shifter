@@ -1,6 +1,6 @@
-package shifter.s3logger.support
+package shifter.s3logger
 
-import shifter.s3logger.S3Logger
+import support.UploadedFileInfo
 
 class S3NoopLogger private[s3logger] () extends S3Logger {
   def write(content: Array[Byte]) {}

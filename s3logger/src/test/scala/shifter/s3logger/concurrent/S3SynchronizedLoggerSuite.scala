@@ -1,4 +1,4 @@
-package shifter.s3logger
+package shifter.s3logger.concurrent
 
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
@@ -6,11 +6,14 @@ import org.scalatest.junit.JUnitRunner
 
 
 @RunWith(classOf[JUnitRunner])
-class S3LoggerSuite extends FunSuite with TestHelpers {
+class S3SynchronizedLoggerSuite extends FunSuite with TestHelpers {
   test("log 10000 items, single thread, forced rotate") {
-    withLogger(60 * 60) { s3logger =>
+    withSynchronizedLogger(60 * 60) { s3logger =>
+      deleteAllKeys()
+      assert(listKeys.length === 0)
+
       for (i <- 1 to 10000)
-        s3logger.write("hello.%d\n".format(i).getBytes("UTF-8"))
+        s3logger.write("hello.%d\n".format(i))
 
       val statsFirst = s3logger.rotate(forced = false)
       assert(statsFirst.isEmpty, "Should not have uploaded: %s".format(statsFirst.toString()))
@@ -43,27 +46,20 @@ class S3LoggerSuite extends FunSuite with TestHelpers {
   }
 
   test("log 30000 items, multi-threaded, non-forced rotate, twice") {
-    withLogger(1) { s3logger =>
+    withSynchronizedLogger(1) { s3logger =>
+      assert(listKeys.length === 0)
 
-      val thread1 = startThread(s3logger, "hello1", 10000)
-      val thread2 = startThread(s3logger, "hello2", 10000)
-      val thread3 = startThread(s3logger, "hello3", 10000)
-
-      thread1.join()
-      thread2.join()
-      thread3.join()
+      (1 to 3).map(nr => startThread(s3logger, "hello" + nr.toString, 10000))
+        .toList
+        .foreach(_.get())
 
       Thread.sleep(1200)
       assert(s3logger.rotate(forced = false).length === 1)
       assert(listKeys.length === 1)
 
-      val thread4 = startThread(s3logger, "hello4", 10000)
-      val thread5 = startThread(s3logger, "hello5", 10000)
-      val thread6 = startThread(s3logger, "hello6", 10000)
-
-      thread4.join()
-      thread5.join()
-      thread6.join()
+      (4 to 6).map(nr => startThread(s3logger, "hello" + nr.toString, 10000))
+        .toList
+        .foreach(_.get())
 
       Thread.sleep(1200)
       assert(s3logger.rotate(forced = false).length === 1)

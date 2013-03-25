@@ -27,6 +27,41 @@ class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends Htt
     }
   }
 
+
+  // To Implement
+  def request(method: String, url: String, body: Array[Byte], headers: Map[String, String])(implicit ec: ExecutionContext): Future[HttpClientResponse] = {
+    val request = method match {
+      case "GET" =>
+        val getRequest = client.prepareGet(url)
+        headers.foldLeft(getRequest) { case (acc, (k,v)) =>
+          acc.addHeader(k,v)
+        }
+
+      case "POST" =>
+        val postRequest = headers.foldLeft(client.preparePost(url)) {
+          case (acc, (k,v)) =>
+            acc.addHeader(k,v)
+        }
+        postRequest.setBody(body)
+      case _ =>
+        throw new Exception("Method not supported by HTTP Client: " + method)
+    }
+
+    val futureResponse = makeRequest(url, request, headers)
+
+    futureResponse.map { response =>
+      val headersJavaMap = response.getHeaders
+
+      var headers = Map.empty[String, String]
+      for (header <- headersJavaMap.keySet.asScala) {
+        // sometimes getJoinedValue() would be more correct.
+        headers += (header -> headersJavaMap.getFirstValue(header))
+      }
+
+      new HttpClientResponse(response.getStatusCode, headers, response.getResponseBodyAsStream)
+    }
+  }
+
   def close() {
     client.close()
   }

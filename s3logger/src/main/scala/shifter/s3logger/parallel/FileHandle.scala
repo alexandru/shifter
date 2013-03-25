@@ -43,8 +43,12 @@ final class FileHandle(prefix: String, suffix: String, localDir: Option[String])
   def hasWrites = state.get() != NotInitialized
 
   def getFileSizeMB: Long =
-    if (hasWrites && fileOutStream != null)
-      Try(fileOutStream.getChannel.size() / (1024L * 1024)).getOrElse(0L)
+    if (hasWrites && fileOutStream != null && writer != null)
+      Try {
+        writer.flush()
+        fileOutStream.getChannel.size() / (1024L * 1024)
+      }
+      .getOrElse(0L)
     else
       0L
 

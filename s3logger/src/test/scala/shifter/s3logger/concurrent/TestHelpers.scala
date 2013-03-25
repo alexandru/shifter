@@ -1,4 +1,4 @@
-package shifter.s3logger
+package shifter.s3logger.concurrent
 
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3Client
@@ -8,6 +8,7 @@ import java.io.{InputStreamReader, BufferedReader}
 import util.Random
 import java.util.zip.GZIPInputStream
 import java.util.concurrent.{ThreadFactory, Executors}
+import shifter.s3logger.S3Logger
 
 trait TestHelpers {
   val executor = Executors.newCachedThreadPool(new ThreadFactory {
@@ -22,7 +23,7 @@ trait TestHelpers {
     executor.submit(new Runnable {
       def run() {
         (0 until count).foreach { x =>
-          logger.write((line + "\n").getBytes("UTF-8"))
+          logger.write(line + "\n")
         }
       }
     })
@@ -31,7 +32,7 @@ trait TestHelpers {
     val thread = new Thread(new Runnable {
       def run() {
         (0 until count).foreach { x =>
-          logger.write(line.getBytes("UTF-8"))
+          logger.write(line)
           cb
         }
       }

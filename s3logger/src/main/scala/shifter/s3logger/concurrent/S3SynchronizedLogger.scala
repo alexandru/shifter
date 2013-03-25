@@ -1,26 +1,25 @@
-package shifter.s3logger
+package shifter.s3logger.concurrent
 
 import java.util.concurrent.atomic.AtomicReference
 import java.io._
 import java.util.zip.GZIPOutputStream
 import java.util.{UUID, Calendar}
 import annotation.tailrec
-import support._
-import support.Handler
-import support.HandlerAvailable
-import support.UploadedFileInfo
 import util.Try
 import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.{AmazonServiceException, AmazonClientException}
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import shifter.s3logger.S3Logger
+import shifter.s3logger.support.{UploadedFileInfo, S3LoggerException}
 
 
 /**
  * Thread safe, non-blocking implementation of an S3Logger.
  */
-class S3ActiveLogger(config: Configuration) extends S3Logger {
+class S3SynchronizedLogger(config: Configuration) extends S3Logger {
 
-  def write(content: Array[Byte]) {
+  def write(content: String) {
     withWriteHandler { handler =>
       handler.out.write(content)
       true
@@ -33,43 +32,46 @@ class S3ActiveLogger(config: Configuration) extends S3Logger {
   @tailrec
   private[this] final def doRotate(forced: Boolean): Seq[UploadedFileInfo] =
     handlerRef.get() match {
-      case NoHandler =>
+      case None =>
         Seq.empty
 
-      case HandlerBorrowed =>
-        // handler is busy, retry until it succeeds
-        doRotate(forced)
-
-      case current@HandlerAvailable(handler) =>
+      case current @ Some(handler) =>
         val fileSize = getFileSize(handler)
         val shouldRotate =
-          fileSize > 20 && (
-            forced ||
-              getElapsed(handler) >= rotateMillis ||
-              fileSize >= maxSizeBytes
-            )
+          forced ||
+          getElapsed(handler) >= rotateMillis ||
+          fileSize >= maxSizeBytes
 
         if (!shouldRotate)
           Seq.empty
 
         // pull out handler for rotation
-        else if (!handlerRef.compareAndSet(current, NoHandler))
+        else if (!handlerRef.compareAndSet(current, None))
           doRotate(forced)
 
         // we've got a handler that we can rotate
         else
-          // locking here, although it shouldn't be necessary, just in case
+          // also acquire the rotateLock to prevent other concurrent
+          // rotates and to be able to release the handlerLock quickly
           rotateLock.synchronized {
-            // close output stream
-            handler.out.close()
-            // rename file
-            val renamed = getFile("for-upload")
-            handler.file.renameTo(renamed)
+            handlerLock.writeLock().lock()
+
+            // rename file quickly, then release the lock
+            try {
+              // close output stream
+              handler.out.close()
+              // rename file
+              val renamed = getFile("for-upload")
+              handler.file.renameTo(renamed)
+            }
+            finally {
+              handlerLock.writeLock().unlock()
+            }
 
             // upload all files that are prefixed with "for-upload.log.gz"
             val forUpload = localDirectory.listFiles().filter { file =>
               file.getName.startsWith(config.collection + "--slash--") &&
-              file.getName.endsWith(".for-upload.log.gz")
+                file.getName.endsWith(".for-upload.log.gz")
             }
 
             val stats = forUpload.foldLeft(Vector.empty[Option[UploadedFileInfo]]) { (acc, file) =>
@@ -101,52 +103,52 @@ class S3ActiveLogger(config: Configuration) extends S3Logger {
           }
     }
 
-  private[this] def withWriteHandler(cb: Handler => Boolean): Boolean = {
+  private[this] def withWriteHandler(cb: Handle => Boolean): Boolean = {
     @tailrec
-    def fetchHandler: Handler =
+    def fetchHandler: Handle =
       handlerRef.get() match {
-        case current@HandlerAvailable(ref) =>
-          // borrow handler for writing
-          if (handlerRef.compareAndSet(current, HandlerBorrowed))
-            ref
-          else
-            // state changed, retry
-            fetchHandler
+        case Some(ref) =>
+          ref
 
-        case HandlerBorrowed =>
-          // handler is busy, retry again until it succeeds
-          fetchHandler
+        case None =>
+          handlerLock.readLock().unlock()
+          handlerLock.writeLock().lock()
 
-        case NoHandler =>
-          val file = File.createTempFile(config.collection, ".log.gz", localDirectory)
-          file.deleteOnExit()
-
-          val fileStream = new FileOutputStream(file)
-          val out =
-              new GZIPOutputStream(new BufferedOutputStream(fileStream))
-          val handler = Handler(file, fileStream, out, System.currentTimeMillis())
-
-          if (!handlerRef.compareAndSet(NoHandler, HandlerBorrowed)) {
-            // we couldn't create handler, revert everything and try again
-            Try(out.close())
-            Try(fileStream.close())
-            Try(file.delete())
+          // can have a race condition here
+          if (handlerRef.get().isDefined) {
+            handlerLock.writeLock().unlock()
+            handlerLock.readLock().lock()
+            // recursive retry
             fetchHandler
           }
           else
-            handler
+            try {
+              val file = File.createTempFile(config.collection, ".log.gz", localDirectory)
+              file.deleteOnExit()
+
+              val fileStream = new FileOutputStream(file)
+              val out = new BufferedWriter(
+                new OutputStreamWriter(
+                  new GZIPOutputStream(fileStream), "UTF-8"))
+              val handler = Handle(file, fileStream, out, System.currentTimeMillis())
+
+              handlerRef.set(Some(handler))
+              handler
+            }
+            finally {
+              // restore read lock state
+              handlerLock.writeLock().unlock()
+              handlerLock.readLock().lock()
+            }
       }
 
-    val handler = fetchHandler
-
+    handlerLock.readLock().lock()
     try {
+      val handler = fetchHandler
       cb(handler)
     }
     finally {
-      if (!handlerRef.compareAndSet(HandlerBorrowed, HandlerAvailable(handler)))
-        throw new IllegalStateException(
-          "S3Logger's Handler is in state %s and should have been in HandlerBorrowed state"
-            .format(handlerRef.get().getClass.getName))
+      handlerLock.readLock().unlock()
     }
   }
 
@@ -183,15 +185,17 @@ class S3ActiveLogger(config: Configuration) extends S3Logger {
   }
 
   @inline
-  private[this] def getFileSize(handler: Handler) =
+  private[this] def getFileSize(handler: Handle) = {
+    handler.out.flush()
     handler.fileStream.getChannel.size()
+  }
 
   @inline
-  private[this] def getElapsed(handler: Handler) =
+  private[this] def getElapsed(handler: Handle) =
     System.currentTimeMillis() - handler.createdTS
 
   private[this] val handlerRef =
-    new AtomicReference(NoHandler : HandlerState)
+    new AtomicReference(None : Option[Handle])
 
   private[this] val aws = config.aws match {
     case Some(value) => value
@@ -203,6 +207,8 @@ class S3ActiveLogger(config: Configuration) extends S3Logger {
   }
 
   private[this] val rotateLock = new AnyRef
+  private[this] val handlerLock = new ReentrantReadWriteLock(false)
+
   private[this] val secret = "kjYhn9UthKlP9HnLuYt"
   private[this] val rotateMillis = config.expiry.toMillis
   private[this] val maxSizeBytes = config.maxSizeMB * 1024 * 1024

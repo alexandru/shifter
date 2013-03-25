@@ -26,10 +26,14 @@ final class FileHandle(prefix: String, suffix: String, localDir: Option[String])
           rotate(destination)
         else
           lock.synchronized {
+            Try(writer.close())
+            Try(fileOutStream.close())
             file.renameTo(destination)
+
             file = null
             fileOutStream = null
             writer = null
+
             if (!state.compareAndSet(Borrowed, NotInitialized))
               throw new IllegalStateException("FileHandle should be in Borrowed state")
             true

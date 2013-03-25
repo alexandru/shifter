@@ -1,8 +1,9 @@
 package shifter.s3logger
 
 import collection.JavaConverters._
-import concurrent.duration._
-import java.util.concurrent.{TimeUnit, Executors}
+import parallel.{S3ParallelLogger, AWSConfiguration, Configuration}
+import scala.concurrent.duration._
+import java.util.concurrent.Executors
 
 
 object Benchmark extends App {
@@ -63,7 +64,7 @@ object Benchmark extends App {
       |        "uid":"7d2f2918be3b0e81673d5625da451d5165258c88"
       |    }
       |}
-    """.stripMargin.replaceAll("\r?\n", " ")
+    """.stripMargin.replaceAll("\r?\n", " ") + "\n"
 
   val pool = Executors.newCachedThreadPool()
 
@@ -73,7 +74,7 @@ object Benchmark extends App {
         var idx = 0
         while (idx < count) {
           idx += 1
-          logger.write((line + "\n").getBytes("UTF-8"))
+          logger.write(line)
         }
       }
     })
@@ -110,17 +111,17 @@ object Benchmark extends App {
   val config = Configuration(
     collection = "test",
     localDirectory = "/tmp",
-    expiry = 1.minute,
-    maxSizeMB = 100,
-    aws = Some(AWSConfiguration(
+    expiry = 10.minute,
+    maxSizeMB = 10,
+    aws = AWSConfiguration(
       accessKey = access,
       secretKey = secret,
       bucketName = bucket
-    )),
-    isEnabled = true
+    ),
+    parallelism = 10
   )
 
-  val logger = new S3SynchronizedLogger(config)
+  val logger = new S3ParallelLogger(config)
 
   pool.submit(new Runnable {
     def run() {
@@ -135,18 +136,19 @@ object Benchmark extends App {
 
   // warmup
   (0 until 10).map(nr =>
-    startThread(logger, json, 10000))
+    startThread(logger, json, 30000))
     .toList
     .foreach(_.get())
 
   println("STARTING")
   val startTs = System.currentTimeMillis()
   val threads = (0 until 10).map(nr =>
-    startThread(logger, json, 30000))
+    startThread(logger, json, 1000000))
     .toList
 
   threads.foreach(th => th.get())
-  logger.rotate(forced = true)
+  val stats = logger.rotate(forced = true)
+  println("ROTATE: " + stats.toString)
 
   println("TIME: %d".format(System.currentTimeMillis()- startTs))
   println("Finished, press any key to exit...")

@@ -1,4 +1,4 @@
-package shifter.s3logger
+package shifter.s3logger.concurrent
 
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
@@ -13,7 +13,7 @@ class S3SynchronizedLoggerSuite extends FunSuite with TestHelpers {
       assert(listKeys.length === 0)
 
       for (i <- 1 to 10000)
-        s3logger.write("hello.%d\n".format(i).getBytes("UTF-8"))
+        s3logger.write("hello.%d\n".format(i))
 
       val statsFirst = s3logger.rotate(forced = false)
       assert(statsFirst.isEmpty, "Should not have uploaded: %s".format(statsFirst.toString()))

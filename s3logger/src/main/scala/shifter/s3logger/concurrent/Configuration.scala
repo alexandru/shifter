@@ -1,4 +1,4 @@
-package shifter.s3logger
+package shifter.s3logger.concurrent
 
 import concurrent.duration._
 

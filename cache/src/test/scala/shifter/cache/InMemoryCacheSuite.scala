@@ -4,7 +4,7 @@ import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import concurrent.duration._
-import shifter.concurrency._
+import shifter.concurrency.extensions._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.Some
 

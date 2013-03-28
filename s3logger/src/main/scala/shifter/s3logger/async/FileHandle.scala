@@ -1,14 +1,13 @@
 package shifter.s3logger.async
 
 import util.Try
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import concurrent.stm._
-import java.io.File
+import java.io.{IOException, File}
 import shifter.io.{AsyncFileOutputStream, AsyncBufferedOutputStream, AsyncGZIPOutputStream, AsyncOutputStream}
 import annotation.tailrec
 import concurrent.duration._
 import concurrent.ExecutionContext
 import java.nio.ByteBuffer
+import shifter.concurrency.atomic.Ref
 
 
 final class FileHandle(prefix: String, suffix: String, localDir: Option[String])(implicit ec: ExecutionContext) {
@@ -37,100 +36,105 @@ final class FileHandle(prefix: String, suffix: String, localDir: Option[String])
   }
 
   def rotate(destination: File): Boolean =
-    state.single.get match {
-      case Borrowed =>
-        rotate(destination)
+    stateRef.get match {
       case NotInitialized =>
         false
-      case Available =>
-        if (!state.single.compareAndSet(Available, Borrowed))
+
+      case state @ Available(startedAtTs, file, out) =>
+        if (!stateRef.compareAndSet(state, NotInitialized))
           rotate(destination)
-        else {
-          lock.writeLock().lock()
-          try {
+
+        else
+          rotateLock.synchronized {
             // rotate file as fast as possible
             // first close the output stream
-            val outStream = out.single.get
-            outStream.close(10.seconds)
-
-            val oldFile = file.single.get
-            oldFile.renameTo(destination)
-
-            atomic { implicit txn =>
-              file() = null
-              out() = null
-              state() = NotInitialized
-            }
-
+            out.close(1.minute)
+            file.renameTo(destination)
             true
           }
-          finally
-            lock.writeLock().unlock()
+    }
+
+  def hasWrites =
+    stateRef.get != NotInitialized
+
+  def getFileSizeMB: Long = {
+    val lastUpdate = fileSizeOpTs.get / 3000
+    if (lastUpdate == 0 || lastUpdate < System.currentTimeMillis() / 3000)
+      lastFileSize.transformAndGet { current =>
+        stateRef.get match {
+          case Available(_, file, _) =>
+            Try(file.length()).getOrElse(0L)
+          case _ =>
+            current
         }
-    }
-
-  def hasWrites = state.single.get == Available
-
-  def getFileSizeMB: Long = atomic { implicit txn =>
-    // updates once every 3 seconds
-    val lastUpdate = fileSizeOpTs() / 3000
-    if (file() != null && lastUpdate > 0 && lastUpdate < System.currentTimeMillis() / 3000) {
-      lastFileSize() = Try(file().length()).getOrElse(0L)
-      fileSizeOpTs() = System.currentTimeMillis()
-    }
-    lastFileSize()
+      }
+    else
+      lastFileSize.get
   }
 
-  def startedAt = startedAtTs.single.get
-  def lifespanInMillis = System.currentTimeMillis() - startedAtTs.single.get
+  def startedAt = stateRef.get match {
+    case Available(ts, _, _) => ts
+    case NotInitialized => 0L
+  }
+
+  def lifespanInMillis = stateRef.get match {
+    case Available(ts, _, _) => System.currentTimeMillis() - ts
+    case NotInitialized => 0L
+  }
 
   @tailrec
   private[this] def withHandler[T](cb: AsyncOutputStream => T): T =
-    state.single.get match {
-      case Borrowed =>
-        withHandler(cb)
-      case Available =>
-        lock.readLock().lock()
-        try {
-          cb(out.single.get)
+    stateRef.get match {
+      case current @ Available(_, _, out) =>
+        val result = try {
+          cb(out)
         }
-        finally {
-          lock.readLock().unlock()
+        catch {
+          case ex: Throwable => ex
         }
+
+        if (result.isInstanceOf[Throwable])
+          if (result.isInstanceOf[IOException])
+            if (stateRef.compareAndSet(current, current))
+              throw result.asInstanceOf[IOException]
+            else
+              withHandler(cb)
+          else
+            throw result.asInstanceOf[Throwable]
+        else
+          result.asInstanceOf[T]
+
       case NotInitialized =>
-        if (!state.single.compareAndSet(NotInitialized, Borrowed))
-          withHandler(cb)
-        else {
-          lock.writeLock().lock()
-          try {
+        initializeLock.synchronized {
+          if (stateRef.compareAndSet(NotInitialized, NotInitialized)) {
             val newFile = localDir match {
               case Some(dir) => File.createTempFile(prefix, suffix, new File(dir))
               case None => File.createTempFile(prefix, suffix)
             }
 
+            newFile.deleteOnExit()
+
             val newOut  = new AsyncGZIPOutputStream(
               new AsyncBufferedOutputStream(
                 new AsyncFileOutputStream(newFile)))
 
-            atomic { implicit txn =>
-              file() = newFile
-              out() = newOut
-              state() = Available
-              startedAtTs() = System.currentTimeMillis()
-            }
+            val stateTest = stateRef.compareAndSet(NotInitialized, Available(
+              startedAtTs = System.currentTimeMillis(),
+              file = newFile,
+              out = newOut
+            ))
+
+            if (!stateTest)
+              throw new IllegalStateException()
           }
-          finally
-            lock.writeLock().unlock()
-
-          withHandler(cb)
         }
-    }
-  private[this] val startedAtTs = Ref(0L)
-  private[this] val lock = new ReentrantReadWriteLock()
-  private[this] val file = Ref(null : File)
-  private[this] val out = Ref(null : AsyncOutputStream)
-  private[this] val state = Ref(NotInitialized : FileHandleState)
 
+        withHandler(cb)
+    }
+
+  private[this] val initializeLock = new AnyRef
+  private[this] val rotateLock = new AnyRef
+  private[this] val stateRef = Ref(NotInitialized : FileHandleState)
   private[this] val fileSizeOpTs = Ref(0L)
   private[this] val lastFileSize = Ref(0L)
 }

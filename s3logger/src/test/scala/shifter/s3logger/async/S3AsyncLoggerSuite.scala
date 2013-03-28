@@ -1,4 +1,4 @@
-package shifter.s3logger.concurrent
+package shifter.s3logger.async
 
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
@@ -6,9 +6,9 @@ import org.scalatest.junit.JUnitRunner
 
 
 @RunWith(classOf[JUnitRunner])
-class S3SynchronizedLoggerSuite extends FunSuite with TestHelpers {
+class S3AsyncLoggerSuite extends FunSuite with TestHelpers {
   test("log 10000 items, single thread, forced rotate") {
-    withSynchronizedLogger(60 * 60) { s3logger =>
+    withAsyncLogger(60 * 60) { s3logger =>
       deleteAllKeys()
       assert(listKeys.length === 0)
 
@@ -46,7 +46,7 @@ class S3SynchronizedLoggerSuite extends FunSuite with TestHelpers {
   }
 
   test("log 30000 items, multi-threaded, non-forced rotate, twice") {
-    withSynchronizedLogger(1) { s3logger =>
+    withAsyncLogger(1) { s3logger =>
       assert(listKeys.length === 0)
 
       (1 to 3).map(nr => startThread(s3logger, "hello" + nr.toString, 10000))

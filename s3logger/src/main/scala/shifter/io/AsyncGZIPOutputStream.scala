@@ -16,35 +16,42 @@ class AsyncGZIPOutputStream(out: AsyncOutputStream, bufferSize: Int = 1.megabyte
   require(compressionLevel == -1 || (compressionLevel >= 0 && compressionLevel <= 9),
     "compressionLevel must be a value between 0 and 9, or -1")
 
-  override def write(b: Array[Byte], off: Int, len: Int): Future[Int] = synchronized {
-    if ((off | len | (off + len) | (b.length - (off + len))) < 0)
-      throw new IndexOutOfBoundsException
-    if (isClosedRef)
-      throw new ClosedChannelException
-    if (deflater.finished())
-      throw new IOException("write beyond end of stream")
+  override def write(b: Array[Byte], off: Int, len: Int): Future[Int] = {
+    val toWrite = synchronized {
+      if ((off | len | (off + len) | (b.length - (off + len))) < 0)
+        throw new IndexOutOfBoundsException
+      if (isClosedRef)
+        throw new ClosedChannelException
+      if (deflater.finished())
+        throw new IOException("write beyond end of stream")
 
-    var arrayBuffer: ByteBuffer = null
+      var arrayBuffer: ByteBuffer = null
 
-    if (!headerWritten) {
-      arrayBuffer = putIntoBuffer(arrayBuffer, GZIP_HEADER, 0, GZIP_HEADER.length)
-      headerWritten = true
+      if (!headerWritten) {
+        arrayBuffer = putIntoBuffer(arrayBuffer, GZIP_HEADER, 0, GZIP_HEADER.length)
+        headerWritten = true
+      }
+
+      crc.update(b, off, len)
+      deflater.setInput(b, off, len)
+
+      while (!deflater.needsInput()) {
+        val flush = if (syncFlush) Deflater.SYNC_FLUSH else Deflater.NO_FLUSH
+        val compressedLen = deflater.deflate(buffer, 0, buffer.length, flush)
+        if (compressedLen > 0)
+          arrayBuffer = putIntoBuffer(arrayBuffer, buffer, 0, compressedLen)
+      }
+
+      if (arrayBuffer != null && arrayBuffer.position() > 0) {
+        arrayBuffer.flip()
+        arrayBuffer.asReadOnlyBuffer()
+      }
+      else
+        null
     }
 
-    crc.update(b, off, len)
-    deflater.setInput(b, off, len)
-
-    while (!deflater.needsInput()) {
-      val flush = if (syncFlush) Deflater.SYNC_FLUSH else Deflater.NO_FLUSH
-      val compressedLen = deflater.deflate(buffer, 0, buffer.length, flush)
-      if (compressedLen > 0)
-        arrayBuffer = putIntoBuffer(arrayBuffer, buffer, 0, compressedLen)
-    }
-
-    if (arrayBuffer != null && arrayBuffer.position() > 0) {
-      arrayBuffer.flip()
-      out.write(arrayBuffer)
-    }
+    if (toWrite != null)
+      out.write(toWrite)
     else
       Future.successful(0)
   }
@@ -69,31 +76,66 @@ class AsyncGZIPOutputStream(out: AsyncOutputStream, bufferSize: Int = 1.megabyte
   def isClosed: Boolean =
     synchronized(isClosedRef)
 
-  private[this] def asyncFinish(): Future[Unit] = synchronized {
-    if (!deflater.finished())
-      flushedBuffer(finish = true) match {
-        case Some(byteBuffer) if byteBuffer.limit() > 0 =>
-          finishPromise.completeWith(out.write(byteBuffer).flatMap(_ => out.flush()))
-        case _ =>
-          finishPromise.completeWith(out.flush())
+  def asyncClose(): Future[Unit] = {
+    val (toWrite, isDeflaterFinished, isAlreadyClosed) =
+      synchronized {
+        if (isClosedRef != true) {
+          isClosedRef = true
+
+          // fetching buffer to flush, if anything is left
+          if (!deflater.finished())
+            flushedBuffer(finish = true) match {
+              case Some(byteBuffer) if byteBuffer.limit() > 0 =>
+                (byteBuffer, false, false)
+              case _ =>
+                (null, false, false)
+            }
+          else
+            (null, true, false)
+        }
+        else
+          (null, true, true)
       }
 
-    finishPromise.future
+    if (!isAlreadyClosed)
+      if (!isDeflaterFinished)
+        if (toWrite != null)
+          closePromise.tryCompleteWith(
+            // writing buffer left
+            out.write(toWrite).flatMap(_ =>
+              // then do a flush (just in case)
+              out.flush()).flatMap(_ =>
+              // then signal close
+              out.asyncClose()))
+        else
+          closePromise.tryCompleteWith(
+            // nothing left to write, so first do a flush
+            out.flush().flatMap(_ =>
+              // then close
+              out.asyncClose()))
+
+      else
+        // deflater is already finished, just close
+        closePromise.tryCompleteWith(out.asyncClose())
+
+    closePromise.future
   }
 
-  def asyncClose(): Future[Unit] = synchronized {
-    isClosedRef = true
-    asyncFinish().flatMap(_ => out.asyncClose())
-  }
+  def flush(): Future[Unit] = {
+    val toWrite = synchronized {
+      if (!deflater.finished())
+        flushedBuffer(finish = false) match {
+          case Some(byteBuffer) if byteBuffer.limit() > 0 =>
+            byteBuffer
+          case _ =>
+            null
+        }
+      else
+        null
+    }
 
-  def flush(): Future[Unit] = synchronized {
-    if (!deflater.finished())
-      flushedBuffer(finish = false) match {
-        case Some(byteBuffer) if byteBuffer.limit() > 0 =>
-          out.write(byteBuffer).flatMap(r => out.flush())
-        case _ =>
-          out.flush()
-      }
+    if (toWrite != null)
+      out.write(toWrite).flatMap(r => out.flush())
     else
       out.flush()
   }
@@ -134,10 +176,12 @@ class AsyncGZIPOutputStream(out: AsyncOutputStream, bufferSize: Int = 1.megabyte
       deflater.reset()
     }
 
-    if (byteBuffer != null)
+    if (byteBuffer != null) {
       byteBuffer.flip()
-
-    Option(byteBuffer)
+      Some(byteBuffer.asReadOnlyBuffer())
+    }
+    else
+      None
   }
 
   private[this] def putIntoBuffer(buffer: ByteBuffer, b: Array[Byte], offset: Int, length: Int): ByteBuffer = {
@@ -206,5 +250,5 @@ class AsyncGZIPOutputStream(out: AsyncOutputStream, bufferSize: Int = 1.megabyte
   private[this] var headerWritten = false
   private[this] val buffer = Array.fill(bufferSize + 1024)(ZERO)
   private[this] val emptyArray = Array.empty[Byte]
-  private[this] val finishPromise = Promise[Unit]()
+  private[this] val closePromise = Promise[Unit]()
 }

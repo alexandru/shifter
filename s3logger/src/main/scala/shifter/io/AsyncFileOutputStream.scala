@@ -11,15 +11,11 @@ import scala.util._
 import concurrent.stm._
 
 
-class AsyncFileOutputStream(file: File, ordered: Boolean = false)(implicit val ec: ExecutionContext)
+class AsyncFileOutputStream(file: File)(implicit val ec: ExecutionContext)
     extends AbstractAsyncOutputStream {
 
   def write(bytes: ByteBuffer): Future[Int] = {
-    val writePosition = if (ordered)
-      synchronized(registerNewJob(bytes))
-    else
-      registerNewJob(bytes)
-
+    val writePosition = registerNewJob(bytes)
     asyncWritePromise(bytes, writePosition).future
   }
 

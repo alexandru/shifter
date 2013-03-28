@@ -8,13 +8,31 @@ import shifter.io.{AsyncFileOutputStream, AsyncBufferedOutputStream, AsyncGZIPOu
 import annotation.tailrec
 import concurrent.duration._
 import concurrent.ExecutionContext
+import java.nio.ByteBuffer
 
 
 final class FileHandle(prefix: String, suffix: String, localDir: Option[String])(implicit ec: ExecutionContext) {
-
-  def write(content: String) {
+  def write(content: String, charset: String = "UTF-8") {
     withHandler { out =>
-      out.write(content.getBytes("UTF-8"))
+      out.write(content.getBytes(charset))
+    }
+  }
+
+  def write(b: Array[Byte]) {
+    withHandler { out =>
+      out.write(b)
+    }
+  }
+
+  def write(b: Array[Byte], off: Int, len: Int) {
+    withHandler { out =>
+      out.write(b, off, len)
+    }
+  }
+
+  def write(b: ByteBuffer) {
+    withHandler { out =>
+      out.write(b)
     }
   }
 

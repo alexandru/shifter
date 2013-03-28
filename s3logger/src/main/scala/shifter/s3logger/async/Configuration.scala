@@ -1,4 +1,4 @@
-package shifter.s3logger.concurrent
+package shifter.s3logger.async
 
 import concurrent.duration._
 
@@ -7,8 +7,7 @@ case class Configuration(
   localDirectory: String,
   expiry: FiniteDuration = 30.minutes,
   maxSizeMB: Int = 1000,
-  aws: Option[AWSConfiguration] = None,
-  isEnabled: Boolean = false
+  aws: AWSConfiguration
 )
 
 case class AWSConfiguration(

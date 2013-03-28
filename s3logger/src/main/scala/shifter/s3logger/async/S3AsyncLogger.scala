@@ -9,11 +9,25 @@ import com.amazonaws.services.s3.AmazonS3Client
 import com.amazonaws.auth.BasicAWSCredentials
 import util.Try
 import com.amazonaws.{AmazonServiceException, AmazonClientException}
+import java.nio.ByteBuffer
 
 
 class S3AsyncLogger(config: Configuration)(implicit ec: ExecutionContext) extends S3Logger {
-  def write(content: String) {
-    fileHandle.write(content)
+
+  def write(b: Array[Byte]) {
+    fileHandle.write(b)
+  }
+
+  def write(b: Array[Byte], off: Int, len: Int) {
+    fileHandle.write(b, off, len)
+  }
+
+  def write(b: ByteBuffer) {
+    fileHandle.write(b)
+  }
+
+  def write(content: String, charset: String = "UTF-8") {
+    fileHandle.write(content, charset)
   }
 
   def rotate(forced: Boolean): Seq[UploadedFileInfo] = {

@@ -25,7 +25,7 @@ The project is made of several smaller projects, that can be used independently:
 * **shifter-migrations** - a simple system for dealing with
   migrations, like database migrations, though usage isn't
   restricted to JDBC databases at all
-* **shifter-s3logger* - high performance logging in Amazon S3, with local buffering based on async I/O by means of [AsynchronousFileChannel](http://openjdk.java.net/projects/nio/javadoc/java/nio/channels/AsynchronousFileChannel.html)
+* **shifter-s3logger** - high performance logging in Amazon S3, with local buffering based on async I/O by means of [AsynchronousFileChannel](http://openjdk.java.net/projects/nio/javadoc/java/nio/channels/AsynchronousFileChannel.html)
 * **shifter-cache** - wrapper around
   [SpyMemcached](http://code.google.com/p/spymemcached/) for working
   with
@@ -83,11 +83,11 @@ resolvers ++= Seq(
 Specify the dependency for individual subprojects:
 
 ```scala
-dependencies += "shifter" %% "shifter-cache" % "0.3.56-SNAPSHOT"
+dependencies += "shifter" %% "shifter-cache" % "0.3.58-SNAPSHOT"
 ```
 
 Or for the whole project, pulling in all required dependencies:
 
 ```scala
-dependencies += "shifter" %% "shifter" % "0.3.56-SNAPSHOT"
+dependencies += "shifter" %% "shifter" % "0.3.58-SNAPSHOT"
 ```

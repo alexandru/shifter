@@ -1,4 +1,4 @@
-package shifter.s3logger.concurrent
+package shifter.s3logger.async
 
 import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.s3.AmazonS3Client
@@ -9,6 +9,7 @@ import util.Random
 import java.util.zip.GZIPInputStream
 import java.util.concurrent.{ThreadFactory, Executors}
 import shifter.s3logger.S3Logger
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait TestHelpers {
   val executor = Executors.newCachedThreadPool(new ThreadFactory {
@@ -131,7 +132,7 @@ trait TestHelpers {
   }
 
 
-  def withSynchronizedLogger[T](intervalSecs: Int)(cb: S3Logger => T): T = {
+  def withAsyncLogger[T](intervalSecs: Int)(cb: S3Logger => T): T = {
     val (access, secret, bucket) = getCredentials
     deleteAllKeys()
 
@@ -140,15 +141,14 @@ trait TestHelpers {
       localDirectory = "/tmp",
       expiry = intervalSecs.seconds,
       maxSizeMB = 100,
-      aws = Some(AWSConfiguration(
+      aws = AWSConfiguration(
         accessKey = access,
         secretKey = secret,
         bucketName = bucket
-      )),
-      isEnabled = true
+      )
     )
 
-    val logger = new S3SynchronizedLogger(config)
+    val logger = new S3AsyncLogger(config)
 
     try {
       cb(logger)

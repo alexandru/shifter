@@ -4,6 +4,7 @@ import collection.immutable.TreeMap
 import java.util.concurrent.atomic.{AtomicLong, AtomicReference}
 import annotation.tailrec
 import scala.concurrent.ExecutionContext
+import util.control.NonFatal
 
 
 /**
@@ -83,9 +84,8 @@ object scheduler {
                   runnable.apply()
                 }
                 catch {
-                  case ex: Throwable =>
+                  case NonFatal(ex) =>
                     context.reportFailure(ex)
-                    throw ex
                 }
               }
             })

@@ -1,8 +1,9 @@
-package shifter.concurrency
+package shifter.concurrency.internals
 
 import concurrent.{ExecutionContext, Future, Promise}
 import concurrent.duration.FiniteDuration
 import util.Try
+import shifter.concurrency.scheduler
 
 trait PromiseExtensions[A] extends Any {
   val promise: Promise[A]

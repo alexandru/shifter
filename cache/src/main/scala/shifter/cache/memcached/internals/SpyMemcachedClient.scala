@@ -10,7 +10,7 @@ import scala.util.{Failure, Success}
 import concurrent.duration._
 import shifter.cache.UnhandledStatusException
 import scala.Some
-import shifter.concurrency._
+import shifter.concurrency.extensions._
 
 
 class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSocketAddress])

@@ -28,7 +28,8 @@ object ShifterBuild extends Build {
       scalacOptions in ThisBuild ++= Seq(
         "-unchecked", "-deprecation", "-feature",
         "-language:existentials",
-        "-language:implicitConversions"
+        "-language:implicitConversions",
+        "-target:jvm-1.7"
       ),
 
       licenses in ThisBuild := Seq("BSD-style" -> url("http://www.opensource.org/licenses/bsd-license.php")),

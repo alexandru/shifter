@@ -1,8 +1,9 @@
-package shifter.concurrency
+package shifter.concurrency.internals
 
 import concurrent.{Promise, Await, ExecutionContext, Future}
 import util.{Failure, Success, Try}
 import concurrent.duration.{FiniteDuration, Duration}
+import shifter.concurrency.scheduler
 
 trait FutureExtensions[A] extends Any {
   val future: Future[A]

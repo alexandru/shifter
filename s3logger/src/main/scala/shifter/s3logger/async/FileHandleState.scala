@@ -1,4 +1,4 @@
-package shifter.s3logger.parallel
+package shifter.s3logger.async
 
 sealed trait FileHandleState
 case object NotInitialized extends FileHandleState

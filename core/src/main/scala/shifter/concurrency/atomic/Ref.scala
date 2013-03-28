@@ -98,6 +98,6 @@ object Ref {
   def apply[T](value: T) =
     new Ref[T](value)
 
-  def unnapply[T](ref: Ref[T]): Option[T] =
+  def unapply[T](ref: Ref[T]): Option[T] =
     Some(ref.get)
 }

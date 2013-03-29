@@ -10,7 +10,7 @@ import java.nio.ByteBuffer
 import shifter.concurrency.atomic.Ref
 
 
-final class FileHandle(prefix: String, suffix: String, localDir: Option[String])(implicit ec: ExecutionContext) {
+final class FileHandle(prefix: String, suffix: String, localDir: Option[String], createStreamCB: Option[File => AsyncOutputStream] = None)(implicit ec: ExecutionContext) {
   def write(content: String, charset: String = "UTF-8") {
     withHandler { out =>
       out.write(content.getBytes(charset))
@@ -114,9 +114,13 @@ final class FileHandle(prefix: String, suffix: String, localDir: Option[String])
 
             newFile.deleteOnExit()
 
-            val newOut  = new AsyncGZIPOutputStream(
-              new AsyncBufferedOutputStream(
-                new AsyncFileOutputStream(newFile)))
+            val newOut =
+              if (createStreamCB.isDefined)
+                createStreamCB.get.apply(newFile)
+              else
+                new AsyncGZIPOutputStream(
+                  new AsyncBufferedOutputStream(
+                    new AsyncFileOutputStream(newFile)))
 
             val stateTest = stateRef.compareAndSet(NotInitialized, Available(
               startedAtTs = System.currentTimeMillis(),

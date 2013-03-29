@@ -63,7 +63,6 @@ class AsyncGZIPOutputStream(out: AsyncOutputStream, bufferSize: Int = 1.megabyte
       write(bytes.array(), offset, length)
     }
     else if (bytes.limit() > bytes.position()) {
-      println("allocate array")
       // copy array
       val length = bytes.limit() - bytes.position()
       val dst = Array.fill(length)(ZERO)
@@ -240,6 +239,7 @@ class AsyncGZIPOutputStream(out: AsyncOutputStream, bufferSize: Int = 1.megabyte
     obj.reset()
     obj
   }
+
   private[this] val deflater = {
     val obj = new Deflater(Deflater.DEFAULT_COMPRESSION, true)
     obj.setLevel(compressionLevel)

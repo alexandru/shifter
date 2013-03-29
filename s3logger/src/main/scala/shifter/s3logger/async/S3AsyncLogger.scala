@@ -10,6 +10,7 @@ import com.amazonaws.auth.BasicAWSCredentials
 import util.Try
 import com.amazonaws.{AmazonServiceException, AmazonClientException}
 import java.nio.ByteBuffer
+import shifter.io.{AsyncFileOutputStream, AsyncGZIPOutputStream, AsyncBufferedOutputStream, AsyncOutputStream}
 
 
 class S3AsyncLogger(config: Configuration)(implicit ec: ExecutionContext) extends S3Logger {
@@ -29,6 +30,11 @@ class S3AsyncLogger(config: Configuration)(implicit ec: ExecutionContext) extend
   def write(content: String, charset: String = "UTF-8") {
     fileHandle.write(content, charset)
   }
+
+  protected def createStreamFromFile(file: File): AsyncOutputStream =
+    new AsyncGZIPOutputStream(
+      new AsyncBufferedOutputStream(
+        new AsyncFileOutputStream(file)))
 
   def rotate(forced: Boolean): Seq[UploadedFileInfo] = {
     val currentSizeMB = fileHandle.getFileSizeMB
@@ -114,5 +120,10 @@ class S3AsyncLogger(config: Configuration)(implicit ec: ExecutionContext) extend
   private[this] val localDirectory = new File(config.localDirectory)
   private[this] val rotateMillis = config.expiry.toMillis
   private[this] val secret = "90as9fhuaiwekfa"
-  private[this] val fileHandle = new FileHandle(config.collection + "-", ".log.gz", Some(config.localDirectory))
+
+  private[this] val fileHandle = new FileHandle(
+    config.collection + "-", ".log.gz",
+    Some(config.localDirectory),
+    Some(createStreamFromFile)
+  )
 }

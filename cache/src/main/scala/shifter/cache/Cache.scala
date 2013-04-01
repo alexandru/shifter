@@ -2,6 +2,7 @@ package shifter.cache
 
 import concurrent._
 import duration._
+import inmemory.InMemoryCache
 import memcached.{Memcached, Configuration}
 
 trait Cache {

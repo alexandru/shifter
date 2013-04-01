@@ -83,11 +83,11 @@ resolvers ++= Seq(
 Specify the dependency for individual subprojects:
 
 ```scala
-dependencies += "shifter" %% "shifter-cache" % "0.3.64-SNAPSHOT"
+dependencies += "shifter" %% "shifter-cache" % "0.3.65-SNAPSHOT"
 ```
 
 Or for the whole project, pulling in all required dependencies:
 
 ```scala
-dependencies += "shifter" %% "shifter" % "0.3.64-SNAPSHOT"
+dependencies += "shifter" %% "shifter" % "0.3.65-SNAPSHOT"
 ```

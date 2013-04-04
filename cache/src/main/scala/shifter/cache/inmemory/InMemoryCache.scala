@@ -1,10 +1,9 @@
 package shifter.cache.inmemory
 
-import shifter.cache.{KeyNotInCacheException, Cache}
+import shifter.cache.{CacheException, Cache}
 import concurrent.duration.Duration
 import concurrent.{Future, ExecutionContext}
 import shifter.concurrency.atomic.Ref
-import collection.SortedMap
 import annotation.tailrec
 
 
@@ -12,116 +11,103 @@ import annotation.tailrec
  * Simple and dumb implementation of an in-memory cache.
  */
 final class InMemoryCache(maxElems: Int = 100) extends Cache {
-
-  def get[T](key: String)(implicit ec: ExecutionContext): Future[Option[T]] = {
-    val result = cache.get.get(CacheKey(key)).flatMap {
-      case value if !value.key.isExpired() =>
+  override def get[T](key: String)(implicit ec: ExecutionContext): Option[T] =
+    cacheRef.get.get(key).flatMap {
+      case value if !isExpired(value) =>
         Some(value.value.asInstanceOf[T])
       case _ =>
         None
     }
 
-    Future.successful(result)
-  }
+  def asyncGet[T](key: String)(implicit ec: ExecutionContext): Future[Option[T]] =
+    Future.successful(get(key))
 
-  def getOrElse[T](key: String, default: => T)(implicit ec: ExecutionContext): Future[T] =
-    get(key).map(_.getOrElse(default))
 
-  def apply[T](key: String)(implicit ec: ExecutionContext): Future[T] =
-    get[T](key).flatMap {
-      case Some(value) =>
-        Future.successful(value)
-      case _ =>
-        Future { throw new KeyNotInCacheException("inmemory." + key) }
-    }
-
-  def add[T](key: String, value: T, exp: Duration)(implicit ec: ExecutionContext): Future[Boolean] =
+  override def add[T](key: String, value: T, exp: Duration)(implicit ec: ExecutionContext): Boolean =
     if (value == null)
-      Future.successful(false)
+      false
 
-    else {
-      val updated = cache.transformAndExtract { map =>
-        val cacheKey = CacheKey(key)
-        val existingValue = map.get(cacheKey).filterNot(_.key.isExpired())
+    else
+      cacheRef.transformAndExtract { map =>
+        val existingValue = map.get(key).filterNot(v => isExpired(v))
 
         existingValue match {
           case Some(_) =>
             (map, false)
           case None =>
-            val limitedMap = makeRoom(map)
-            val newKey = CacheKey(key, exp)
-            val newMap = limitedMap.updated(newKey, CacheValue(newKey, value))
+            val newMap = makeRoom(map).updated(key, CacheValue(value, exp))
             (newMap, true)
         }
       }
 
-      Future.successful(updated)
-    }
+  def asyncAdd[T](key: String, value: T, exp: Duration)(implicit ec: ExecutionContext): Future[Boolean] =
+    Future.successful(add(key, value, exp))
 
-  def set[T](key: String, value: T, exp: Duration)(implicit ec: ExecutionContext): Future[Unit] = {
+
+  override def set[T](key: String, value: T, exp: Duration)(implicit ec: ExecutionContext) {
     if (value != null)
-      cache.transform { map =>
-        val cacheKey = CacheKey(key)
-        val existingValue = map.get(cacheKey).filterNot(_.key.isExpired())
+      cacheRef.transform { map =>
+        val existingValue = map.get(key).filterNot(v => isExpired(v))
 
         existingValue match {
           case Some(v) =>
-            val newKey = CacheKey(key, exp)
-            map.updated(newKey, CacheValue(newKey, value))
+            map.updated(key, CacheValue(value, exp))
           case None =>
             val limitedMap = makeRoom(map)
-            val newKey = CacheKey(key, exp)
-            val newMap = limitedMap.updated(newKey, CacheValue(newKey, value))
+            val newMap = limitedMap.updated(key, CacheValue(value, exp))
             newMap
         }
       }
+  }
 
+  def asyncSet[T](key: String, value: T, exp: Duration)(implicit ec: ExecutionContext): Future[Unit] = {
+    set(key, value, exp)
     Future.successful(())
   }
 
 
-  def delete(key: String)(implicit ec: ExecutionContext): Future[Boolean] = {
-    val cacheKey = CacheKey(key)
-    val oldMap = cache.getAndTransform { map =>
-      map - cacheKey
+  override def delete(key: String)(implicit ec: ExecutionContext): Boolean = {
+    val oldMap = cacheRef.getAndTransform { map =>
+      map - key
     }
-    Future.successful(oldMap.contains(cacheKey))
+    oldMap.contains(key) && !isExpired(oldMap(key))
   }
 
-  def getBulk(keys: Traversable[String])(implicit ec: ExecutionContext): Future[Map[String, Any]] = {
-    val map = cache.get
+  def asyncDelete(key: String)(implicit ec: ExecutionContext): Future[Boolean] = {
+    Future.successful(delete(key))
+  }
+
+  override def bulk(keys: Traversable[String])(implicit ec: ExecutionContext): Map[String, Any] = {
+    val map = cacheRef.get
     val currentTS = System.currentTimeMillis()
     val results = keys.map { k =>
-      val cacheKey = CacheKey(k)
-      map.get(cacheKey).collect {
-        case v if !v.key.isExpired(currentTS) =>
+      map.get(k).collect {
+        case v if !isExpired(v, currentTS) =>
           (k, v.value)
       }
     }
 
-    Future.successful(results.flatten.toMap)
+    results.flatten.toMap
   }
 
+  def asyncBulk(keys: Traversable[String])(implicit ec: ExecutionContext): Future[Map[String, Any]] =
+    Future.successful(bulk(keys))
 
   private[this] def compareAndSet[T](key: String, expecting: Option[T], newValue: T, exp: Duration)(implicit ec: ExecutionContext): Boolean = {
     val currentTS = System.currentTimeMillis()
 
-    cache.transformAndExtract { map =>
-      val cacheKey = CacheKey(key)
-
-      map.get(cacheKey) match {
-        case current @ Some(v) if !v.key.isExpired(currentTS) =>
+    cacheRef.transformAndExtract { map =>
+      map.get(key) match {
+        case current @ Some(v) if !isExpired(v, currentTS) =>
           if (current.map(_.value) == expecting)  {
-            val newKey = CacheKey(key, exp)
-            (map.updated(newKey, CacheValue(newKey, newValue)), true)
+            (map.updated(key, CacheValue(newValue, exp)), true)
           }
           else
             (map, false)
         case _ =>
           if (expecting == None) {
-            val newKey = CacheKey(key, exp)
             val limited = makeRoom(map)
-            (limited.updated(newKey, CacheValue(newKey, newValue)), true)
+            (limited.updated(key, CacheValue(newValue, exp)), true)
           }
           else
             (map, false)
@@ -132,43 +118,55 @@ final class InMemoryCache(maxElems: Int = 100) extends Cache {
   def cas[T](key: String, expecting: Option[T], newValue: T, exp: Duration)(implicit ec: ExecutionContext): Future[Boolean] =
     Future.successful(compareAndSet(key, expecting, newValue, exp))
 
-  @tailrec
   def transformAndGet[T](key: String, exp: Duration)(cb: (Option[T]) => T)(implicit ec: ExecutionContext): Future[T] = {
-    val current = cache.get.get(CacheKey(key)).collect { case v if !v.key.isExpired() => v.value.asInstanceOf[T] }
-    val update = cb(current)
+    @tailrec
+    def loop: T = {
+      val current = cacheRef.get.get(key).collect { case v if !isExpired(v) => v.value.asInstanceOf[T] }
+      val update = cb(current)
 
-    if (!compareAndSet(key, current, update, exp))
-      transformAndGet(key, exp)(cb)
-    else
-      Future.successful(update)
-  }
-
-  @tailrec
-  def getAndTransform[T](key: String, exp: Duration)(cb: (Option[T]) => T)(implicit ec: ExecutionContext): Future[Option[T]] = {
-    val current = cache.get.get(CacheKey(key)).collect { case v if !v.key.isExpired() => v.value.asInstanceOf[T] }
-    val update = cb(current)
-
-    if (!compareAndSet(key, current, update, exp))
-      getAndTransform(key, exp)(cb)
-    else
-      Future.successful(current)
-  }
-
-  def shutdown() {}
-
-  private[this] def makeRoom(map: SortedMap[CacheKey, CacheValue]): SortedMap[CacheKey, CacheValue] = {
-    if (map.size >= maxElems) {
-      val currentTS = System.currentTimeMillis()
-      val notExpired = map.dropWhile(_._1.isExpired(currentTS))
-      val withinLimit = if (notExpired.size >= maxElems)
-        notExpired.drop(notExpired.size - maxElems + 1)
+      if (!compareAndSet(key, current, update, exp))
+        loop
       else
-        notExpired
-      withinLimit
+        update
     }
+
+    Future(loop)
+  }
+
+  def getAndTransform[T](key: String, exp: Duration)(cb: (Option[T]) => T)(implicit ec: ExecutionContext): Future[Option[T]] = {
+    @tailrec
+    def loop: Option[T] = {
+      val current = cacheRef.get.get(key).collect { case v if !isExpired(v) => v.value.asInstanceOf[T] }
+      val update = cb(current)
+
+      if (!compareAndSet(key, current, update, exp))
+        loop
+      else
+        current
+    }
+
+    Future(loop)
+  }
+
+  def shutdown() {
+    cacheRef.set(Map.empty)
+  }
+
+  private[this] def makeRoom(map: Map[String, CacheValue]): Map[String, CacheValue] = {
+    val currentTS = System.currentTimeMillis()
+    val newMap = if (map.size >= maxElems)
+      map.filterNot { case (key, value) => isExpired(value, currentTS) }
     else
       map
+
+    if (newMap.size < maxElems)
+      newMap
+    else
+      throw new CacheException("InMemoryCache cannot hold any more elements")
   }
 
-  val cache = Ref(SortedMap.empty[CacheKey, CacheValue])
+  private[this] def isExpired(value: CacheValue, currentTS: Long = System.currentTimeMillis()) =
+    value.expiresTS <= currentTS
+
+  private[this] val cacheRef = Ref(Map.empty[String, CacheValue])
 }

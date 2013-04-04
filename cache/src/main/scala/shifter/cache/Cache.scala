@@ -4,6 +4,7 @@ import concurrent._
 import duration._
 import inmemory.InMemoryCache
 import memcached.{Memcached, Configuration}
+import shifter.concurrency.extensions._
 
 trait Cache {
   protected def defaultExpiry = 10.minutes
@@ -19,45 +20,49 @@ trait Cache {
    *
    * @return either true, in case the value was set, or false otherwise
    */
-  def add[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Boolean]
+  def asyncAdd[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Boolean]
+
+  def add[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Boolean =
+    asyncAdd(key, value, exp).await(Duration.Inf)
 
   /**
    * Sets a (key, value) in the cache store.
    *
    * The expiry time can be Duration.Inf (infinite duration).
    */
-  def set[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Unit]
+  def asyncSet[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Unit]
+
+  def set[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext) {
+    asyncSet(key, value, exp).await(Duration.Inf)
+  }
 
   /**
    * Deletes a key from the cache store.
    *
    * @return true if a key was deleted or false if there was nothing there to delete
    */
-  def delete(key: String)(implicit ec: ExecutionContext): Future[Boolean]
+  def asyncDelete(key: String)(implicit ec: ExecutionContext): Future[Boolean]
 
-  /**
-   * Fetches a value from the cache store.
-   *
-   * @throws KeyNotInCacheException
-   */
-  def apply[T](key: String)(implicit ec: ExecutionContext): Future[T]
+  def delete(key: String)(implicit ec: ExecutionContext) =
+    asyncDelete(key).await(Duration.Inf)
 
   /**
    * Fetches a value from the cache store.
    *
    * @return Some(value) in case the key is available, or None otherwise (doesn't throw exception on key missing)
    */
-  def get[T](key: String)(implicit ec: ExecutionContext): Future[Option[T]]
+  def asyncGet[T](key: String)(implicit ec: ExecutionContext): Future[Option[T]]
 
-  /**
-   * Fetches a value from the cache store, or a default in case the key is missing.
-   */
-  def getOrElse[T](key: String, default: => T)(implicit ec: ExecutionContext): Future[T]
+  def get[T](key: String)(implicit ec: ExecutionContext): Option[T] =
+    asyncGet[T](key).await(Duration.Inf)
 
   /**
    * Fetches several keys from the cache store at once, returning a map.
    */
-  def getBulk(keys: Traversable[String])(implicit ec: ExecutionContext): Future[Map[String, Any]]
+  def asyncBulk(keys: Traversable[String])(implicit ec: ExecutionContext): Future[Map[String, Any]]
+
+  def bulk(keys: Traversable[String])(implicit ec: ExecutionContext): Map[String, Any] =
+    asyncBulk(keys).await(Duration.Inf)
 
   /**
    * Compare and set.

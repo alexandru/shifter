@@ -12,97 +12,89 @@ import scala.Some
 
 @RunWith(classOf[JUnitRunner])
 class InMemoryCacheSuite extends FunSuite {
-  implicit val timeout = 5.second
+  implicit val timeout = 200.millis
 
   test("add") {
     withCache("add") { cache =>
-      val op1 = cache.add("hello", Value("world"), 5.seconds).await
+      val op1 = cache.asyncAdd("hello", Value("world"), 5.seconds).await
       assert(op1 === true)
 
-      val stored = cache.get[Value]("hello").await
+      val stored = cache.asyncGet[Value]("hello").await
       assert(stored === Some(Value("world")))
 
-      val op2 = cache.add("hello", Value("changed"), 5.seconds).await
+      val op2 = cache.asyncAdd("hello", Value("changed"), 5.seconds).await
       assert(op2 === false)
 
-      val changed = cache.get[Value]("hello").await
+      val changed = cache.asyncGet[Value]("hello").await
       assert(changed === Some(Value("world")))
     }
   }
 
+
   test("add-null") {
     withCache("add-null") { cache =>
-      val op1 = cache.add("hello", null, 5.seconds).await
+      val op1 = cache.asyncAdd("hello", null, 5.seconds).await
       assert(op1 === false)
 
-      val stored = cache.get[Value]("hello").await
+      val stored = cache.asyncGet[Value]("hello").await
       assert(stored === None)
     }
   }
 
   test("get") {
     withCache("get") { cache =>
-      val value = cache.get[Value]("missing").await
+      val value = cache.asyncGet[Value]("missing").await
       assert(value === None)
-
-      try {
-        cache[Value]("missingValue").await
-        assert(condition = false, "apply() for missing value should yield exception")
-      }
-      catch {
-        case ex: KeyNotInCacheException =>
-          assert(ex.getMessage === "inmemory.missingValue")
-      }
     }
   }
 
   test("set") {
     withCache("set") { cache =>
-      assert(cache.get[Value]("hello").await === None)
+      assert(cache.asyncGet[Value]("hello").await === None)
 
-      cache.set("hello", Value("world"), 3.seconds).await
-      assert(cache[Value]("hello").await === Value("world"))
+      cache.asyncSet("hello", Value("world"), 3.seconds).await
+      assert(cache.get[Value]("hello") === Some(Value("world")))
 
-      cache.set("hello", Value("changed"), 3.seconds).await
-      assert(cache[Value]("hello").await === Value("changed"))
+      cache.asyncSet("hello", Value("changed"), 3.seconds).await
+      assert(cache.get[Value]("hello") === Some(Value("changed")))
 
       Thread.sleep(3100)
 
-      assert(cache.get[Value]("hello").await === None)
+      assert(cache.asyncGet[Value]("hello").await === None)
     }
   }
 
   test("set-null") {
     withCache("set-null") { cache =>
-      val op1 = cache.add("hello", null, 5.seconds).await
+      val op1 = cache.asyncAdd("hello", null, 5.seconds).await
       assert(op1 === false)
 
-      val stored = cache.get[Value]("hello").await
+      val stored = cache.asyncGet[Value]("hello").await
       assert(stored === None)
     }
   }
 
   test("delete") {
     withCache("delete") { cache =>
-      cache.delete("hello").await
-      assert(cache.get[Value]("hello").await === None)
+      cache.asyncDelete("hello").await
+      assert(cache.asyncGet[Value]("hello").await === None)
 
-      cache.set[Value]("hello", Value("world")).await
-      assert(cache[Value]("hello").await === Value("world"))
+      cache.asyncSet[Value]("hello", Value("world")).await
+      assert(cache.get[Value]("hello") === Some(Value("world")))
 
-      assert(cache.delete("hello").await === true)
-      assert(cache.get[Value]("hello").await === None)
+      assert(cache.asyncDelete("hello").await === true)
+      assert(cache.asyncGet[Value]("hello").await === None)
 
-      assert(cache.delete("hello").await === false)
+      assert(cache.asyncDelete("hello").await === false)
     }
   }
 
   test("bulkGet") {
     withCache("bulkGet") { cache =>
-      cache.set("key1", Value("value1")).await
-      cache.set("key2", Value("value2")).await
+      cache.asyncSet("key1", Value("value1")).await
+      cache.asyncSet("key2", Value("value2")).await
 
-      val values = cache.getBulk(Seq("key1", "key2", "missing")).await
+      val values = cache.asyncBulk(Seq("key1", "key2", "missing")).await
         .asInstanceOf[Map[String, Value]]
 
       assert(values.get("key1") === Some(Value("value1")))
@@ -113,39 +105,39 @@ class InMemoryCacheSuite extends FunSuite {
 
   test("cas") {
     withCache("cas") { cache =>
-      cache.delete("some-key").await
-      assert(cache.get[Value]("some-key").await === None)
+      cache.asyncDelete("some-key").await
+      assert(cache.asyncGet[Value]("some-key").await === None)
 
       // no can do
       assert(cache.cas("some-key", Some(Value("invalid")), Value("value1"), 15.seconds).await === false)
-      assert(cache.get[Value]("some-key").await === None)
+      assert(cache.asyncGet[Value]("some-key").await === None)
 
       // set to value1
       assert(cache.cas("some-key", None, Value("value1"), 5.seconds).await === true)
-      assert(cache.get[Value]("some-key").await === Some(Value("value1")))
+      assert(cache.asyncGet[Value]("some-key").await === Some(Value("value1")))
 
       // no can do
       assert(cache.cas("some-key", Some(Value("invalid")), Value("value1"), 15.seconds).await === false)
-      assert(cache.get[Value]("some-key").await === Some(Value("value1")))
+      assert(cache.asyncGet[Value]("some-key").await === Some(Value("value1")))
 
       // set to value2, from value1
       assert(cache.cas("some-key", Some(Value("value1")), Value("value2"), 15.seconds).await === true)
-      assert(cache.get[Value]("some-key").await === Some(Value("value2")))
+      assert(cache.asyncGet[Value]("some-key").await === Some(Value("value2")))
 
       // no can do
       assert(cache.cas("some-key", Some(Value("invalid")), Value("value1"), 15.seconds).await === false)
-      assert(cache.get[Value]("some-key").await === Some(Value("value2")))
+      assert(cache.asyncGet[Value]("some-key").await === Some(Value("value2")))
 
       // set to value3, from value2
       assert(cache.cas("some-key", Some(Value("value2")), Value("value3"), 15.seconds).await === true)
-      assert(cache.get[Value]("some-key").await === Some(Value("value3")))
+      assert(cache.asyncGet[Value]("some-key").await === Some(Value("value3")))
     }
   }
 
   test("transformAndGet") {
     withCache("transformAndGet") { cache =>
-      cache.delete("some-key").await
-      assert(cache.get[Value]("some-key").await === None)
+      cache.asyncDelete("some-key").await
+      assert(cache.asyncGet[Value]("some-key").await === None)
 
       def incrementValue =
         cache.transformAndGet[Int]("some-key", 5.seconds) {
@@ -163,8 +155,8 @@ class InMemoryCacheSuite extends FunSuite {
 
   test("getAndTransform") {
     withCache("getAndTransform") { cache =>
-      cache.delete("some-key").await
-      assert(cache.get[Value]("some-key").await === None)
+      cache.asyncDelete("some-key").await
+      assert(cache.asyncGet[Value]("some-key").await === None)
 
       def incrementValue =
         cache.getAndTransform[Int]("some-key", 5.seconds) {
@@ -184,8 +176,8 @@ class InMemoryCacheSuite extends FunSuite {
 
   test("transformAndGet-concurrent") {
     withCache("transformAndGet") { cache =>
-      cache.delete("some-key").await
-      assert(cache.get[Value]("some-key").await === None)
+      cache.asyncDelete("some-key").await
+      assert(cache.asyncGet[Value]("some-key").await === None)
 
       def incrementValue =
         cache.transformAndGet[Int]("some-key", 60.seconds) {
@@ -196,14 +188,14 @@ class InMemoryCacheSuite extends FunSuite {
       val seq = concurrent.Future.sequence((0 until 500).map(nr => incrementValue))
       seq.await(20.seconds)
 
-      assert(cache.get[Int]("some-key").await === Some(500))
+      assert(cache.asyncGet[Int]("some-key").await === Some(500))
     }
   }
 
   test("getAndTransform-concurrent") {
     withCache("getAndTransform") { cache =>
-      cache.delete("some-key").await
-      assert(cache.get[Value]("some-key").await === None)
+      cache.asyncDelete("some-key").await
+      assert(cache.asyncGet[Value]("some-key").await === None)
 
       def incrementValue =
         cache.getAndTransform[Int]("some-key", 60.seconds) {
@@ -214,7 +206,7 @@ class InMemoryCacheSuite extends FunSuite {
       val seq = concurrent.Future.sequence((0 until 500).map(nr => incrementValue))
       seq.await(20.seconds)
 
-      assert(cache.get[Int]("some-key").await === Some(500))
+      assert(cache.asyncGet[Int]("some-key").await === Some(500))
     }
   }
 

@@ -2,7 +2,7 @@ package shifter.io
 
 import java.io.Writer
 import shifter.units._
-import shifter.concurrency.atomic.Ref
+import shifter.concurrency.utils.Ref
 import scala.collection.immutable.Queue
 
 

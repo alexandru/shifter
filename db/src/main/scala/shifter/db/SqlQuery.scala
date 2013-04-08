@@ -1,14 +1,14 @@
 package shifter.db
 
+import language.implicitConversions
 import java.util.Date
 import java.util.Calendar
 import java.io.InputStream
 import java.sql.Connection
 import java.sql.PreparedStatement
-import java.sql.ResultSet
 import collection.breakOut
-import reflect.Manifest
-import shifter.reflection.castTo
+import scala.reflect.runtime.universe._
+import scala.util.control.NonFatal
 
 
 class SqlException(msg: String) extends RuntimeException(msg)
@@ -21,26 +21,33 @@ class Row(val names: Vector[String], val values: Vector[Any]) {
   private[this] lazy val namesSet =
     names.toSet
 
-  def apply[T: Manifest](key: String): T = {
+  def get[T: TypeTag](key: String): T = {
     val keys = Seq(key, key.toLowerCase, key.toUpperCase)
-    val searchKey = keys.find(namesSet.contains(_))
-    require(!searchKey.isEmpty, "Non-existent key '" + key + "' in row")
-    castTo[T](toMap(searchKey.get)) match {
-      case Some(value) => value
+    val TypeRef(_, symbol, _) = typeOf[T]
+
+    keys.find(namesSet.contains(_)) match {
+      case Some(k) =>
+        val value = toMap(k)
+
+        if (symbol == optionSymbol)
+          Option(toMap(k)).asInstanceOf[T]
+        else if (value == null)
+          throw null
+        else
+          toMap(k).asInstanceOf[T]
+
       case None =>
-        throw new IllegalArgumentException("Cannot find element for key '" + key + "' of type " + manifest[T].toString)
+        if (symbol == optionSymbol)
+          None.asInstanceOf[T]
+        else
+          throw new IllegalArgumentException(
+            "Cannot find element for key '" + key + "'")
     }
   }
 
-  def get[T: Manifest](key: String): Option[T] = {
-    val keys = Seq(key, key.toLowerCase, key.toUpperCase)
-    keys.find(namesSet.contains(_)) match {
-      case Some(key) =>
-        val value = toMap(key)
-        castTo[T](value)
-      case None =>
-        None
-    }
+  private[this] val optionSymbol = {
+    val TypeRef(_, symbol, _) = typeOf[Option[Any]]
+    symbol
   }
 }
 
@@ -118,11 +125,20 @@ sealed class SqlQuery(conn: Connection, query: String) {
       try {
         result._3.close()
       } catch {
-        case _: Throwable =>
+        case NonFatal(_) =>
       }
       if (!stm.isClosed) stm.close()
     }
   }
+
+  def first[A](f: Row => A): Option[A] =
+    select(i => if (i.hasNext) Some(f(i.next())) else None)
+
+  def map[A](f: Row => A): Seq[A] =
+    select(i => i.map(f).toList)
+
+  def foldLeft[A](initialValue: A)(f: (A, Row) => A): A =
+    select(i => i.foldLeft(initialValue)(f))
 
   private[this] def iter(stm: PreparedStatement, lazyResult: (Vector[String], Int, java.sql.ResultSet)): Iterator[Row] =
     new Iterator[Row] {
@@ -244,7 +260,7 @@ object SqlQuery {
 
     override lazy val args =
       parsed._2.map(x => nArgs.get(x) match {
-        case Some(x) => x
+        case Some(value) => value
         case None => throw new SqlException("Argument for named param " + x + " not given")
       })
 

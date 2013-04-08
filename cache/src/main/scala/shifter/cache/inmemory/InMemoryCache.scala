@@ -3,7 +3,7 @@ package shifter.cache.inmemory
 import shifter.cache.{CacheException, Cache}
 import concurrent.duration.Duration
 import concurrent.{Future, ExecutionContext}
-import shifter.concurrency.atomic.Ref
+import shifter.concurrency.utils.Ref
 import annotation.tailrec
 
 

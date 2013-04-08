@@ -1,9 +1,9 @@
-package shifter.concurrency.atomic
+package shifter.concurrency.utils
 
 import java.util.concurrent.atomic.AtomicReference
 import annotation.tailrec
 
-final class Ref[T] private[atomic] (initialValue: T) {
+final class Ref[T] private[utils] (initialValue: T) {
   private val serialVersionUID: Long = -18385889765843242L
 
   @tailrec

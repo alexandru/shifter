@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicReference
 import annotation.tailrec
 
 final class Ref[T] private[atomic] (initialValue: T) {
-  if (initialValue == null) throw null
   private val serialVersionUID: Long = -18385889765843242L
 
   @tailrec
@@ -41,21 +40,21 @@ final class Ref[T] private[atomic] (initialValue: T) {
   }
 
   @tailrec
-  def transform(cb: T => T) {
+  def transform(cb: T => T): Boolean = {
     val value = instance.get()
     val update = cb(value)
 
     if (!compareAndSet(value, update))
       transform(cb)
+    else
+      value != update
   }
 
   def set(update: T) {
-    if (update == null) throw null
     instance.set(update)
   }
 
   def lazySet(update: T) {
-    if (update == null) throw null
     instance.lazySet(update)
   }
 
@@ -65,33 +64,19 @@ final class Ref[T] private[atomic] (initialValue: T) {
     instance.get()
 
   def getAndSet(update: T): T = {
-    if (update == null) throw null
     instance.getAndSet(update)
   }
 
   def compareAndSet(expect: T, update: T): Boolean = {
-    if (update == null) throw null
     instance.compareAndSet(expect, update)
   }
 
   def weakCompareAndSet(expect: T, update: T) = {
-    if (update == null) throw null
     instance.weakCompareAndSet(expect, update)
   }
 
   private[this] val instance =
     new AtomicReference[T](initialValue)
-
-  override def hashCode(): Int =
-    get.hashCode()
-
-  override def equals(obj: Any): Boolean =
-    obj match {
-      case other: Ref[_] =>
-        other.get == this.get
-      case _ =>
-        false
-    }
 }
 
 object Ref {

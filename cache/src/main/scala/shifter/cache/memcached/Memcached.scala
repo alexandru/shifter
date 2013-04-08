@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 trait Memcached extends Cache {
   protected def config: Configuration
 
-  def add[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Boolean] =
+  def asyncAdd[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Boolean] =
     if (value != null)
       instance.realAsyncAdd(withPrefix(key), value, exp, config.operationTimeout) map {
         case SuccessfulResult(givenKey, Some(_)) =>
@@ -31,7 +31,7 @@ trait Memcached extends Cache {
     else
       Future.successful(false)
 
-  def set[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Unit] = {
+  def asyncSet[T](key: String, value: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Unit] = {
     if (value != null)
       instance.realAsyncSet(withPrefix(key), value, exp, config.operationTimeout) map {
         case SuccessfulResult(givenKey, _) =>
@@ -43,7 +43,7 @@ trait Memcached extends Cache {
       Future.successful(())
   }
 
-  def delete(key: String)(implicit ec: ExecutionContext): Future[Boolean] =
+  def asyncDelete(key: String)(implicit ec: ExecutionContext): Future[Boolean] =
     instance.realAsyncDelete(withPrefix(key), config.operationTimeout) map {
       case SuccessfulResult(givenKey, result) =>
         result
@@ -61,7 +61,7 @@ trait Memcached extends Cache {
         throwExceptionOn(failure)
     }
 
-  def get[T](key: String)(implicit ec: ExecutionContext): Future[Option[T]] =
+  def asyncGet[T](key: String)(implicit ec: ExecutionContext): Future[Option[T]] =
     instance.realAsyncGet[T](withPrefix(key), config.operationTimeout) map {
       case SuccessfulResult(givenKey, option) =>
         option
@@ -70,12 +70,12 @@ trait Memcached extends Cache {
     }
 
   def getOrElse[T](key: String, default: => T)(implicit ec: ExecutionContext): Future[T] =
-    get[T](key) map {
+    asyncGet[T](key) map {
       case Some(value) => value
       case None => default
     }
 
-  def getBulk(keys: Traversable[String])(implicit ec: ExecutionContext): Future[Map[String, Any]] = {
+  def asyncBulk(keys: Traversable[String])(implicit ec: ExecutionContext): Future[Map[String, Any]] = {
     val givenKeys = keys.toSet
     val futures = givenKeys.map(key => instance.realAsyncGet[Any](withPrefix(key), config.operationTimeout))
     val bulkQuery = Future.sequence(futures)
@@ -98,7 +98,7 @@ trait Memcached extends Cache {
   def cas[T](key: String, expecting: Option[T], newValue: T, exp: Duration = defaultExpiry)(implicit ec: ExecutionContext): Future[Boolean] =
     expecting match {
       case None =>
-        add[T](key, newValue, exp)
+        asyncAdd[T](key, newValue, exp)
 
       case Some(expectingValue) =>
         instance.realAsyncGets[T](withPrefix(key), config.operationTimeout) flatMap {
@@ -126,7 +126,7 @@ trait Memcached extends Cache {
     instance.realAsyncGets[T](withPrefix(key), config.operationTimeout).flatMap {
       case SuccessfulResult(_, None) =>
         val result = cb(None)
-        add(key, result, exp) flatMap {
+        asyncAdd(key, result, exp) flatMap {
           case true =>
             Future.successful(result)
           case false =>
@@ -152,7 +152,7 @@ trait Memcached extends Cache {
     instance.realAsyncGets[T](withPrefix(key), config.operationTimeout).flatMap {
       case SuccessfulResult(_, None) =>
         val result = cb(None)
-        add(key, result, exp) flatMap {
+        asyncAdd(key, result, exp) flatMap {
           case true =>
             Future.successful(None)
           case false =>

@@ -56,8 +56,8 @@ object ShifterBuild extends Build {
       )
     )
   )
-  .aggregate(core, db, migrations, cache, httpClient, geoip, s3logger, web)
-  .dependsOn(core, db, migrations, cache, httpClient, geoip, s3logger, web)
+  .aggregate(core, db, migrations, cache, httpClient, geoip, web)
+  .dependsOn(core, db, migrations, cache, httpClient, geoip, web)
 
   lazy val core = Project(
     id = "shifter-core",
@@ -82,10 +82,6 @@ object ShifterBuild extends Build {
   lazy val geoip = Project(
     id = "shifter-geoip",
     base = file("geoip")) dependsOn (core)
-
-  lazy val s3logger = Project(
-    id = "shifter-s3logger",
-    base = file("s3logger")) dependsOn (core)
 
   lazy val web = Project(
     id = "shifter-web",

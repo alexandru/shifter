@@ -21,14 +21,10 @@ object ShifterBuild extends Build {
 
       scalaVersion in ThisBuild := "2.10.1",
 
-      crossScalaVersions in ThisBuild := Seq("2.10.0", "2.10.1"),
-
       compileOrder in ThisBuild := CompileOrder.JavaThenScala,
 
       scalacOptions in ThisBuild ++= Seq(
         "-unchecked", "-deprecation", "-feature",
-        "-language:existentials",
-        "-language:implicitConversions",
         "-target:jvm-1.6"
       ),
 

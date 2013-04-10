@@ -1,15 +1,17 @@
 package shifter.io
 
-import scala.concurrent.{Promise, Future, ExecutionContext}
+import scala.concurrent.{Promise, Future}
 import java.io.File
 import java.nio.file.{StandardOpenOption => o}
 import java.nio.ByteBuffer
-import shifter.concurrency.atomic.Ref
+import shifter.concurrency.utils.Ref
 import scala.util.Try
 import scala.concurrent.duration.Duration
 import shifter.concurrency.extensions._
+import shifter.io.Implicits.IOContext
 
-final class AsyncFileOutputStream(file: File)(implicit ec: ExecutionContext) extends AsyncOutputStream {
+
+final class AsyncFileOutputStream(file: File) extends AsyncOutputStream {
   def asyncWrite(b: ByteBuffer): Future[Int] = {
     val length = b.limit() - b.position()
     val buffer: ByteBuffer = if (b.isReadOnly)

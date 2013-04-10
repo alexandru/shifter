@@ -1,8 +1,7 @@
 package shifter.web.api.mvc
 
 import shifter.web.api.responses.ResponseBuilders
-import shifter.web.api.requests.Parsers
+import shifter.web.api.base.{HeaderNames, Status, MimeTypes}
+import shifter.web.api.requests.Parser
 
-trait Controller extends ResponseBuilders {
-  lazy val parse = Parsers
-}
+trait Controller extends ResponseBuilders with MimeTypes with Status with HeaderNames with Parser

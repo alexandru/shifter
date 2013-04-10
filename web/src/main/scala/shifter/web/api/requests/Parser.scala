@@ -1,6 +1,6 @@
 package shifter.web.api.requests
 
-object Parsers {
+trait Parser {
   val json = JsonParser
   val jsonLazy = new LazyParser(json)
 
@@ -18,3 +18,5 @@ object Parsers {
 
   val raw = RawParser
 }
+
+object Parser extends Parser

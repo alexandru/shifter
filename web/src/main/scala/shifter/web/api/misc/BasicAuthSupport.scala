@@ -2,10 +2,12 @@ package shifter.web.api.misc
 
 import org.apache.commons.codec.binary.Base64
 import shifter.web.api.requests.HttpRequest
+import shifter.web.api.base.HeaderNames._
+
 
 trait BasicAuthSupport {
   def isAuthenticated(request: HttpRequest[_], user: String, password: String): Boolean = {
-    val authorization = request.header("Authorization").getOrElse("")
+    val authorization = request.header(AUTHORIZATION).getOrElse("")
     !authorization.isEmpty && isAuthenticated(authorization, user, password)
   }
 

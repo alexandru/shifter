@@ -12,8 +12,8 @@ class PathMatcher(method: Option[m.Value]) {
 }
 
 object Path {
-  def unapply(req: RawRequest) = {
-    val segments = req.path.split("/").filterNot(_.isEmpty).toList
+  def unapply(path: String) = {
+    val segments = path.split("/").filterNot(_.isEmpty).toList
     Some(segments)
   }
 }
@@ -24,5 +24,6 @@ object HEAD extends PathMatcher(Some(m.HEAD))
 object OPTIONS extends PathMatcher(Some(m.OPTIONS))
 object POST extends PathMatcher(Some(m.POST))
 object PUT extends PathMatcher(Some(m.PUT))
+
 
 

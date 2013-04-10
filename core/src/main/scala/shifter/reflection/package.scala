@@ -1,10 +1,11 @@
 package shifter
 
+import language.existentials
 import java.io.{File, FileInputStream}
 import java.util.zip.ZipInputStream
 import collection.JavaConverters._
 import annotation.tailrec
-import scala.reflect.Manifest
+import scala.reflect.{ClassTag, Manifest}
 import util.{Failure, Try}
 
 
@@ -147,21 +148,22 @@ package object reflection {
     }
   }
 
-  def castTo[T : Manifest](value: Any): Option[T] = {
+  def castTo[T : ClassTag](value: Any): Option[T] = {
     import scala.runtime._
     import collection.immutable.StringOps
-    val m = manifest[T]
+
+    val m = implicitly[ClassTag[T]]
 
     val (erasure, wantsNumber) = m match {
-      case Manifest.Byte => (classOf[java.lang.Byte], true)
-      case Manifest.Short => (classOf[java.lang.Short], true)
-      case Manifest.Char => (classOf[java.lang.Character], true)
-      case Manifest.Long => (classOf[java.lang.Long], true)
-      case Manifest.Float => (classOf[java.lang.Float], true)
-      case Manifest.Double => (classOf[java.lang.Double], true)
-      case Manifest.Boolean => (classOf[java.lang.Boolean], true)
-      case Manifest.Int => (classOf[java.lang.Integer], true)
-      case m => (m.runtimeClass, false)
+      case ClassTag.Byte => (classOf[java.lang.Byte], true)
+      case ClassTag.Short => (classOf[java.lang.Short], true)
+      case ClassTag.Char => (classOf[java.lang.Character], true)
+      case ClassTag.Long => (classOf[java.lang.Long], true)
+      case ClassTag.Float => (classOf[java.lang.Float], true)
+      case ClassTag.Double => (classOf[java.lang.Double], true)
+      case ClassTag.Boolean => (classOf[java.lang.Boolean], true)
+      case ClassTag.Int => (classOf[java.lang.Integer], true)
+      case _ => (m.runtimeClass, false)
     }
 
     if(erasure.isInstance(value))
@@ -179,28 +181,28 @@ package object reflection {
           val str = value.asInstanceOf[String]
           val proxy = new StringOps(str)
           Some((m match {
-            case Manifest.Byte => proxy.toByte
-            case Manifest.Short => proxy.toShort
-            case Manifest.Char => proxy.toInt.toChar
-            case Manifest.Long => proxy.toLong
-            case Manifest.Float => proxy.toFloat
-            case Manifest.Double => proxy.toDouble
-            case Manifest.Boolean => (if (proxy.toInt != 0) true else false)
-            case Manifest.Int => proxy.toInt
+            case ClassTag.Byte => proxy.toByte
+            case ClassTag.Short => proxy.toShort
+            case ClassTag.Char => proxy.toInt.toChar
+            case ClassTag.Long => proxy.toLong
+            case ClassTag.Float => proxy.toFloat
+            case ClassTag.Double => proxy.toDouble
+            case ClassTag.Boolean => (if (proxy.toInt != 0) true else false)
+            case ClassTag.Int => proxy.toInt
           }).asInstanceOf[T])
 
         case FloatFormat(_*) =>
           val str = value.asInstanceOf[String]
           val proxy = new StringOps(str)
           Some((m match {
-            case Manifest.Byte => proxy.toDouble.toByte
-            case Manifest.Short => proxy.toDouble.toShort
-            case Manifest.Char => proxy.toDouble.toChar
-            case Manifest.Long => proxy.toDouble.toLong
-            case Manifest.Float => proxy.toFloat
-            case Manifest.Double => proxy.toDouble
-            case Manifest.Boolean => (if (proxy.toDouble != 0) true else false)
-            case Manifest.Int => proxy.toDouble.toInt
+            case ClassTag.Byte => proxy.toDouble.toByte
+            case ClassTag.Short => proxy.toDouble.toShort
+            case ClassTag.Char => proxy.toDouble.toChar
+            case ClassTag.Long => proxy.toDouble.toLong
+            case ClassTag.Float => proxy.toFloat
+            case ClassTag.Double => proxy.toDouble
+            case ClassTag.Boolean => (if (proxy.toDouble != 0) true else false)
+            case ClassTag.Int => proxy.toDouble.toInt
           }).asInstanceOf[T])
 
         case _ => None
@@ -221,14 +223,14 @@ package object reflection {
       proxyOpt match {
         case Some(proxy) =>
           Some((m match {
-            case Manifest.Byte => proxy.toByte
-            case Manifest.Short => proxy.toShort
-            case Manifest.Char => proxy.toChar
-            case Manifest.Long => proxy.toLong
-            case Manifest.Float => proxy.toFloat
-            case Manifest.Double => proxy.toDouble
-            case Manifest.Boolean => (if (proxy.toInt != 0) true else false)
-            case Manifest.Int => proxy.toInt
+            case ClassTag.Byte => proxy.toByte
+            case ClassTag.Short => proxy.toShort
+            case ClassTag.Char => proxy.toChar
+            case ClassTag.Long => proxy.toLong
+            case ClassTag.Float => proxy.toFloat
+            case ClassTag.Double => proxy.toDouble
+            case ClassTag.Boolean => (if (proxy.toInt != 0) true else false)
+            case ClassTag.Int => proxy.toInt
           }).asInstanceOf[T])
         case None =>
           None

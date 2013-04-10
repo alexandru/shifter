@@ -26,10 +26,10 @@ final class Action[T, U <: HttpRequest[T]] private[mvc] (parser: RequestParser[T
 }
 
 object Action {
-  def apply[T](cb: => HttpResponse[_]): ActionResponse =
+  def apply(cb: => HttpResponse[_]): ActionResponse =
     (req: RawRequest) => cb
 
-  def apply[T](cb: SimpleRequest => HttpResponse[T]): ActionResponse =
+  def apply(cb: SimpleRequest => HttpResponse[_]): ActionResponse =
     (req: RawRequest) => cb(SimpleParser.parse(req).get)
 
   def apply[T, U <: HttpRequest[T]](parser: RequestParser[T, U]) =

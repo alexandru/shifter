@@ -15,6 +15,7 @@ import shifter.web.api.responses.StreamResponse
 import shifter.web.api.responses.SimpleResponse
 import shifter.web.api.responses.Async
 import shifter.web.api.responses.BytesResponse
+import shifter.web.api.base.HeaderNames._
 
 
 trait Filter extends JavaFilter with ResponseBuilders with Logging {
@@ -139,11 +140,11 @@ trait Filter extends JavaFilter with ResponseBuilders with Logging {
     if (!response.hasHeader("Cache-Control"))
       servletResponse.setHeader("Cache-Control", "must-revalidate,no-cache,no-store")
 
-    if (!response.hasHeader("Connection"))
+    if (!response.hasHeader(CONNECTION))
       if (request.protocol == "HTTP/1.1")
-        servletResponse.setHeader("Connection", request.header("Connection").getOrElse("keep-alive"))
+        servletResponse.setHeader(CONNECTION, request.header(CONNECTION).getOrElse("keep-alive"))
       else
-        servletResponse.setHeader("Connection", request.header("Connection").getOrElse("close"))
+        servletResponse.setHeader(CONNECTION, request.header(CONNECTION).getOrElse("close"))
   }
 
   final def writeResponse(

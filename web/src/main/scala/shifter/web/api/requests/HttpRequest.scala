@@ -3,6 +3,7 @@ package shifter.web.api.requests
 import shifter.web.api.base._
 import scala.Some
 import shifter.web.api.base.UserInfo
+import shifter.web.api.base.HeaderNames._
 
 
 trait HttpRequest[T] {
@@ -45,12 +46,12 @@ trait HttpRequest[T] {
       case None => url
     }
 
-  lazy val remoteForwardedFor = header("X-FORWARDED-FOR").getOrElse("")
+  lazy val remoteForwardedFor = header(X_FORWARDED_FOR).getOrElse("")
 
-  lazy val remoteVia = header("VIA").getOrElse("")
+  lazy val remoteVia = header(VIA).getOrElse("")
 
   lazy val remoteRealIP =
-    header("X-FORWARDED-FOR") match {
+    header(X_FORWARDED_FOR) match {
       case Some(value) if !value.isEmpty =>
         value.split("\\s*,\\s*").find(IPUtils.isIPv4Public) match {
           case Some(ip) => ip
@@ -62,10 +63,10 @@ trait HttpRequest[T] {
     }
 
   lazy val userAgent =
-    header("USER-AGENT").getOrElse("")
+    header(USER_AGENT).getOrElse("")
 
   lazy val contentType = {
-    headers.get("CONTENT-TYPE")
+    headers.get(CONTENT_TYPE)
       .flatMap(_.headOption)
       .getOrElse("")
       .split(";")

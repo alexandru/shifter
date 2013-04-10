@@ -1,6 +1,7 @@
 package shifter.web.server
 
-import com.typesafe.config.{ConfigException, ConfigFactory}
+import language.existentials
+import com.typesafe.config.ConfigFactory
 import shifter.reflection.{toClass, isSubclass}
 import com.typesafe.config.ConfigException.BadValue
 import util.Try

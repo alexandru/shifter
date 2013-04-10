@@ -1,15 +1,19 @@
 package shifter.io
 
 import java.io.File
-import scala.concurrent.{Future, Promise, ExecutionContext}
+import scala.concurrent.{ExecutionContext, Future, Promise}
 import java.nio.file.StandardOpenOption
 import java.nio.channels.{CompletionHandler, AsynchronousFileChannel}
-import shifter.concurrency.extensions._
-import collection.JavaConverters._
 import scala.util.{Failure, Success}
 import java.nio.ByteBuffer
+import collection.JavaConverters._
+import shifter.io.Implicits.IOContext
+import shifter.concurrency.extensions._
 
-final class AsyncFileChannel(file: File, options: StandardOpenOption*)(implicit val ec: ExecutionContext) {
+
+final class AsyncFileChannel(file: File, options: StandardOpenOption*) {
+  private[this] val ec = implicitly[ExecutionContext]
+
   def write(source: ByteBuffer, positionInFile: Long): Future[Int] = {
     val promise = Promise[Int]()
     instance.write(source, positionInFile, promise, writeCompletionHandler)
@@ -46,8 +50,14 @@ final class AsyncFileChannel(file: File, options: StandardOpenOption*)(implicit 
     def completed(result: Integer, promise: Promise[Int]) {
       promise.complete(Success(result))
     }
+
     def failed(exc: Throwable, promise: Promise[Int]) {
-      promise.complete(Failure(exc))
+      try {
+        promise.complete(Failure(exc))
+      }
+      finally {
+        ec.reportFailure(exc)
+      }
     }
   }
 

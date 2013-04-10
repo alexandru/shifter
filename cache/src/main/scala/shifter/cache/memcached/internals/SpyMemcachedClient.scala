@@ -3,7 +3,7 @@ package shifter.cache.memcached.internals
 import net.spy.memcached._
 import java.{util => jutil}
 import java.net.InetSocketAddress
-import concurrent.{ExecutionContext, Promise, Future}
+import concurrent.{Promise, Future}
 import net.spy.memcached.transcoders.Transcoder
 import net.spy.memcached.ops._
 import scala.util.{Failure, Success}
@@ -12,11 +12,12 @@ import shifter.cache.UnhandledStatusException
 import scala.Some
 import shifter.concurrency.extensions._
 
-
 class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSocketAddress])
     extends MemcachedClient(conn, addresses) {
 
-  def realAsyncGet[T](key: String, timeout: FiniteDuration)(implicit ec: ExecutionContext): Future[Result[Option[T]]] = {
+  private[this] implicit val ec = shifter.io.Implicits.IOContext
+
+  def realAsyncGet[T](key: String, timeout: FiniteDuration): Future[Result[Option[T]]] = {
     val promise = Promise[Result[Option[T]]]()
     val tc = transcoder.asInstanceOf[Transcoder[T]]
     val result = new MutablePartialResult[Option[T]]
@@ -59,7 +60,7 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
     prepareFuture(key, op, promise, timeout)
   }
 
-  def realAsyncSet[T](key: String, value: T, exp: Duration, timeout: FiniteDuration)(implicit ec: ExecutionContext): Future[Result[Long]] = {
+  def realAsyncSet[T](key: String, value: T, exp: Duration, timeout: FiniteDuration): Future[Result[Long]] = {
     val tc = transcoder.asInstanceOf[Transcoder[T]]
     val co: CachedData = tc.encode(value)
     val promise = Promise[Result[Long]]()
@@ -93,7 +94,7 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
     prepareFuture(key, op, promise, timeout)
   }
 
-  def realAsyncAdd[T](key: String, value: T, exp: Duration, timeout: FiniteDuration)(implicit ec: ExecutionContext): Future[Result[Option[Long]]] = {
+  def realAsyncAdd[T](key: String, value: T, exp: Duration, timeout: FiniteDuration): Future[Result[Option[Long]]] = {
     val tc = transcoder.asInstanceOf[Transcoder[T]]
     val co: CachedData = tc.encode(value)
     val promise = Promise[Result[Option[Long]]]()
@@ -129,7 +130,7 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
     prepareFuture(key, op, promise, timeout)
   }
 
-  def realAsyncDelete(key: String, timeout: FiniteDuration)(implicit ec: ExecutionContext): Future[Result[Boolean]] = {
+  def realAsyncDelete(key: String, timeout: FiniteDuration): Future[Result[Boolean]] = {
     val promise = Promise[Result[Boolean]]()
     val result = new MutablePartialResult[Boolean]
 
@@ -159,7 +160,7 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
     prepareFuture(key, op, promise, timeout)
   }
 
-  def realAsyncGets[T](key: String, timeout: FiniteDuration)(implicit ec: ExecutionContext): Future[Result[Option[(T, Long)]]] = {
+  def realAsyncGets[T](key: String, timeout: FiniteDuration): Future[Result[Option[(T, Long)]]] = {
     val promise = Promise[Result[Option[(T, Long)]]]()
     val tc = transcoder.asInstanceOf[Transcoder[T]]
     val result = new MutablePartialResult[Option[(T, Long)]]
@@ -202,7 +203,7 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
     prepareFuture(key, op, promise, timeout)
   }
 
-  def realAsyncCAS[T](key: String, casID: Long, value: T, exp: Duration, timeout: FiniteDuration)(implicit ec: ExecutionContext): Future[Result[Boolean]] = {
+  def realAsyncCAS[T](key: String, casID: Long, value: T, exp: Duration, timeout: FiniteDuration): Future[Result[Boolean]] = {
     val tc = transcoder.asInstanceOf[Transcoder[T]]
     val co: CachedData = tc.encode(value)
     val promise = Promise[Result[Boolean]]()
@@ -269,7 +270,7 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
       (System.currentTimeMillis() / 1000) + 31536000 // 60 * 60 * 24 * 365 -> 365 days in seconds
   }
 
-  private[this] def prepareFuture[T](key: String, op: Operation, promise: Promise[Result[T]], atMost: FiniteDuration)(implicit ec: ExecutionContext): Future[Result[T]] = {
+  private[this] def prepareFuture[T](key: String, op: Operation, promise: Promise[Result[T]], atMost: FiniteDuration): Future[Result[T]] = {
     val future = promise.futureWithTimeout(atMost) {
       if (op.hasErrored)
         Failure(op.getException)

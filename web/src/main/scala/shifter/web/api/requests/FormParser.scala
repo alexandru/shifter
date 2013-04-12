@@ -4,7 +4,7 @@ import shifter.web.api.base.{HttpMethod, utils}
 
 object FormParser extends RequestParser[Map[String, Seq[String]], FormRequest] {
   def canBeParsed(raw: RawRequest): Boolean =
-    validMethods(raw.method) && validContentTypes(raw.contentType)
+    validMethods(raw.method) && (raw.contentType.isEmpty || validContentTypes(raw.contentType))
 
   def parse(raw: RawRequest): Option[FormRequest] =
     if (canBeParsed(raw)) {
@@ -27,6 +27,7 @@ object FormParser extends RequestParser[Map[String, Seq[String]], FormRequest] {
         headers = raw.headers,
         remoteAddress = raw.remoteAddress,
         cookies = raw.cookies,
+        canForward = raw.canForward,
         body = params
       ))
     }

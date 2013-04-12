@@ -3,15 +3,15 @@ package shifter.http.client
 import java.io.{InputStream, ByteArrayInputStream, UnsupportedEncodingException}
 import collection.mutable.ArrayBuffer
 import java.util
-import util.concurrent.atomic.AtomicReference
 import scala.util.Try
+import shifter.concurrency.atomic.Ref
 
 class HttpClientResponse(val status: Int, val headers: Map[String, String], inputStream: InputStream) {
-  private[this] val consumed = new AtomicReference(false)
+  private[this] val consumed = Ref(initialValue = false)
 
   private[this] lazy val bytes =
     consumed.synchronized {
-      if (consumed.get())
+      if (consumed.get)
         throw new HttpClientException("Response was already consumed")
 
       consumed.set(true)
@@ -60,7 +60,7 @@ class HttpClientResponse(val status: Int, val headers: Map[String, String], inpu
 
   lazy val bodyAsStream =
     consumed.synchronized {
-      if (!consumed.get()) {
+      if (!consumed.get) {
         consumed.set(true)
         inputStream
       }

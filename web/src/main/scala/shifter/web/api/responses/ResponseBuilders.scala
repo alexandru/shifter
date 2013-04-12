@@ -1,10 +1,15 @@
 package shifter.web.api.responses
 
+import language.existentials
 import twirl.api.Html
 import java.io.InputStream
 import javax.servlet.http.HttpServletResponse
 import org.apache.commons.codec.binary.Base64
 import scala.concurrent.Future
+import scala.concurrent.duration.Duration
+import shifter.web.api.mvc.Action
+import shifter.web.api.requests.{CanForward, HttpRequest}
+
 
 trait ResponseBuilders {
   def Ok(body: String, contentType: String = "", headers: Map[String, String] = Map.empty): SimpleResponse = {
@@ -70,6 +75,21 @@ trait ResponseBuilders {
     BytesResponse(200, body = bytes.toSeq)
       .withHeader("Content-type", "image/gif")
   }
+
+  def Async[T](response: Future[CompleteResponse[T]]) =
+    AsyncResponse(response)
+
+  def Async[T](response: Future[CompleteResponse[T]], timeout: Duration) =
+    AsyncResponse(response, timeout)
+
+  def Async[T](response: Future[CompleteResponse[T]], timeout: Duration, timeoutResponse: CompleteResponse[_]) =
+    AsyncResponse(response, timeout, timeoutResponse)
+
+  def Forward[T <: HttpRequest[_]](action: Action)(implicit req: T, ev: CanForward[T]) =
+    if (req.canForward)
+      ForwardResponse(action)
+    else
+      throw new IllegalArgumentException("Forwarding this request is not possible")
 }
 
 object ResponseBuilders extends ResponseBuilders

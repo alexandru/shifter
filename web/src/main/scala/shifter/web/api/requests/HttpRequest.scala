@@ -18,6 +18,8 @@ trait HttpRequest[T] {
   def remoteAddress: String
   def cookies: Map[String, Cookie]
 
+  private[api] def canForward: Boolean = false
+
   def header(key: String): Option[String] =
     headers.get(key.toUpperCase).flatMap(_.headOption).flatMap {
       str => if (str == null || str.trim.isEmpty) None else Some(str.trim)

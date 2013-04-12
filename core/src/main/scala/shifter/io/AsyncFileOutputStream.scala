@@ -4,7 +4,7 @@ import scala.concurrent.{Promise, Future}
 import java.io.File
 import java.nio.file.{StandardOpenOption => o}
 import java.nio.ByteBuffer
-import shifter.concurrency.utils.Ref
+import shifter.concurrency.atomic.Ref
 import scala.util.Try
 import scala.concurrent.duration.Duration
 import shifter.concurrency.extensions._

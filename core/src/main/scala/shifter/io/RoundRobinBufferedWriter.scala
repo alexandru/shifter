@@ -60,7 +60,7 @@ final class RoundRobinBufferedWriter(out: Writer, capacity: Int = 1.megabyte) ex
 
   private[this] def initBuffer =
     CharBuffer(
-      array = Array.fill(capacity)(0.toChar),
+      array = new Array[Char](capacity),
       position = Ref(0)
     )
 

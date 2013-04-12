@@ -206,11 +206,13 @@ trait ShifterFilter extends JavaFilter with ResponseBuilders with Logging {
           servletResponse.setContentType(response.contentType)
           writeHeaders(request, response, servletResponse)
 
+          // TODO: serve chunked response
+
           val outBuffer = ArrayBuffer.empty[Byte]
 
           var bytesCount = 0
           var totalBytes = 0
-          val buffer = Array.fill(4 * 1024){0.toByte}
+          val buffer = new Array[Byte](4 * 1024)
 
           do {
             bytesCount = body.read(buffer)

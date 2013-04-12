@@ -13,7 +13,8 @@ case class FormRequest(
   headers: Map[String, Seq[String]],
   remoteAddress: String,
   cookies: Map[String, Cookie],
-  body: Map[String, Seq[String]]
+  body: Map[String, Seq[String]],
+  override val canForward: Boolean
 )
 extends HttpRequest[Map[String, Seq[String]]] {
   def param(key: String): Option[String] =
@@ -27,6 +28,10 @@ extends HttpRequest[Map[String, Seq[String]]] {
       case (key, list) =>
         list.headOption.map(value => (key, value))
     }
+}
+
+object FormRequest {
+  implicit val YesItCanForward = new CanForward[FormRequest]
 }
 
 

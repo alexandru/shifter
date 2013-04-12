@@ -12,7 +12,11 @@ case class SimpleRequest(
   query: Option[String],
   remoteAddress: String,
   headers: Map[String, Seq[String]],
-  cookies: Map[String, Cookie]
+  cookies: Map[String, Cookie],
+  override val canForward: Boolean
 )
 extends HttpRequest[None.type]
 
+object SimpleRequest {
+  implicit val YesItCanForward = new CanForward[SimpleRequest]
+}

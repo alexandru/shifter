@@ -5,8 +5,22 @@ import scala.concurrent.Future
 import scala.concurrent.duration._
 import shifter.web.api.base.Cookie
 import java.io.InputStream
+import shifter.web.api.mvc._
 
 sealed trait HttpResponse[T]
+
+case class AsyncResponse[T] private[responses] (
+  response: Future[CompleteResponse[T]],
+  timeout: Duration = 1.second,
+  timeoutResponse: CompleteResponse[_] =
+    ResponseBuilders.RequestTimeout("408 Timeout")
+      .withHeader("Content-Type" -> "text/plain")
+) extends HttpResponse[T]
+
+case class ForwardResponse private[responses] (action: Action)
+  extends HttpResponse[Action]
+
+case object ChainResponse extends HttpResponse[Nothing]
 
 sealed trait CompleteResponse[T] extends HttpResponse[T] {
   def status: Int
@@ -50,14 +64,6 @@ sealed trait CompleteResponse[T] extends HttpResponse[T] {
   def asFuture: Future[CompleteResponse[T]] =
     Future.successful(this)
 }
-
-case class Async[T](
-  response: Future[CompleteResponse[T]],
-  timeout: Duration = 1.second,
-  timeoutResponse: CompleteResponse[_] =
-    ResponseBuilders.RequestTimeout("408 Timeout")
-      .withHeader("Content-Type" -> "text/plain")
-) extends HttpResponse[T]
 
 case class BytesResponse(status: Int, headers: Map[String, Seq[String]] = Map.empty, body: Seq[Byte])
   extends CompleteResponse[Seq[Byte]] {

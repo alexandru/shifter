@@ -3,9 +3,11 @@ package shifter.web.api.requests
 import javax.servlet.http.HttpServletRequest
 import collection.JavaConverters._
 import shifter.web.api.base.{HttpMethod, Cookie}
+import shifter.units._
+import java.nio.charset.Charset
 
 
-class RawRequest(val underlying: HttpServletRequest)
+final class RawRequest(underlying: HttpServletRequest)
     extends HttpRequest[HttpServletRequest] {
 
   private[this] val DomainRegex = "^([^:]+)(?:[:]\\d+)?$".r
@@ -60,24 +62,62 @@ class RawRequest(val underlying: HttpServletRequest)
     }
     .toMap
 
-  val body: HttpServletRequest = underlying
-
-  lazy val bodyAsString = {
-    val in = body.getReader
-
-    try {
-      var line: String = null
-      val builder = new java.lang.StringBuilder
-      do {
-        line = in.readLine
-        if (line != null)
-          builder.append(line)
-      } while (line != null)
-
-      builder.toString
+  override private[api] lazy val canForward =
+    if (underlying.getContentLength == -1)
+      false
+    else if (underlying.getContentLength > 5.kilobytes)
+      false
+    else {
+      val in = underlying.getInputStream
+      in.markSupported()
     }
-    finally {
-      in.close()
+
+  lazy val body: HttpServletRequest = underlying
+
+  lazy val bodyAsString: String =
+    if (canForward) {
+      val in = underlying.getInputStream
+      val length = underlying.getContentLength
+
+      in.mark(length)
+
+      try {
+        val in = underlying.getInputStream
+        val buf = Array.fill(length)(0.asInstanceOf[Byte])
+        var off = 0
+
+        while (off < length) {
+          val bytesRead = in.readLine(buf, off, length - off)
+          if (bytesRead > 0)
+            off += bytesRead
+        }
+
+        val enc = underlying.getCharacterEncoding
+
+        if (enc != null && Charset.isSupported(enc))
+          new String(buf, 0, off, enc)
+        else
+          new String(buf, 0, off, "UTF-8")
+      }
+      finally
+        in.reset()
     }
-  }
+    else {
+      val in = body.getReader
+
+      try {
+        var line: String = null
+        val builder = new java.lang.StringBuilder
+        do {
+          line = in.readLine
+          if (line != null)
+            builder.append(line)
+        } while (line != null)
+
+        builder.toString
+      }
+      finally {
+        in.close()
+      }
+    }
 }

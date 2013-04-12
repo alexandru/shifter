@@ -1,10 +1,10 @@
 package shifter.concurrency
 
 import collection.immutable.TreeMap
-import java.util.concurrent.atomic.{AtomicLong, AtomicReference}
 import annotation.tailrec
 import scala.concurrent.ExecutionContext
 import util.control.NonFatal
+import shifter.concurrency.atomic.Ref
 
 
 /**
@@ -19,7 +19,7 @@ object scheduler {
   )
 
   def runOnce(delayMillis: Long)(callback: => Any)(implicit ec: ExecutionContext): TaskKey = {
-    val newID = lastID.incrementAndGet()
+    val newID = lastID.incrementAndGet
     val task = TaskKey(newID, System.currentTimeMillis() + delayMillis)
     pushTask(task, TaskCallback(() => callback, ec))
     scheduledTasks.synchronized { scheduledTasks.notifyAll() }
@@ -28,7 +28,7 @@ object scheduler {
 
   @tailrec
   def cancel(task: TaskKey): Boolean = {
-    val tasks = scheduledTasks.get()
+    val tasks = scheduledTasks.get
     if (!tasks.contains(task))
       false
     else if (!scheduledTasks.compareAndSet(tasks, tasks - task))
@@ -39,7 +39,7 @@ object scheduler {
 
   @tailrec
   private[this] def pushTask(task: TaskKey, callback: TaskCallback) {
-    val tasks = scheduledTasks.get()
+    val tasks = scheduledTasks.get
     if (!tasks.contains(task))
       if (!scheduledTasks.compareAndSet(tasks, tasks.updated(task, callback)))
         pushTask(task, callback)
@@ -47,7 +47,7 @@ object scheduler {
 
   @tailrec
   private[this] def waitOrExecute() {
-    val tasks = scheduledTasks.get()
+    val tasks = scheduledTasks.get
     val firstTaskOpt = if (!tasks.isEmpty)
       Some(tasks.firstKey)
     else
@@ -127,9 +127,9 @@ object scheduler {
   }
 
   private[this] val scheduledTasks =
-    new AtomicReference(TreeMap.empty[TaskKey, TaskCallback])
+    Ref(TreeMap.empty[TaskKey, TaskCallback])
 
-  private[this] val lastID = new AtomicLong(0L)
+  private[this] val lastID = Ref(0L)
 
   locally {
     val th = new Thread(new Runnable {

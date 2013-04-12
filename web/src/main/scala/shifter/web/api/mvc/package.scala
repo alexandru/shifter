@@ -5,7 +5,7 @@ import shifter.web.api.requests.RawRequest
 import shifter.web.api.responses.HttpResponse
 
 package object mvc {
-  type ActionResponse = RawRequest => HttpResponse[_]
+  type Action = RawRequest => HttpResponse[_]
 
-  type UrlRoutes = PartialFunction[RawRequest, ActionResponse]
+  type UrlRoutes = PartialFunction[RawRequest, Action]
 }

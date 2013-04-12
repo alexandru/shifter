@@ -2,8 +2,7 @@ package shifter.io
 
 import java.io.Writer
 import shifter.units._
-import shifter.concurrency.utils.Ref
-import java.util.concurrent.atomic.AtomicInteger
+import shifter.concurrency.atomic.Ref
 
 
 final class RoundRobinBufferedWriter(out: Writer, capacity: Int = 1.megabyte) extends Writer {
@@ -65,7 +64,7 @@ final class RoundRobinBufferedWriter(out: Writer, capacity: Int = 1.megabyte) ex
       position = Ref(0)
     )
 
-  private[this] val roundRobinCnt = new AtomicInteger(0)
+  private[this] val roundRobinCnt = Ref(0)
 
   private[this] val number = math.max(Runtime.getRuntime.availableProcessors(), 4)
   private[this] val allBuffers: Vector[CharBuffer] = (0 until number)

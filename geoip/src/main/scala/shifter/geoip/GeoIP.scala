@@ -7,8 +7,8 @@ import util.Try
 import shifter.http.client.{HttpClient, BlockingHttpClient}
 import concurrent.{Future, Await}
 import concurrent.duration._
-import concurrent.ExecutionContext.Implicits.global
 import com.typesafe.scalalogging.slf4j.Logging
+import shifter.io.Implicits.IOContext
 
 
 class GeoIP(file: File) {

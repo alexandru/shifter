@@ -1,4 +1,4 @@
-package shifter.concurrency.utils
+package shifter.concurrency.atomic
 
 import annotation.tailrec
 import java.util.concurrent.atomic.AtomicReference

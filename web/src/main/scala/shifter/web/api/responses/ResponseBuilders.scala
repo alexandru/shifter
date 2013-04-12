@@ -86,10 +86,7 @@ trait ResponseBuilders {
     AsyncResponse(response, timeout, timeoutResponse)
 
   def Forward[T <: HttpRequest[_]](action: Action)(implicit req: T, ev: CanForward[T]) =
-    if (req.canForward)
-      ForwardResponse(action)
-    else
-      throw new IllegalArgumentException("Forwarding this request is not possible")
+    ForwardResponse(action)
 }
 
 object ResponseBuilders extends ResponseBuilders

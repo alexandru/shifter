@@ -21,7 +21,7 @@ class HttpClientResponse(val status: Int, val headers: Map[String, String], inpu
 
       contentLength match {
         case Some(length) =>
-          val buffer = Array.fill(length)(0.toByte)
+          val buffer = new Array[Byte](length)
           var remaining = length
           var offset = 0
           var bytesRead = -1
@@ -40,7 +40,8 @@ class HttpClientResponse(val status: Int, val headers: Map[String, String], inpu
           buffer
 
         case _ =>
-          val chunkBuffer = Array.fill(1024 * 4)(0.toByte)
+          // TODO: fix
+          val chunkBuffer = new Array[Byte](1024 * 4)
           val buffer = ArrayBuffer.empty[Byte]
           var bytesRead = -1
 

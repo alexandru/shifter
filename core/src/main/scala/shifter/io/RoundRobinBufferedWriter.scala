@@ -5,7 +5,7 @@ import shifter.units._
 import shifter.concurrency.atomic.Ref
 
 
-final class RoundRobinBufferedWriter(out: Writer, capacity: Int = 1.megabyte) extends Writer {
+final class RoundRobinBufferedWriter(out: Writer, capacity: Int = 1.megabyte, parallelism: Int = 1) extends Writer {
   def write(charsToWrite: Array[Char], off: Int, len: Int) {
     if (len > capacity)
       throw new IllegalArgumentException("RoundRobinBufferedWriter cannot write lines bigger than %d".format(capacity))
@@ -66,7 +66,10 @@ final class RoundRobinBufferedWriter(out: Writer, capacity: Int = 1.megabyte) ex
 
   private[this] val roundRobinCnt = Ref(0)
 
-  private[this] val number = math.max(Runtime.getRuntime.availableProcessors(), 4)
+  private[this] val number = {
+    math.max(Runtime.getRuntime.availableProcessors(), 1) * parallelism
+  }
+
   private[this] val allBuffers: Vector[CharBuffer] = (0 until number)
     .map { _ => initBuffer }.toVector
 }

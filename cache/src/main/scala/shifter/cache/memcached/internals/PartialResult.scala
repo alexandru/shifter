@@ -2,7 +2,7 @@ package shifter.cache.memcached.internals
 
 import util.{Success, Try}
 import concurrent.{Promise, Future}
-import java.util.concurrent.atomic.AtomicReference
+import shifter.concurrency.atomic.Ref
 
 sealed trait PartialResult[+T]
 case class FinishedResult[T](result: Try[Result[T]]) extends PartialResult[T]
@@ -17,7 +17,7 @@ final class MutablePartialResult[T] {
     _result.compareAndSet(NoResultAvailable, FutureResult(result))
 
   def completePromise(key: String, promise: Promise[Result[T]]) {
-    _result.get() match {
+    _result.get match {
       case FinishedResult(result) =>
         promise.tryComplete(result)
       case FutureResult(result) =>
@@ -28,5 +28,5 @@ final class MutablePartialResult[T] {
   }
 
   private[this] val _result =
-    new AtomicReference[PartialResult[T]](NoResultAvailable)
+    Ref[PartialResult[T]](NoResultAvailable)
 }

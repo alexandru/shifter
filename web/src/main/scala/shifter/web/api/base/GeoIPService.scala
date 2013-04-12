@@ -1,7 +1,6 @@
 package shifter.web.api.base
 
 import shifter.geoip.{GeoIPLocation, GeoIP}
-import java.util.concurrent.atomic.AtomicReference
 import shifter.http.client.{HttpClientConfig, NingHttpClient}
 import util.Try
 
@@ -12,30 +11,17 @@ object GeoIPService {
     else
       instance.search(address)
 
-  private[this] def instance =
-    if (_instance.get().isDefined)
-      _instance.get().get
-    else
-      this.synchronized {
-        if (_instance.get().isDefined)
-          _instance.get().get
-        else {
-          val client = NingHttpClient(HttpClientConfig(
-            maxTotalConnections = 3,
-            maxConnectionsPerHost = 1
-          ))
+  private[this] lazy val instance = {
+    val client = NingHttpClient(HttpClientConfig(
+      maxTotalConnections = 3,
+      maxConnectionsPerHost = 1
+    ))
 
-          try {
-            val obj = GeoIP.withLiteCity(client)
-            _instance.set(Some(obj))
-            obj
-          }
-          finally {
-            Try(client.close())
-          }
-        }
-      }
-
-  private[this] val _instance =
-    new AtomicReference(None : Option[GeoIP])
+    try {
+      GeoIP.withLiteCity(client)
+    }
+    finally {
+      Try(client.close())
+    }
+  }
 }

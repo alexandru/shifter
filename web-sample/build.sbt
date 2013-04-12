@@ -1,0 +1,1 @@
+name := "shifter-web-sample"

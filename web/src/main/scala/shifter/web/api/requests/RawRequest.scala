@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest
 import collection.JavaConverters._
 import shifter.web.api.base.{HttpMethod, Cookie}
 import shifter.units._
-import java.nio.charset.Charset
 
 
 final class RawRequest(underlying: HttpServletRequest)
@@ -62,62 +61,42 @@ final class RawRequest(underlying: HttpServletRequest)
     }
     .toMap
 
-  override private[api] lazy val canForward =
-    if (underlying.getContentLength == -1)
-      false
-    else if (underlying.getContentLength > 5.kilobytes)
-      false
-    else {
-      val in = underlying.getInputStream
-      in.markSupported()
-    }
-
   lazy val body: HttpServletRequest = underlying
 
-  lazy val bodyAsString: String =
-    if (canForward) {
-      val in = underlying.getInputStream
-      val length = underlying.getContentLength
+  lazy val bodyAsString: String = {
+    val in = body.getReader
+    val contentLength = body.getContentLength
 
-      in.mark(length)
-
-      try {
-        val in = underlying.getInputStream
-        val buf = Array.fill(length)(0.asInstanceOf[Byte])
-        var off = 0
-
-        while (off < length) {
-          val bytesRead = in.readLine(buf, off, length - off)
-          if (bytesRead > 0)
-            off += bytesRead
-        }
-
-        val enc = underlying.getCharacterEncoding
-
-        if (enc != null && Charset.isSupported(enc))
-          new String(buf, 0, off, enc)
-        else
-          new String(buf, 0, off, "UTF-8")
-      }
-      finally
-        in.reset()
-    }
-    else {
+    if (contentLength >= 0 && contentLength < 5.kilobytes) {
       val in = body.getReader
+      val buffer = new Array[Char](contentLength)
+      var charsRead = 0
+      var offset = 0
 
+      while (charsRead > -1 && offset < contentLength) {
+        charsRead = in.read(buffer, offset, contentLength - offset)
+        if (charsRead > 0)
+          offset += charsRead
+      }
+
+      new String(buffer, 0, offset)
+    }
+    else
       try {
-        var line: String = null
         val builder = new java.lang.StringBuilder
-        do {
-          line = in.readLine
-          if (line != null)
-            builder.append(line)
-        } while (line != null)
+        val buffer = new Array[Char](512)
+        var bytesRead = 0
+
+        while (bytesRead > -1) {
+          bytesRead = in.read(buffer, 0, 512)
+          if (bytesRead > 0)
+            builder.append(buffer, 0, bytesRead)
+        }
 
         builder.toString
       }
       finally {
         in.close()
       }
-    }
+  }
 }

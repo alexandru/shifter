@@ -11,6 +11,7 @@ case class Configuration(
   port: Int,
   minThreads: Int,
   maxThreads: Int,
+  parallelismFactor: Int,
   resourceBase: String,
   lifeCycleClass: Class[_],
   error404: String,
@@ -45,11 +46,22 @@ object Configuration {
     if (!isSubclass[LifeCycle](lifeCycleClass))
       throw new BadValue("http.server.lifeCycleClass", "Value is not a valid LifeCycle class")
 
+    val numberOfProcessors = math.max(Runtime.getRuntime.availableProcessors(), 1)
+    val parallelismFactor = Try(values.getInt("http.server.parallelismFactor")).getOrElse(2)
+    val parallelism = numberOfProcessors * parallelismFactor
+
+    val declaredMinThreads = Try(values.getInt("http.server.minThreads")).getOrElse(numberOfProcessors)
+    val declaredMaxThreads = Try(values.getInt("http.server.maxThreads")).getOrElse(parallelism)
+
+    val minThreads = math.max(1, declaredMinThreads)
+    val maxThreads = math.max(declaredMinThreads, math.min(declaredMaxThreads, parallelism))
+
     Configuration(
       host = values.getString("http.server.host"),
       port = values.getInt("http.server.port"),
-      minThreads = values.getInt("http.server.minThreads"),
-      maxThreads = values.getInt("http.server.maxThreads"),
+      parallelismFactor = parallelismFactor,
+      minThreads = minThreads,
+      maxThreads = maxThreads,
       resourceBase = values.getString("http.server.resourceBase"),
       lifeCycleClass = lifeCycleClass,
       error404 = values.getString("http.server.error404"),

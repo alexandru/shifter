@@ -14,7 +14,6 @@ object SimpleParser extends RequestParser[None.type, SimpleRequest] {
       query = raw.query,
       remoteAddress = raw.remoteAddress,
       headers = raw.headers,
-      cookies = raw.cookies,
-      canForward = true
+      cookies = raw.cookies
     ))
 }

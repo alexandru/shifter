@@ -24,11 +24,11 @@ object Application extends Controller {
   }
 
   val asyncHello = Action { req =>
-    val response = Promise[SimpleResponse]().futureWithTimeout(1.second) {
+    val response = Future {
       val name = req.queryParam("name").getOrElse("Anonymous")
-      Success(Ok("Hello after 1 second, %s!".format(name)))
+      Ok("Hello, %s!".format(name))
     }
 
-    Async(response, timeout = 2000.millis)
+    Async(response, timeout = 30.millis)
   }
 }

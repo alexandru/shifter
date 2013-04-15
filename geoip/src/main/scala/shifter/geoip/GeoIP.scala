@@ -86,7 +86,7 @@ object GeoIP extends Logging {
         val httpResponse = Await.result(futureResponse, 10.minutes)
 
         val in = new BufferedInputStream(new GZIPInputStream(httpResponse.bodyAsStream))
-        val buffer = Array.fill(1024 * 1024)(0.toByte)
+        val buffer = new Array[Byte](1024 * 1024)
         var bytes = -1
 
         do {

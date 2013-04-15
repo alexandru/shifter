@@ -27,7 +27,6 @@ object FormParser extends RequestParser[Map[String, Seq[String]], FormRequest] {
         headers = raw.headers,
         remoteAddress = raw.remoteAddress,
         cookies = raw.cookies,
-        canForward = raw.canForward,
         body = params
       ))
     }

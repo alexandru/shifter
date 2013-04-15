@@ -74,7 +74,7 @@ final class AsyncFileOutputStream(file: File) extends AsyncOutputStream {
   }
 
   private[this] def wrapArray(b: Array[Byte], off: Int, len: Int) = {
-    val copy = Array.fill(len)(0.toByte)
+    val copy = new Array[Byte](len)
     System.arraycopy(b, off, copy, 0, len)
     ByteBuffer.wrap(copy).asReadOnlyBuffer()
   }

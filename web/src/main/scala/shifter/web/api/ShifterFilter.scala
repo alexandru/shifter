@@ -15,7 +15,7 @@ import shifter.web.api.responses.StreamResponse
 import shifter.web.api.responses.SimpleResponse
 import shifter.web.api.responses.AsyncResponse
 import shifter.web.api.responses.BytesResponse
-import shifter.web.api.base.HeaderNames._
+import shifter.web.api.http.HeaderNames._
 import scala.annotation.tailrec
 import shifter.concurrency.atomic.Ref
 import scala.util.{Success, Failure}

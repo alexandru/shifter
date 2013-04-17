@@ -1,4 +1,4 @@
-package shifter.web.api.base
+package shifter.web.api.utils
 
 import java.util.regex.Pattern
 

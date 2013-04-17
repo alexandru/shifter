@@ -1,6 +1,6 @@
 package shifter.web.api.requests
 
-import shifter.web.api.base.{HttpMethod, Cookie}
+import shifter.web.api.http.{HttpMethod, Cookie}
 
 case class SimpleRequest(
   method: HttpMethod.Value,

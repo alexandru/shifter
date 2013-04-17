@@ -1,4 +1,4 @@
-package shifter.web.api.base
+package shifter.web.api.utils
 
 import shifter.geoip.{GeoIPLocation, GeoIP}
 import shifter.http.client.{HttpClientConfig, NingHttpClient}

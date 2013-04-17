@@ -1,9 +1,10 @@
 package shifter.web.api.requests
 
-import shifter.web.api.base._
+import shifter.web.api.http._
 import scala.Some
-import shifter.web.api.base.UserInfo
-import shifter.web.api.base.HeaderNames._
+import shifter.web.api.http.HeaderNames._
+import shifter.web.api.utils.{IPUtils, GeoIPService, UserInfo}
+import shifter.web.api.utils
 
 
 trait HttpRequest[T] {
@@ -25,6 +26,8 @@ trait HttpRequest[T] {
 
   def headerList(key: String): Seq[String] =
     headers.get(key.toUpperCase).getOrElse(Seq.empty)
+
+  lazy val route = method.toString + " " + path
 
   lazy val queryParams: Map[String, Seq[String]] =
     this.query match {

@@ -1,6 +1,6 @@
 package shifter.web.api.requests
 
-import shifter.web.api.base.{FileInfo, HttpMethod, MultiPartBody}
+import shifter.web.api.http.{FileInfo, HttpMethod, MultiPartBody}
 import org.apache.commons.fileupload.servlet.ServletFileUpload
 import org.apache.commons.fileupload.disk.DiskFileItemFactory
 import scala.collection.mutable

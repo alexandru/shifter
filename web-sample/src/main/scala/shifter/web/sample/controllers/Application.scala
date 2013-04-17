@@ -1,12 +1,9 @@
 package shifter.web.sample.controllers
 
 import shifter.web.api.mvc._
-import scala.concurrent.{Promise, Future}
+import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import shifter.concurrency.extensions._
-import shifter.web.api.responses.SimpleResponse
-import scala.util.Success
 
 object Application extends Controller {
 

@@ -1,7 +1,7 @@
 package shifter.web.api.requests
 
 import spray.json._
-import shifter.web.api.base.{HttpMethod, Cookie}
+import shifter.web.api.http.{HttpMethod, Cookie}
 
 case class JsonRequest(
   method: HttpMethod.Value,

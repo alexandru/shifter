@@ -1,7 +1,7 @@
 package shifter.web.api.requests
 
 import spray.json.{JsonParser => SprayJsonParser, JsValue}
-import shifter.web.api.base.HttpMethod
+import shifter.web.api.http.HttpMethod
 
 object JsonParser extends RequestParser[JsValue, JsonRequest] {
   val validMethods = Set(

@@ -1,10 +1,10 @@
 package shifter.web.server.internal
 
 import shifter.web.server.MetricsConfiguration
-import shifter.web.api.misc.BasicAuthSupport
 import javax.servlet
 import javax.servlet.{FilterConfig, FilterChain, ServletResponse, ServletRequest}
 import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
+import shifter.web.api.utils.BasicAuthSupport
 
 
 class MetricsAuthenticationFilter(config: MetricsConfiguration) extends servlet.Filter with BasicAuthSupport {

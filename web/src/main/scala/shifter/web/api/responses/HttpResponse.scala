@@ -3,7 +3,7 @@ package shifter.web.api.responses
 import language.existentials
 import scala.concurrent.Future
 import scala.concurrent.duration._
-import shifter.web.api.base.Cookie
+import shifter.web.api.http.Cookie
 import java.io.InputStream
 import shifter.web.api.mvc._
 

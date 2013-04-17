@@ -1,4 +1,4 @@
-package shifter.web.api.base
+package shifter.web.api.http
 
 import java.net.URLEncoder
 import java.util.{Calendar, TimeZone, Date}

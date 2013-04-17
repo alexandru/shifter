@@ -1,6 +1,6 @@
 package shifter.web.api.requests
 
-import shifter.web.api.base.{MultiPartBody, HttpMethod, Cookie}
+import shifter.web.api.http.{MultiPartBody, HttpMethod, Cookie}
 
 case class MultiPartRequest(
   method: HttpMethod.Value,

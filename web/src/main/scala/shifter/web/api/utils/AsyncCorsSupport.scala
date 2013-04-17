@@ -1,8 +1,8 @@
-package shifter.web.api.misc
+package shifter.web.api.utils
 
 import concurrent.{ExecutionContext, Future}
 import shifter.web.api._
-import shifter.web.api.base.HttpMethod
+import shifter.web.api.http.HttpMethod
 import shifter.web.api.requests.HttpRequest
 import shifter.web.api.responses.{ResponseBuilders, CompleteResponse}
 

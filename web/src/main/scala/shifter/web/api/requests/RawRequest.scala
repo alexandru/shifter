@@ -2,7 +2,7 @@ package shifter.web.api.requests
 
 import javax.servlet.http.HttpServletRequest
 import collection.JavaConverters._
-import shifter.web.api.base.{HttpMethod, Cookie}
+import shifter.web.api.http.{HttpMethod, Cookie}
 import shifter.units._
 
 

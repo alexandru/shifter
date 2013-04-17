@@ -1,7 +1,8 @@
 package shifter.web.api.requests
 
 import scala.util.Try
-import shifter.web.api.base.{HttpMethod, utils}
+import shifter.web.api.http.{HttpMethod}
+import shifter.web.api.utils
 
 object MixedParser extends RequestParser[Map[String, Seq[String]], MixedRequest] {
 

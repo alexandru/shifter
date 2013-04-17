@@ -1,8 +1,8 @@
-package shifter.web.api.base
+package shifter.web.api
 
 import java.net.URLDecoder._
 
-object utils {
+package object utils {
   def urlDecode(data: String): Map[String, String] = {
     if (data != null && !data.isEmpty) {
       val parts = Seq(data.split("&"): _*)

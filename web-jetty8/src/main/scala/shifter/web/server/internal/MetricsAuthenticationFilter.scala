@@ -1,5 +1,7 @@
 package shifter.web.server.internal
 
+/*
+
 import shifter.web.server.MetricsConfiguration
 import javax.servlet
 import javax.servlet.{FilterConfig, FilterChain, ServletResponse, ServletRequest}
@@ -47,3 +49,4 @@ class MetricsAuthenticationFilter(config: MetricsConfiguration) extends servlet.
   def destroy() {}
 }
 
+*/

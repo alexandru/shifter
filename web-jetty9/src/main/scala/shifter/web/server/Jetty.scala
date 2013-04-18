@@ -2,57 +2,50 @@ package shifter.web.server
 
 import com.typesafe.scalalogging.slf4j.Logging
 import org.eclipse.jetty.server.Server
-import com.yammer.metrics.jetty.{InstrumentedQueuedThreadPool, InstrumentedSelectChannelConnector}
-import org.eclipse.jetty.server.nio.SelectChannelConnector
 import org.eclipse.jetty.util.thread.QueuedThreadPool
 import org.eclipse.jetty.webapp.WebAppContext
+import org.eclipse.jetty.server.ServerConnector
 import java.io._
-import scala.Some
-import com.yammer.metrics.reporting.GraphiteReporter
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.LinkedBlockingQueue
 
-
-object Jetty extends Logging {
-
+trait Jetty extends Logging {
   def start(): Server = {
     start(Configuration.load())
   }
   
   def start(config: Configuration): Server = {
+    logger.info("Starting Jetty on %s:%d".format(config.host, config.port))
 
-    if (config.metrics.graphiteEnabled)
-      for (gHost <- config.metrics.graphiteServerHost;
-           gPort <- config.metrics.graphiteServerPort;
-           gPrefix <- config.metrics.graphiteServerPrefix) {
-        logger.info("Starting Graphite reporting")
-        GraphiteReporter.enable(1, TimeUnit.MINUTES, gHost, gPort, gPrefix)
-      }
+    logger.info(s"Jetty config.parallelismFactor: ${config.parallelismFactor}")
+    logger.info(s"Jetty config.minThreads: ${config.minThreads}")
+    logger.info(s"Jetty config.maxThreads: ${config.maxThreads}")
+    logger.info(s"Jetty config.threadPoolMaxQueueSize: ${config.threadPoolMaxQueueSize}")
+    logger.info(s"Jetty config.threadPoolIdleTimeout: ${config.threadPoolIdleTimeout}")
 
-    logger.info(
-      "Starting Jetty on %s:%d with minThreads=%d, maxThreads=%d, killOnFatalError=%s and isInstrumented=%s".format(
-          config.host, config.port, config.minThreads, config.maxThreads,
-          config.killOnFatalError, config.isInstrumented
-        ))
-
-    val server = new Server()
-
-    val connector = if (config.isInstrumented)
-      new InstrumentedSelectChannelConnector(config.port)
+    val pool = if (config.threadPoolMaxQueueSize.isDefined) {
+      val maxQueueSize = config.threadPoolMaxQueueSize.get
+      val queue = new LinkedBlockingQueue[Runnable](maxQueueSize)
+      new QueuedThreadPool(config.maxThreads, config.minThreads, config.threadPoolIdleTimeout, queue)
+    }
     else
-      new SelectChannelConnector()
+      new QueuedThreadPool(config.maxThreads, config.minThreads, config.threadPoolIdleTimeout)
 
-    connector.setPort(config.port)
+    val server = new Server(pool)
+    val connector = new ServerConnector(server)
+
     connector.setHost(config.host)
+    connector.setPort(config.port)
+
+    logger.info(s"Jetty config.acceptQueueSize: ${config.acceptQueueSize}")
+    connector.setAcceptQueueSize(config.acceptQueueSize)
+
+    logger.info(s"Jetty config.soLingerTime: ${config.soLingerTime}")
+    connector.setSoLingerTime(config.soLingerTime)
+
+    logger.info(s"Jetty config.maxIdleTime: ${config.idleTimeoutMillis}")
+    connector.setIdleTimeout(config.idleTimeoutMillis)
+
     server.addConnector(connector)
-
-    val pool = if (config.isInstrumented)
-      new InstrumentedQueuedThreadPool()
-    else
-      new QueuedThreadPool()
-
-    pool.setMinThreads(config.minThreads)
-    pool.setMaxThreads(config.maxThreads)
-    server.setThreadPool(pool)
 
     val resourceBase = Option(getClass.getResource(config.resourceBase)) match {
       case Some(res) => res.toExternalForm
@@ -82,14 +75,12 @@ object Jetty extends Logging {
   }
 
   def getWebXmlPath(config: Configuration): String = {
-    val resource = if (config.isInstrumented)
-      Option(getClass.getResource("/shifter/web/server/web.xml"))
-    else
+    val resource =
       Option(getClass.getResource("/shifter/web/server/web-plain.xml"))
 
     val webXmlTemplate = resource match {
       case None =>
-        throw new RuntimeException("Cannot find resource: /shifter/web/server/web.xml")
+        throw new RuntimeException("Cannot find resource: /shifter/web/server/web-plain.xml")
 
       case Some(res) =>
         val in = new BufferedReader(new InputStreamReader(res.openStream(), "UTF-8"))
@@ -113,7 +104,6 @@ object Jetty extends Logging {
       .replace("$error-404", config.error404)
       .replace("$error-500", config.error500)
       .replace("$error-403", config.error403)
-      .replace("$metrics-mapping", config.metrics.mapping)
 
     val file = File.createTempFile("web.", ".xml")
     file.deleteOnExit()
@@ -129,3 +119,5 @@ object Jetty extends Logging {
     file.getAbsolutePath
   }
 }
+
+object Jetty extends Jetty

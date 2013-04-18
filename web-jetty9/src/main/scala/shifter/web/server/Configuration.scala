@@ -71,8 +71,8 @@ case class Configuration(
    * The linger time. Use -1 to disable.
    *
    * See:
-   * http://stackoverflow.com/a/13088864/3280
-   * http://www.serverframework.com/asynchronousevents/2011/01/time-wait-and-its-design-implications-for-protocols-and-scalable-servers.html
+   *   http://stackoverflow.com/a/13088864/3280
+   *   http://www.serverframework.com/asynchronousevents/2011/01/time-wait-and-its-design-implications-for-protocols-and-scalable-servers.html
    */
   soLingerTime: Int = -1
 )

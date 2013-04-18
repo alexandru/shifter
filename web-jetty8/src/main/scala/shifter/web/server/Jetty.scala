@@ -6,6 +6,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool
 import org.eclipse.jetty.webapp.WebAppContext
 import org.eclipse.jetty.server.nio.SelectChannelConnector
 import java.io._
+import java.util.concurrent.LinkedBlockingQueue
 
 trait Jetty extends Logging {
   def start(): Server = {
@@ -36,12 +37,21 @@ trait Jetty extends Logging {
     logger.info(s"Jetty config.lowResourcesMaxIdleTime: ${config.lowResourcesMaxIdleTime}")
     connector.setLowResourcesMaxIdleTime(config.lowResourcesMaxIdleTime)
 
-    logger.info(s"Jetty config.maxIdleTime: ${config.maxIdleTime}")
-    connector.setMaxIdleTime(config.maxIdleTime)
+    logger.info(s"Jetty config.idleTimeoutMillis: ${config.idleTimeoutMillis}")
+    connector.setMaxIdleTime(config.idleTimeoutMillis)
+
+    logger.info(s"Jetty config.soLingerTime: ${config.soLingerTime}")
+    connector.setSoLingerTime(config.soLingerTime)
 
     server.addConnector(connector)
 
-    val pool = new QueuedThreadPool()
+    val pool = if (config.threadPoolMaxQueueSize.isDefined) {
+      val maxQueueSize = config.threadPoolMaxQueueSize.get
+      val queue = new LinkedBlockingQueue[Runnable](maxQueueSize)
+      new QueuedThreadPool(queue)
+    }
+    else
+      new QueuedThreadPool()
 
     logger.info(s"Jetty config.parallelismFactor: ${config.parallelismFactor}")
 
@@ -50,6 +60,13 @@ trait Jetty extends Logging {
 
     logger.info(s"Jetty config.maxThreads: ${config.maxThreads}")
     pool.setMaxThreads(config.maxThreads)
+
+    logger.info(s"Jetty config.threadPoolMaxQueueSize: ${config.maxThreads}")
+    if (config.threadPoolMaxQueueSize.isDefined)
+      pool.setMaxQueued(config.threadPoolMaxQueueSize.get)
+
+    logger.info(s"Jetty config.threadPoolIdleTimeout: ${config.threadPoolIdleTimeout}")
+    pool.setMaxIdleTimeMs(config.threadPoolIdleTimeout)
 
     server.setThreadPool(pool)
 

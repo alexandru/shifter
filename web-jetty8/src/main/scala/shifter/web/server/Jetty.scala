@@ -61,7 +61,7 @@ trait Jetty extends Logging {
     logger.info(s"Jetty config.maxThreads: ${config.maxThreads}")
     pool.setMaxThreads(config.maxThreads)
 
-    logger.info(s"Jetty config.threadPoolMaxQueueSize: ${config.maxThreads}")
+    logger.info(s"Jetty config.threadPoolMaxQueueSize: ${config.threadPoolMaxQueueSize}")
     if (config.threadPoolMaxQueueSize.isDefined)
       pool.setMaxQueued(config.threadPoolMaxQueueSize.get)
 

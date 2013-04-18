@@ -19,9 +19,6 @@ class ContextListener extends ServletContextListener with Logging {
       for (router <- context.get.filters)
         addFilterMapping(router.name, router.instance, router.urlPattern, servletContext)
 
-      // for authentication for metrics
-      addFilterMapping("metrics-auth", new MetricsAuthenticationFilter(config.metrics), config.metrics.mapping, servletContext)
-
       for (router <- context.get.servlets)
         addServletMapping(router.name, router.instance, router.urlPattern, servletContext)
 

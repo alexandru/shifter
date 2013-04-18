@@ -2,9 +2,11 @@ package shifter.concurrency
 
 import collection.immutable.TreeMap
 import annotation.tailrec
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Promise, Future, ExecutionContext}
 import util.control.NonFatal
 import shifter.concurrency.atomic.Ref
+import scala.util.Try
+import scala.concurrent.duration.FiniteDuration
 
 
 /**
@@ -17,6 +19,14 @@ object scheduler {
     run: () => Any,
     ec: ExecutionContext
   )
+
+  def future[T](initialDelay: FiniteDuration)(cb: => T)(implicit ec: ExecutionContext): Future[T] = {
+    val promise = Promise[T]()
+    runOnce(initialDelay.toMillis) {
+      promise.completeWith(Future(cb))
+    }
+    promise.future
+  }
 
   def runOnce(delayMillis: Long)(callback: => Any)(implicit ec: ExecutionContext): TaskKey = {
     val newID = lastID.incrementAndGet

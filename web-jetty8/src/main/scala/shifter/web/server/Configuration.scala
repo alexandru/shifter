@@ -34,14 +34,27 @@ case class Configuration(
   parallelismFactor: Int = 2,
 
   /**
+   * If None, then a QueuedThreadPool is used, which has no upper bound.
+   * If Some(Int), then the thread pool created will use a bounded LinkedBlockingQueue,
+   * useful for limiting the number of incoming connections.
+   */
+  threadPoolMaxQueueSize: Option[Int] = None,
+
+  /**
+   * Set the maximum thread idle time.
+   * Threads that are idle for longer than this period may be
+   * stopped.
+   */
+  threadPoolIdleTimeout: Int = 60000,
+
+  /**
    * Number of acceptor threads to use.
    */
   acceptors: Int = 1,
 
   /**
    * Number of connection requests that can be queued up before the operating system
-   * starts to send rejections. Useful for limiting the total number of connections
-   * that can be accepted.
+   * starts to send rejections.
    */
   acceptQueueSize: Int = 0,
 
@@ -72,7 +85,16 @@ case class Configuration(
    * writes of memory-mapped file buffers, a write may take many 10s of seconds for large content written to
    * a slow device.
    */
-  maxIdleTime: Int = 10000
+  idleTimeoutMillis: Int = 10000,
+
+  /**
+   * The linger time. Use -1 to disable.
+   *
+   * See:
+   *   http://stackoverflow.com/a/13088864/3280
+   *   http://www.serverframework.com/asynchronousevents/2011/01/time-wait-and-its-design-implications-for-protocols-and-scalable-servers.html
+   */
+  soLingerTime: Int = -1
 )
 
 object Configuration {
@@ -87,29 +109,40 @@ object Configuration {
     if (!isSubclass[LifeCycle](lifeCycleClass))
       throw new BadValue("http.server.lifeCycleClass", "Value is not a valid LifeCycle class")
 
-    val numberOfProcessors = math.max(Runtime.getRuntime.availableProcessors(), 1)
-    val parallelismFactor = Try(values.getInt("http.server.parallelismFactor")).getOrElse(2)
-    val parallelism = numberOfProcessors * parallelismFactor
-
-    val declaredMinThreads = Try(values.getInt("http.server.minThreads")).getOrElse(numberOfProcessors)
-    val declaredMaxThreads = Try(values.getInt("http.server.maxThreads")).getOrElse(parallelism)
-
-    val acceptors = Try(values.getInt("http.server.acceptors")).getOrElse(numberOfProcessors)
-    val minThreads = math.max(1, declaredMinThreads) + acceptors
-    val maxThreads = math.max(declaredMinThreads, math.min(declaredMaxThreads, parallelism)) + acceptors
-
-    Configuration(
+    val defaultConfig: Configuration = Configuration(
       host = values.getString("http.server.host"),
       port = values.getInt("http.server.port"),
-      parallelismFactor = parallelismFactor,
-      minThreads = minThreads,
-      maxThreads = maxThreads,
-      acceptors = acceptors,
       resourceBase = values.getString("http.server.resourceBase"),
       lifeCycleClass = lifeCycleClass,
       error404 = values.getString("http.server.error404"),
       error500 = values.getString("http.server.error500"),
       error403 = values.getString("http.server.error403")
+    )
+
+    val numberOfProcessors = math.max(Runtime.getRuntime.availableProcessors(), 1)
+    val parallelismFactor = Try(values.getInt("http.server.parallelismFactor"))
+      .getOrElse(defaultConfig.parallelismFactor)
+    val parallelism = numberOfProcessors * parallelismFactor
+
+    val declaredMinThreads = Try(values.getInt("http.server.minThreads")).getOrElse(defaultConfig.minThreads)
+    val declaredMaxThreads = Try(values.getInt("http.server.maxThreads")).getOrElse(defaultConfig.maxThreads)
+
+    val acceptors = Try(values.getInt("http.server.acceptors")).getOrElse(defaultConfig.acceptors)
+    val minThreads = math.max(1, declaredMinThreads) + acceptors
+    val maxThreads = math.max(declaredMinThreads, math.min(declaredMaxThreads, parallelism)) + acceptors
+
+    defaultConfig.copy(
+      minThreads = minThreads,
+      maxThreads = maxThreads,
+      acceptors = acceptors,
+      parallelismFactor = parallelismFactor,
+      threadPoolMaxQueueSize = Try(values.getInt("http.server.threadPoolMaxQueueSize")).toOption,
+      threadPoolIdleTimeout = Try(values.getInt("http.server.threadPoolIdleTimeout")).getOrElse(defaultConfig.threadPoolIdleTimeout),
+      acceptQueueSize = Try(values.getInt("http.server.acceptQueueSize")).getOrElse(defaultConfig.acceptQueueSize),
+      idleTimeoutMillis = Try(values.getInt("http.server.idleTimeoutMillis")).getOrElse(defaultConfig.idleTimeoutMillis),
+      soLingerTime = Try(values.getInt("http.server.soLingerTime")).getOrElse(defaultConfig.soLingerTime),
+      lowResourcesConnections = Try(values.getInt("http.server.lowResourcesConnections")).getOrElse(defaultConfig.lowResourcesConnections),
+      lowResourcesMaxIdleTime = Try(values.getInt("http.server.lowResourcesMaxIdleTime")).getOrElse(defaultConfig.lowResourcesMaxIdleTime)
     )
   }
 }

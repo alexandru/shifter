@@ -3,18 +3,17 @@ package shifter.web.sample.controllers
 import shifter.web.api.mvc._
 
 object Urls extends UrlRouter {
-
   def route = {
     case GET("/") =>
       Application.homepage
 
-    case GET(Path("hello" :: Nil)) =>
+    case GET(p"/hello/") =>
       Application.hello
 
-    case GET(Path("hello" :: name :: Nil)) =>
+    case GET(p"/hello/$name/") =>
       Application.helloName(name)
 
-    case GET(Path("async" :: "hello" :: Nil)) =>
+    case GET(p"/async/hello/") =>
       Application.asyncHello
   }
 }

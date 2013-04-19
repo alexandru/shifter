@@ -1,4 +1,4 @@
-package shifter.web.server
+package shifter.web.jetty9
 
 import javax.servlet.{Filter, Servlet}
 

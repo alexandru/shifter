@@ -1,10 +1,10 @@
-package shifter.web.server
+package shifter.web.jetty8
 
 import com.typesafe.scalalogging.slf4j.Logging
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.util.thread.QueuedThreadPool
 import org.eclipse.jetty.webapp.WebAppContext
-import org.eclipse.jetty.server.ServerConnector
+import org.eclipse.jetty.server.nio.SelectChannelConnector
 import java.io._
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -16,36 +16,59 @@ trait Jetty extends Logging {
   def start(config: Configuration): Server = {
     logger.info("Starting Jetty on %s:%d".format(config.host, config.port))
 
-    logger.info(s"Jetty config.parallelismFactor: ${config.parallelismFactor}")
-    logger.info(s"Jetty config.minThreads: ${config.minThreads}")
-    logger.info(s"Jetty config.maxThreads: ${config.maxThreads}")
-    logger.info(s"Jetty config.threadPoolMaxQueueSize: ${config.threadPoolMaxQueueSize}")
-    logger.info(s"Jetty config.threadPoolIdleTimeout: ${config.threadPoolIdleTimeout}")
+    val server = new Server()
+    val connector = new SelectChannelConnector()
 
-    val pool = if (config.threadPoolMaxQueueSize.isDefined) {
-      val maxQueueSize = config.threadPoolMaxQueueSize.get
-      val queue = new LinkedBlockingQueue[Runnable](maxQueueSize)
-      new QueuedThreadPool(config.maxThreads, config.minThreads, config.threadPoolIdleTimeout, queue)
-    }
-    else
-      new QueuedThreadPool(config.maxThreads, config.minThreads, config.threadPoolIdleTimeout)
-
-    val server = new Server(pool)
-    val connector = new ServerConnector(server)
-
+    logger.info(s"Jetty config.host: ${config.host}")
     connector.setHost(config.host)
+
+    logger.info(s"Jetty config.port: ${config.port}")
     connector.setPort(config.port)
+
+    logger.info(s"Jetty config.acceptors: ${config.acceptors}")
+    connector.setAcceptors(config.acceptors)
 
     logger.info(s"Jetty config.acceptQueueSize: ${config.acceptQueueSize}")
     connector.setAcceptQueueSize(config.acceptQueueSize)
 
+    logger.info(s"Jetty config.lowResourcesConnections: ${config.lowResourcesConnections}")
+    connector.setLowResourcesConnections(config.lowResourcesConnections)
+
+    logger.info(s"Jetty config.lowResourcesMaxIdleTime: ${config.lowResourcesMaxIdleTime}")
+    connector.setLowResourcesMaxIdleTime(config.lowResourcesMaxIdleTime)
+
+    logger.info(s"Jetty config.idleTimeoutMillis: ${config.idleTimeoutMillis}")
+    connector.setMaxIdleTime(config.idleTimeoutMillis)
+
     logger.info(s"Jetty config.soLingerTime: ${config.soLingerTime}")
     connector.setSoLingerTime(config.soLingerTime)
 
-    logger.info(s"Jetty config.maxIdleTime: ${config.idleTimeoutMillis}")
-    connector.setIdleTimeout(config.idleTimeoutMillis)
-
     server.addConnector(connector)
+
+    val pool = if (config.threadPoolMaxQueueSize.isDefined) {
+      val maxQueueSize = config.threadPoolMaxQueueSize.get
+      val queue = new LinkedBlockingQueue[Runnable](maxQueueSize)
+      new QueuedThreadPool(queue)
+    }
+    else
+      new QueuedThreadPool()
+
+    logger.info(s"Jetty config.parallelismFactor: ${config.parallelismFactor}")
+
+    logger.info(s"Jetty config.minThreads: ${config.minThreads}")
+    pool.setMinThreads(config.minThreads)
+
+    logger.info(s"Jetty config.maxThreads: ${config.maxThreads}")
+    pool.setMaxThreads(config.maxThreads)
+
+    logger.info(s"Jetty config.threadPoolMaxQueueSize: ${config.threadPoolMaxQueueSize}")
+    if (config.threadPoolMaxQueueSize.isDefined)
+      pool.setMaxQueued(config.threadPoolMaxQueueSize.get)
+
+    logger.info(s"Jetty config.threadPoolIdleTimeout: ${config.threadPoolIdleTimeout}")
+    pool.setMaxIdleTimeMs(config.threadPoolIdleTimeout)
+
+    server.setThreadPool(pool)
 
     val resourceBase = Option(getClass.getResource(config.resourceBase)) match {
       case Some(res) => res.toExternalForm
@@ -76,11 +99,11 @@ trait Jetty extends Logging {
 
   def getWebXmlPath(config: Configuration): String = {
     val resource =
-      Option(getClass.getResource("/shifter/web/server/web-plain.xml"))
+      Option(getClass.getResource("/shifter/web/jetty8/web-plain.xml"))
 
     val webXmlTemplate = resource match {
       case None =>
-        throw new RuntimeException("Cannot find resource: /shifter/web/server/web-plain.xml")
+        throw new RuntimeException("Cannot find resource: /shifter/web/jetty8/web-plain.xml")
 
       case Some(res) =>
         val in = new BufferedReader(new InputStreamReader(res.openStream(), "UTF-8"))

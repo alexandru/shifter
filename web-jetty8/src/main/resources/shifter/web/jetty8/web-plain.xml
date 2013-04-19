@@ -5,17 +5,8 @@
          version="3.0">
 
     <listener>
-        <listener-class>shifter.web.server.internal.ContextListener</listener-class>
+        <listener-class>shifter.web.jetty8.internal.ContextListener</listener-class>
     </listener>
-
-    <servlet>
-        <servlet-name>codahale-metrics</servlet-name>
-        <servlet-class>com.yammer.metrics.reporting.AdminServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>codahale-metrics</servlet-name>
-        <url-pattern>$metrics-mapping</url-pattern>
-    </servlet-mapping>
 
     <servlet>
         <servlet-name>default</servlet-name>

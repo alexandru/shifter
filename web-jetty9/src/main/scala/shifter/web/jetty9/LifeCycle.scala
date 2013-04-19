@@ -1,4 +1,4 @@
-package shifter.web.server
+package shifter.web.jetty9
 
 trait LifeCycle {
   def createContext: Context

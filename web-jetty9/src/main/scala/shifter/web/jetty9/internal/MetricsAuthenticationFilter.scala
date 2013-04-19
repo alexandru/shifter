@@ -1,4 +1,4 @@
-package shifter.web.server.internal
+package shifter.web.jetty9.internal
 
 /*
 

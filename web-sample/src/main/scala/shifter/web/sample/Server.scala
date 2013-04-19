@@ -1,5 +1,5 @@
 package shifter.web.sample
 
 object Server extends App {
-  shifter.web.server.Jetty.run()
+  shifter.web.jetty9.Jetty.run()
 }

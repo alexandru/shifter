@@ -1,12 +1,9 @@
 package shifter.web.sample.controllers
 
 import shifter.web.api.mvc._
-import scala.concurrent.{Promise, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import shifter.concurrency.extensions._
-import shifter.web.api.responses.SimpleResponse
-import scala.util.Success
+import shifter.concurrency.scheduler
 
 object Application extends Controller {
 
@@ -24,11 +21,11 @@ object Application extends Controller {
   }
 
   val asyncHello = Action { req =>
-    val response = Future {
+    val response = scheduler.future(500.millis) {
       val name = req.queryParam("name").getOrElse("Anonymous")
       Ok("Hello, %s!".format(name))
     }
 
-    Async(response, timeout = 30.millis)
+    Async(response, timeout = 1.second)
   }
 }

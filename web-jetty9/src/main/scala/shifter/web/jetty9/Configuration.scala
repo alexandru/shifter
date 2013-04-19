@@ -1,4 +1,4 @@
-package shifter.web.server
+package shifter.web.jetty9
 
 import language.existentials
 import com.typesafe.config.ConfigFactory
@@ -49,29 +49,31 @@ case class Configuration(
 
   /**
    * Number of acceptor threads to use.
+   *
+   * These are added to the final minThreads used in the pool, so if
+   * you're specifying 1 acceptor, 2 selectors and 2 minThreads, the final minThreads
+   * used by the pool will be 5.
+   *
+   * Use 0 for the default value, which is the number of processors / 2
    */
   acceptors: Int = 1,
+
+  /**
+   * Number of selector threads to use.
+   *
+   * These are added to the final minThreads used in the pool, so if
+   * you're specifying 1 acceptor, 2 selectors and 2 minThreads, the final minThreads
+   * used by the pool will be 5.
+   *
+   * Use 0 for the default value, which is equal to the number of processors
+   */
+  selectors: Int = 1,
 
   /**
    * Number of connection requests that can be queued up before the operating system
    * starts to send rejections.
    */
   acceptQueueSize: Int = 0,
-
-  /**
-   * Sets the number of connections, which if exceeded places this connector in a low resources
-   * state. This is not an exact measure as the connection count is averaged over the select sets.
-   * When in a low resources state, different idle timeouts can apply on connections.
-   * See lowResourcesMaxIdleTime.
-   */
-  lowResourcesConnections: Int = 0,
-
-  /**
-   * Sets the period in ms that a connection is allowed to be idle when this there are more than
-   * lowResourcesConnections connections. This allows the server to rapidly close idle connections
-   * in order to gracefully handle high load situations.
-   */
-  lowResourcesMaxIdleTime: Int = 0,
 
   /**
    * Set the maximum Idle time for a connection, which roughly translates to the Socket.setSoTimeout(int)
@@ -98,16 +100,9 @@ case class Configuration(
 )
 
 object Configuration {
-  def load() = {
-    val values = ConfigFactory.load().withFallback(
-      ConfigFactory.load("shifter/web/server/reference.conf")
-    )
-
-    val lifeCycleClass = toClass(values.getString("http.server.lifeCycleClass"))
-      .getOrElse(classOf[DefaultLifeCycle])
-
+  def load(lifeCycleClass: Class[_]): Configuration = {
     if (!isSubclass[LifeCycle](lifeCycleClass))
-      throw new BadValue("http.server.lifeCycleClass", "Value is not a valid LifeCycle class")
+      throw new IllegalArgumentException("Value is not a valid LifeCycle class")
 
     val defaultConfig: Configuration = Configuration(
       host = values.getString("http.server.host"),
@@ -120,29 +115,44 @@ object Configuration {
     )
 
     val numberOfProcessors = math.max(Runtime.getRuntime.availableProcessors(), 1)
-    val parallelismFactor = Try(values.getInt("http.server.parallelismFactor"))
-      .getOrElse(defaultConfig.parallelismFactor)
+    val parallelismFactor = Try(values.getInt("http.server.parallelismFactor")).getOrElse(defaultConfig.parallelismFactor)
     val parallelism = numberOfProcessors * parallelismFactor
 
     val declaredMinThreads = Try(values.getInt("http.server.minThreads")).getOrElse(defaultConfig.minThreads)
     val declaredMaxThreads = Try(values.getInt("http.server.maxThreads")).getOrElse(defaultConfig.maxThreads)
 
-    val acceptors = Try(values.getInt("http.server.acceptors")).getOrElse(defaultConfig.acceptors)
-    val minThreads = math.max(1, declaredMinThreads) + acceptors
-    val maxThreads = math.max(declaredMinThreads, math.min(declaredMaxThreads, parallelism)) + acceptors
+    val declaredSelectors = Try(values.getInt("http.server.selectors")).getOrElse(defaultConfig.selectors)
+    val declaredAcceptors = Try(values.getInt("http.server.acceptors")).getOrElse(defaultConfig.acceptors)
+
+    val selectors = if (declaredSelectors == 0) numberOfProcessors else declaredSelectors
+    val acceptors = if (declaredAcceptors == 0) math.max(1, numberOfProcessors / 2) else declaredAcceptors
+
+    val minThreads = math.max(1, declaredMinThreads) + acceptors + selectors
+    val maxThreads = math.max(declaredMinThreads, math.min(declaredMaxThreads, parallelism)) + acceptors + selectors
 
     defaultConfig.copy(
       minThreads = minThreads,
       maxThreads = maxThreads,
-      acceptors = acceptors,
       parallelismFactor = parallelismFactor,
       threadPoolMaxQueueSize = Try(values.getInt("http.server.threadPoolMaxQueueSize")).toOption,
       threadPoolIdleTimeout = Try(values.getInt("http.server.threadPoolIdleTimeout")).getOrElse(defaultConfig.threadPoolIdleTimeout),
       acceptQueueSize = Try(values.getInt("http.server.acceptQueueSize")).getOrElse(defaultConfig.acceptQueueSize),
       idleTimeoutMillis = Try(values.getInt("http.server.idleTimeoutMillis")).getOrElse(defaultConfig.idleTimeoutMillis),
       soLingerTime = Try(values.getInt("http.server.soLingerTime")).getOrElse(defaultConfig.soLingerTime),
-      lowResourcesConnections = Try(values.getInt("http.server.lowResourcesConnections")).getOrElse(defaultConfig.lowResourcesConnections),
-      lowResourcesMaxIdleTime = Try(values.getInt("http.server.lowResourcesMaxIdleTime")).getOrElse(defaultConfig.lowResourcesMaxIdleTime)
+      acceptors = acceptors,
+      selectors = selectors
     )
   }
+
+  def load(): Configuration = {
+    val lifeCycleClass = toClass(values.getString("http.server.lifeCycleClass")).get
+    if (!isSubclass[LifeCycle](lifeCycleClass))
+      throw new BadValue("http.server.lifeCycleClass", "Value is not a valid LifeCycle class")
+
+    load(lifeCycleClass)
+  }
+
+  private[this] lazy val values = ConfigFactory.load().withFallback(
+    ConfigFactory.load("shifter/web/server/reference.conf")
+  )
 }

@@ -1,7 +1,6 @@
 package shifter.concurrency.atomic
 
 import scala.annotation.tailrec
-import scala.reflect.ClassTag
 
 trait Ref[@specialized(scala.Int, scala.Long, scala.Boolean) T] {
   def get: T

@@ -1,9 +1,9 @@
-package shifter.web.server.internal
+package shifter.web.jetty9.internal
 
 import javax.servlet._
 import com.typesafe.scalalogging.slf4j.Logging
 import java.{util => jutil}
-import shifter.web.server.{Context, LifeCycle, Configuration}
+import shifter.web.jetty9.{Context, LifeCycle, Configuration}
 import shifter.reflection.toInstance
 import scala.util.{Failure, Success}
 

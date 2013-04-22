@@ -22,18 +22,24 @@ import scala.util.{Success, Failure}
 
 
 trait ShifterFilter extends JavaFilter with ResponseBuilders with Logging {
-  def router: UrlRoutes
+  def routes: UrlRoutes
   implicit def ec: ExecutionContext
 
   final def doFilter(servletRequest: ServletRequest, servletResponse: ServletResponse, chain: FilterChain) {
     val rawRequest = new RawRequest(servletRequest.asInstanceOf[HttpServletRequest])
 
-    if (!router.isDefinedAt(rawRequest)) {
-      chain.doFilter(servletRequest, servletResponse)
-      return
-    }
+    val action =
+      try
+        routes(rawRequest)
+      catch {
+        case _: MatchError =>
+          null
+      }
 
-    handleAction(servletRequest, servletResponse, chain, rawRequest, router(rawRequest))
+    if (action != null)
+      handleAction(servletRequest, servletResponse, chain, rawRequest, action)
+    else
+      chain.doFilter(servletRequest, servletResponse)
   }
 
   @tailrec
@@ -237,7 +243,7 @@ trait ShifterFilter extends JavaFilter with ResponseBuilders with Logging {
 }
 
 object ShifterFilter {
-  final class ConcreteFilter private[api] (val router: UrlRoutes, val ec: ExecutionContext) extends ShifterFilter
+  final class ConcreteFilter private[api] (val routes: UrlRoutes, val ec: ExecutionContext) extends ShifterFilter
 
   def apply(routes: UrlRoutes)(implicit ec: ExecutionContext): ConcreteFilter =
     new ConcreteFilter(routes, ec)

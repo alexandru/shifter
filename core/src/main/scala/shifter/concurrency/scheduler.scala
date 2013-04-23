@@ -102,7 +102,7 @@ object scheduler {
    * @param delayMillis - the initial delay to wait before executing the function
    * @param callback - the function to execute
    * @param ec - the execution context used for executing the function
-   * @return - a `TaskKey` that can be used for canceling the scheduling of this tas
+   * @return - a `TaskKey` that can be used for canceling the scheduling of this task
    */
   def runOnce(delayMillis: Long)(callback: => Any)(implicit ec: ExecutionContext): TaskKey = {
     val newID = lastID.incrementAndGet

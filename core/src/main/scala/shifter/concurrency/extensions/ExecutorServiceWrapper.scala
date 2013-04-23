@@ -1,10 +1,14 @@
-package shifter.concurrency.internals
+package shifter.concurrency.extensions
 
 import concurrent._
 import java.util.concurrent.{AbstractExecutorService, TimeUnit}
 import java.util.Collections
 
 
+/**
+ * Wrapper for transforming an `ExecutionContext` into a Java
+ * [[http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ExecutorService.html ExecutorService]]
+ */
 class ExecutorServiceWrapper protected[concurrency] (ec: ExecutionContext)
     extends AbstractExecutorService with ExecutionContextExecutorService {
 

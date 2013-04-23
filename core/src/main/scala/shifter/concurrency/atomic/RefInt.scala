@@ -2,6 +2,13 @@ package shifter.concurrency.atomic
 
 import java.util.concurrent.atomic.AtomicInteger
 
+/**
+ * A [[Ref]] with an
+ * [[http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicInteger.html AtomicInteger]]
+ * as the underlying atomic reference.
+ *
+ *@see The documentation on [[Ref]]
+ */
 final class RefInt(initialValue: Int) extends Ref[Int] {
   def set(update: Int) {
     instance.set(update)

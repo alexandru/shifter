@@ -2,13 +2,16 @@ package shifter.concurrency.atomic
 
 import java.util.concurrent.atomic.AtomicInteger
 
+/**
+ * A [[Ref]] with an
+ * [[http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicInteger.html AtomicInteger]]
+ * as the underlying atomic reference.
+ *
+ *@see The documentation on [[Ref]]
+ */
 final class RefInt(initialValue: Int) extends Ref[Int] {
   def set(update: Int) {
     instance.set(update)
-  }
-
-  def lazySet(update: Int) {
-    instance.lazySet(update)
   }
 
   def get: Int =
@@ -20,10 +23,6 @@ final class RefInt(initialValue: Int) extends Ref[Int] {
 
   def compareAndSet(expect: Int, update: Int): Boolean = {
     instance.compareAndSet(expect, update)
-  }
-
-  def weakCompareAndSet(expect: Int, update: Int) = {
-    instance.weakCompareAndSet(expect, update)
   }
 
   override def increment(implicit num: Numeric[Int]) {

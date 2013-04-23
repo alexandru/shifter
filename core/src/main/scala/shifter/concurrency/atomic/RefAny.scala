@@ -2,14 +2,17 @@ package shifter.concurrency.atomic
 
 import java.util.concurrent.atomic.AtomicReference
 
-final class RefAny[T] private[atomic] (initialValue: T) extends Ref[T] {
 
+/**
+ * A [[Ref]] with an
+ * [[http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicReference.html AtomicReference]]
+ * as the underlying atomic reference.
+ *
+ *@see The documentation on [[Ref]]
+ */
+final class RefAny[T] private[atomic] (initialValue: T) extends Ref[T] {
   def set(update: T) {
     instance.set(update)
-  }
-
-  def lazySet(update: T) {
-    instance.lazySet(update)
   }
 
   def get: T =
@@ -21,10 +24,6 @@ final class RefAny[T] private[atomic] (initialValue: T) extends Ref[T] {
 
   def compareAndSet(expect: T, update: T): Boolean = {
     instance.compareAndSet(expect, update)
-  }
-
-  def weakCompareAndSet(expect: T, update: T) = {
-    instance.weakCompareAndSet(expect, update)
   }
 
   private[this] val instance =

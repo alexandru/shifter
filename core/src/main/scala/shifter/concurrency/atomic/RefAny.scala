@@ -2,8 +2,15 @@ package shifter.concurrency.atomic
 
 import java.util.concurrent.atomic.AtomicReference
 
-final class RefAny[T] private[atomic] (initialValue: T) extends Ref[T] {
 
+/**
+ * A [[Ref]] with an
+ * [[http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicReference.html AtomicReference]]
+ * as the underlying atomic reference.
+ *
+ *@see The documentation on [[Ref]]
+ */
+final class RefAny[T] private[atomic] (initialValue: T) extends Ref[T] {
   def set(update: T) {
     instance.set(update)
   }

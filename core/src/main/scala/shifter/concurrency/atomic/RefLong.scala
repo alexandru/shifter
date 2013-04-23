@@ -2,6 +2,13 @@ package shifter.concurrency.atomic
 
 import java.util.concurrent.atomic.AtomicLong
 
+/**
+ * A [[Ref]] with an
+ * [[http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicLong.html AtomicLong]]
+ * as the underlying atomic reference.
+ *
+ *@see The documentation on [[Ref]]
+ */
 final class RefLong private[atomic] (initialValue: Long) extends Ref[Long] {
   def set(update: Long) {
     instance.set(update)

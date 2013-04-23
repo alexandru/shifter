@@ -1,4 +1,4 @@
-package shifter.concurrency.internals
+package shifter.concurrency.extensions
 
 import concurrent.ExecutionContext
 import java.util.concurrent.Executor

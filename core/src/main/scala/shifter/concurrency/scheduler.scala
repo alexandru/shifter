@@ -46,7 +46,7 @@ import scala.concurrent.duration.FiniteDuration
  *     "Hello, after 10 seconds"
  *   }
  *
- *   val result = Await(future, 10.seconds)
+ *   val result = Await.result(future, 10.seconds)
  *
  * }}}
  */

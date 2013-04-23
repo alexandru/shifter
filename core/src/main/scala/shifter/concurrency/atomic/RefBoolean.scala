@@ -7,10 +7,6 @@ final class RefBoolean private[atomic] (initialValue: Boolean) extends Ref[Boole
     instance.set(update)
   }
 
-  def lazySet(update: Boolean) {
-    instance.lazySet(update)
-  }
-
   def get: Boolean =
     instance.get()
 
@@ -20,10 +16,6 @@ final class RefBoolean private[atomic] (initialValue: Boolean) extends Ref[Boole
 
   def compareAndSet(expect: Boolean, update: Boolean): Boolean = {
     instance.compareAndSet(expect, update)
-  }
-
-  def weakCompareAndSet(expect: Boolean, update: Boolean) = {
-    instance.weakCompareAndSet(expect, update)
   }
 
   private[this] val instance = new AtomicBoolean(initialValue)

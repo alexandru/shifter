@@ -7,10 +7,6 @@ final class RefLong private[atomic] (initialValue: Long) extends Ref[Long] {
     instance.set(update)
   }
 
-  def lazySet(update: Long) {
-    instance.lazySet(update)
-  }
-
   def get: Long =
     instance.get()
 
@@ -20,10 +16,6 @@ final class RefLong private[atomic] (initialValue: Long) extends Ref[Long] {
 
   def compareAndSet(expect: Long, update: Long): Boolean = {
     instance.compareAndSet(expect, update)
-  }
-
-  def weakCompareAndSet(expect: Long, update: Long) = {
-    instance.weakCompareAndSet(expect, update)
   }
 
   override def increment(implicit num: Numeric[Long]) {

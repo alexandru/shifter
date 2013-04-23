@@ -24,15 +24,6 @@ class RefLongTests extends FunSuite {
      assert(r.get === updatedValue)
    }
 
-   test("lazySet") {
-     val initialValue = 2.toLong
-     val r = Ref(initialValue)
-     val updatedValue = 3.toLong
-     r.lazySet(updatedValue)
-
-     assert(r.get === updatedValue)
-   }
-
    test("getAndSet updates value and returns previous one") {
      val initialValue = 2.toLong
      val r = Ref(initialValue)
@@ -60,27 +51,6 @@ class RefLongTests extends FunSuite {
      val r = Ref(initialValue)
 
      val success = r.compareAndSet(3.toLong, 5.toLong)
-
-     assert(r.get === initialValue)
-     assert(!success)
-   }
-
-   test("weakCompareAndSet changes value on condition met") {
-     val initialValue = new String("InitialValue")
-     val r = Ref(initialValue)
-     val updatedValue = new String("NewValue")
-
-     val success = r.weakCompareAndSet(initialValue, updatedValue)
-
-     assert(r.get === updatedValue)
-     assert(success)
-   }
-
-   test("weakCompareAndSet - value stays the same on condition not met") {
-     val initialValue = new String("InitialValue")
-     val r = Ref(initialValue)
-
-     val success = r.weakCompareAndSet(new String("OtherValue"), new String("NewValue"))
 
      assert(r.get === initialValue)
      assert(!success)

@@ -60,5 +60,55 @@ class RefTests extends FunSuite {
     assert(actualResult === expectedResult)
   }
 
+  test("increment") {
+    val initialValue = BigInt(2)
+    val r = Ref(initialValue)
+    r.increment
 
+    assert(r.get === initialValue + BigInt(1))
+  }
+
+  test("incrementAndGet") {
+    val initialValue = BigInt(2)
+    val r = Ref(initialValue)
+    val newValue = r.incrementAndGet
+
+    assert(newValue === initialValue + BigInt(1))
+    assert(r.get === initialValue + BigInt(1))
+  }
+
+  test("getAndIncrement") {
+    val initialValue = BigInt(2)
+    val r = Ref(initialValue)
+    val result = r.getAndIncrement
+
+    assert(result === initialValue)
+    assert(r.get === initialValue + BigInt(1))
+  }
+
+  test("decrement") {
+    val initialValue = BigInt(2)
+    val r = Ref(initialValue)
+    r.decrement
+
+    assert(r.get === initialValue - BigInt(1))
+  }
+
+  test("decrementAndGet") {
+    val initialValue = BigInt(2)
+    val r = Ref(initialValue)
+    val newValue = r.decrementAndGet
+
+    assert(newValue === initialValue - BigInt(1))
+    assert(r.get === initialValue - BigInt(1))
+  }
+
+  test("getAndDecrement") {
+    val initialValue = BigInt(2)
+    val r = Ref(initialValue)
+    val newValue = r.getAndDecrement
+
+    assert(newValue === initialValue)
+    assert(r.get === initialValue - BigInt(1))
+  }
 }

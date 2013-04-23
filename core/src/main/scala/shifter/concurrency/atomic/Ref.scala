@@ -9,25 +9,25 @@ import scala.annotation.tailrec
  * of its companion object and depending on the given parameter it returns
  * one of its sub-classes.
  *
- * To get a [[RefInt]]: {{{
+ * To get a [[shifter.concurrency.atomic.RefInt]]: {{{
  *
  *   val value: RefInt = Ref(123)
  *
  * }}}
  *
- * To get a [[RefLong]]: {{{
+ * To get a [[shifter.concurrency.atomic.RefLong]]: {{{
  *
  *   val value: RefLong = Ref(10293840239L)
  *
  * }}}
  *
- * To get a [[RefBoolean]]: {{{
+ * To get a [[shifter.concurrency.atomic.RefBoolean]]: {{{
  *
  *   val value: RefBoolean = Ref(true)
  *
  * }}}
  *
- * To get a [[RefAny]]: {{{
+ * To get a [[shifter.concurrency.atomic.RefAny]]: {{{
  *
  *   val value: RefAny = Ref(BigInt(1))
  *
@@ -362,7 +362,7 @@ trait Ref[@specialized(scala.Int, scala.Long, scala.Boolean) T] {
 }
 
 /**
- * Provides constructors for [[Ref]]
+ * Provides constructors for [[shifter.concurrency.atomic.Ref]]
  */
 object Ref {
   def apply(initialValue: Int): RefInt =

@@ -1,13 +1,20 @@
-package shifter.concurrency.internals
+package shifter.concurrency.extensions
 
 import concurrent.{Promise, Await, ExecutionContext, Future}
 import util.{Failure, Success, Try}
 import concurrent.duration.{FiniteDuration, Duration}
 import shifter.concurrency.scheduler
 
+/**
+ * [[http://www.scala-lang.org/api/current/index.html#scala.concurrent.Future concurrent.Future]]
+ * extensions for greater joy.
+ */
 trait FutureExtensions[A] extends Any {
   val future: Future[A]
 
+  /**
+   * Shortcut for `scala.concurrent.Await.result`
+   */
   def await(implicit timeout: Duration): A =
     Await.result(future, timeout)
 

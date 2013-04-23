@@ -5,7 +5,23 @@ import shifter.units._
 import shifter.concurrency.atomic.Ref
 
 
-final class RoundRobinBufferedWriter(out: Writer, capacity: Int = 1.megabyte, parallelism: Int = 1) extends Writer {
+/**
+ * A [[http://docs.oracle.com/javase/1.5.0/docs/api/java/io/Writer.html Writer]]
+ * that buffers content to write in multiple char buffers, to avoid synchronization issues
+ * and blocking.
+ *
+ * When a write comes in, a char buffer is picked using a round-robin selection process.
+ * The idea is that when multiple threads are writing to an instance of `RoundRobinBufferedWriter`,
+ * each of them usually end up writing to different locations in memory.
+ *
+ * It does not provide any guarantees about the order of writes. Useful for log files, where
+ * the order of the lines written don't matter.
+ *
+ * @param out - the writer for piping the buffered content
+ * @param capacity - the size of a single in-memory buffer (the total size will be `capacity` * number of buffers used)
+ * @param parallelismFactor - used to calculate the number of buffers to instantiate, based on the number of processors available
+ */
+final class RoundRobinBufferedWriter(out: Writer, capacity: Int = 1.megabyte, parallelismFactor: Int = 1) extends Writer {
   def write(charsToWrite: Array[Char], off: Int, len: Int) {
     if (len > capacity)
       throw new IllegalArgumentException("RoundRobinBufferedWriter cannot write lines bigger than %d".format(capacity))
@@ -67,7 +83,7 @@ final class RoundRobinBufferedWriter(out: Writer, capacity: Int = 1.megabyte, pa
   private[this] val roundRobinCnt = Ref(0)
 
   private[this] val number = {
-    math.max(Runtime.getRuntime.availableProcessors(), 1) * parallelism
+    math.max(Runtime.getRuntime.availableProcessors(), 1) * parallelismFactor
   }
 
   private[this] val allBuffers: Vector[CharBuffer] = (0 until number)

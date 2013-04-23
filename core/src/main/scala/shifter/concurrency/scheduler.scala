@@ -56,7 +56,7 @@ object scheduler {
    * Is returned by `runOnce` as a task identifier and can
    * be used to cancel a scheduled task.
    *
-   * @param id - unique per-process ID if the scheduled task
+   * @param id - unique per-process ID of the scheduled task
    * @param runsAt - Unix timestamp in milliseconds of when the task is scheduled to run
    */
   case class TaskKey(id: Long, runsAt: Long)

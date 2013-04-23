@@ -1,4 +1,4 @@
-package shifter.concurrency
+package shifter.concurrency.atomic
 
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith

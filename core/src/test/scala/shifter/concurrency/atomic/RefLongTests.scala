@@ -3,7 +3,6 @@ package shifter.concurrency.atomic
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import shifter.concurrency.atomic.Ref
 
 @RunWith(classOf[JUnitRunner])
 class RefLongTests extends FunSuite {

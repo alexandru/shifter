@@ -6,7 +6,7 @@ import java.util.Collections
 
 
 /**
- * For transforming an `ExecutionContext` into a Java
+ * Wrapper for transforming an `ExecutionContext` into a Java
  * [[http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ExecutorService.html ExecutorService]]
  */
 class ExecutorServiceWrapper protected[concurrency] (ec: ExecutionContext)

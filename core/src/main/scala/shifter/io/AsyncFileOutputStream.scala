@@ -11,6 +11,12 @@ import shifter.concurrency.extensions._
 import shifter.io.Implicits.IOContext
 
 
+/**
+ * An asynchronous file output stream is an output stream for
+ * writing data to a `File` in an asynchronous manner.
+ *
+ * The write operations are guaranteed to be atomic and non-blocking.
+ */
 final class AsyncFileOutputStream(file: File) extends AsyncOutputStream {
   def asyncWrite(b: ByteBuffer): Future[Int] = {
     val length = b.limit() - b.position()

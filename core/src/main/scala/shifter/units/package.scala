@@ -1,5 +1,8 @@
 package shifter
 
+/**
+ * Helpers for specifying sizes in bytes.
+ */
 package object units {
   implicit class ByteUnitsInt(val number: Int) extends AnyVal {
     def bytes: Int = number

@@ -2,13 +2,16 @@ package shifter.concurrency.atomic
 
 import java.util.concurrent.atomic.AtomicBoolean
 
+/**
+ * A [[Ref]] with an
+ * [[http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicBoolean.html AtomicBoolean]]
+ * as the underlying atomic reference.
+ *
+ *@see The documentation on [[Ref]]
+ */
 final class RefBoolean private[atomic] (initialValue: Boolean) extends Ref[Boolean] {
   def set(update: Boolean) {
     instance.set(update)
-  }
-
-  def lazySet(update: Boolean) {
-    instance.lazySet(update)
   }
 
   def get: Boolean =
@@ -20,10 +23,6 @@ final class RefBoolean private[atomic] (initialValue: Boolean) extends Ref[Boole
 
   def compareAndSet(expect: Boolean, update: Boolean): Boolean = {
     instance.compareAndSet(expect, update)
-  }
-
-  def weakCompareAndSet(expect: Boolean, update: Boolean) = {
-    instance.weakCompareAndSet(expect, update)
   }
 
   private[this] val instance = new AtomicBoolean(initialValue)

@@ -2,13 +2,16 @@ package shifter.concurrency.atomic
 
 import java.util.concurrent.atomic.AtomicLong
 
+/**
+ * A [[Ref]] with an
+ * [[http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicLong.html AtomicLong]]
+ * as the underlying atomic reference.
+ *
+ *@see The documentation on [[Ref]]
+ */
 final class RefLong private[atomic] (initialValue: Long) extends Ref[Long] {
   def set(update: Long) {
     instance.set(update)
-  }
-
-  def lazySet(update: Long) {
-    instance.lazySet(update)
   }
 
   def get: Long =
@@ -20,10 +23,6 @@ final class RefLong private[atomic] (initialValue: Long) extends Ref[Long] {
 
   def compareAndSet(expect: Long, update: Long): Boolean = {
     instance.compareAndSet(expect, update)
-  }
-
-  def weakCompareAndSet(expect: Long, update: Long) = {
-    instance.weakCompareAndSet(expect, update)
   }
 
   override def increment(implicit num: Numeric[Long]) {

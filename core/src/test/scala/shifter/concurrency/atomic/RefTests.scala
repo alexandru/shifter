@@ -3,8 +3,6 @@ package shifter.concurrency.atomic
 import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
-import shifter.concurrency.atomic.Ref
-import collection.concurrent.RDCSS_Descriptor
 
 @RunWith(classOf[JUnitRunner])
 class RefTests extends FunSuite {

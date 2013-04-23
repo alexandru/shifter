@@ -7,10 +7,6 @@ final class RefInt(initialValue: Int) extends Ref[Int] {
     instance.set(update)
   }
 
-  def lazySet(update: Int) {
-    instance.lazySet(update)
-  }
-
   def get: Int =
     instance.get()
 
@@ -20,10 +16,6 @@ final class RefInt(initialValue: Int) extends Ref[Int] {
 
   def compareAndSet(expect: Int, update: Int): Boolean = {
     instance.compareAndSet(expect, update)
-  }
-
-  def weakCompareAndSet(expect: Int, update: Int) = {
-    instance.weakCompareAndSet(expect, update)
   }
 
   override def increment(implicit num: Numeric[Int]) {

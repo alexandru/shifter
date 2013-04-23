@@ -8,10 +8,6 @@ final class RefAny[T] private[atomic] (initialValue: T) extends Ref[T] {
     instance.set(update)
   }
 
-  def lazySet(update: T) {
-    instance.lazySet(update)
-  }
-
   def get: T =
     instance.get()
 
@@ -21,10 +17,6 @@ final class RefAny[T] private[atomic] (initialValue: T) extends Ref[T] {
 
   def compareAndSet(expect: T, update: T): Boolean = {
     instance.compareAndSet(expect, update)
-  }
-
-  def weakCompareAndSet(expect: T, update: T) = {
-    instance.weakCompareAndSet(expect, update)
   }
 
   private[this] val instance =

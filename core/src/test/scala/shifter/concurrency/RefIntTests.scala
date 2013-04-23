@@ -6,7 +6,8 @@ import org.scalatest.junit.JUnitRunner
 import shifter.concurrency.atomic.Ref
 
 @RunWith(classOf[JUnitRunner])
-class RefIntTests extends FunSuite {
+class
+RefIntTests extends FunSuite {
 
   test("get returns correct value") {
     val initialValue = 2
@@ -20,15 +21,6 @@ class RefIntTests extends FunSuite {
     val r = Ref(initialValue)
     val updatedValue = 3
     r.set(updatedValue)
-
-    assert(r.get === updatedValue)
-  }
-
-  test("lazySet") {
-    val initialValue = 2
-    val r = Ref(initialValue)
-    val updatedValue = 3
-    r.lazySet(updatedValue)
 
     assert(r.get === updatedValue)
   }
@@ -60,27 +52,6 @@ class RefIntTests extends FunSuite {
     val r = Ref(initialValue)
 
     val success = r.compareAndSet(3, 5)
-
-    assert(r.get === initialValue)
-    assert(!success)
-  }
-
-  test("weakCompareAndSet changes value on condition met") {
-    val initialValue = new String("InitialValue")
-    val r = Ref(initialValue)
-    val updatedValue = new String("NewValue")
-
-    val success = r.weakCompareAndSet(initialValue, updatedValue)
-
-    assert(r.get === updatedValue)
-    assert(success)
-  }
-
-  test("weakCompareAndSet - value stays the same on condition not met") {
-    val initialValue = new String("InitialValue")
-    val r = Ref(initialValue)
-
-    val success = r.weakCompareAndSet(new String("OtherValue"), new String("NewValue"))
 
     assert(r.get === initialValue)
     assert(!success)

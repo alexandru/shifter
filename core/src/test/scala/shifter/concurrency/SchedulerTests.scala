@@ -5,7 +5,9 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
 import concurrent.ExecutionContext.Implicits.global
+import concurrent.duration._
 import org.scalatest.concurrent.AsyncAssertions.Waiter
+import concurrent.Await
 
 /*
  * Note: This tests are fragile
@@ -13,6 +15,16 @@ import org.scalatest.concurrent.AsyncAssertions.Waiter
  */
 @RunWith(classOf[JUnitRunner])
 class SchedulerTests extends FunSuite {
+
+  test("runOnce") {
+    val w = new Waiter()
+
+    val task = scheduler.runOnce(10) {
+      w.dismiss()
+    }
+
+    w.await()
+  }
 
   test("cancel") {
     val task = scheduler.runOnce(500) {
@@ -23,13 +35,11 @@ class SchedulerTests extends FunSuite {
     Thread.sleep(1000)
   }
 
-  test("runOnce") {
-    val w = new Waiter()
+  test("future") {
+    val retrievedValue = "task ran"
+    val future = scheduler.future(500.millis) { retrievedValue }
+    val result = Await.result(future, 1.second)
 
-    val task = scheduler.runOnce(10) {
-      w.dismiss()
-    }
-
-    w.await()
+    assert(result === retrievedValue)
   }
 }

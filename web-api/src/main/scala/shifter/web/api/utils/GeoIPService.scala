@@ -1,8 +1,6 @@
 package shifter.web.api.utils
 
 import shifter.geoip.{GeoIPLocation, GeoIP}
-import shifter.http.client.{HttpClientConfig, NingHttpClient}
-import util.Try
 
 object GeoIPService {
   def search(address: String): Option[GeoIPLocation] =
@@ -11,17 +9,6 @@ object GeoIPService {
     else
       instance.search(address)
 
-  private[this] lazy val instance = {
-    val client = NingHttpClient(HttpClientConfig(
-      maxTotalConnections = 3,
-      maxConnectionsPerHost = 1
-    ))
-
-    try {
-      GeoIP.withLiteCity(client)
-    }
-    finally {
-      Try(client.close())
-    }
-  }
+  private[this] lazy val instance =
+    GeoIP.withLiteCity()
 }

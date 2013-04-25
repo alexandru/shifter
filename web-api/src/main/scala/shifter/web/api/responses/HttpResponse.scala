@@ -11,7 +11,7 @@ sealed trait HttpResponse[T]
 
 case class AsyncResponse[T] private[responses] (
   response: Future[CompleteResponse[T]],
-  timeout: Duration = 1.second,
+  timeout: Duration = 10.seconds,
   timeoutResponse: CompleteResponse[_] =
     ResponseBuilders.RequestTimeout("408 Timeout")
       .withHeader("Content-Type" -> "text/plain")

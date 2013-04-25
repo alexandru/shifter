@@ -39,10 +39,14 @@ class BlockingHttpClient extends HttpClient {
       val status = connection.getResponseCode
       val responseHeaders =
         connection.getHeaderFields.asScala.foldLeft(Map.empty[String, String]) { (acc, elem) =>
-          val (key, value) = (elem._1, elem._2.asScala.find(v => v != null && !v.isEmpty).headOption)
+          if (elem._1 != null && elem._2 != null) {
+            val (key, value) = (elem._1, elem._2.asScala.find(v => v != null && !v.isEmpty).headOption)
 
-          if (value.isDefined)
-            acc.updated(key, value.get)
+            if (value.isDefined)
+              acc.updated(key, value.get)
+            else
+              acc
+          }
           else
             acc
         }

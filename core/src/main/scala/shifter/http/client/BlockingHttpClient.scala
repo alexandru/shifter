@@ -9,7 +9,7 @@ import collection.JavaConverters._
 class BlockingHttpClient extends HttpClient {
 
   // To Implement
-  def request(method: String, url: String, data: Map[String, String], headers: Map[String, String])(implicit ec: ExecutionContext): Future[HttpClientResponse] =
+  def request(method: String, url: String, data: Map[String, String], headers: Map[String, String]): Future[HttpClientResponse] =
     Future {
       val connection: HttpURLConnection =
         method match {
@@ -56,7 +56,7 @@ class BlockingHttpClient extends HttpClient {
 
 
   // To Implement
-  def request(method: String, url: String, body: Array[Byte], headers: Map[String, String])(implicit ec: ExecutionContext): Future[HttpClientResponse] =
+  def request(method: String, url: String, body: Array[Byte], headers: Map[String, String]): Future[HttpClientResponse] =
     Future {
       val connection: HttpURLConnection =
         method match {

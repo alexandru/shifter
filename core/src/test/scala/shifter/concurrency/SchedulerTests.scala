@@ -17,13 +17,19 @@ import concurrent.Await
 class SchedulerTests extends FunSuite {
 
   test("runOnce") {
-    val w = new Waiter()
+    val ref = shifter.concurrency.atomic.Ref(0L)
+    val startAt = System.currentTimeMillis()
 
-    val task = scheduler.runOnce(10) {
-      w.dismiss()
+    scheduler.runOnce(100) {
+      ref.set(System.currentTimeMillis() - startAt)
+      ref.synchronized { ref.notify() }
     }
 
-    w.await()
+    Thread.sleep(50)
+    while (ref.get == 0 && System.currentTimeMillis() - startAt < 1000)
+      ref.synchronized { ref.wait(100) }
+
+    assert(ref.get >= 100, "Wrong time: " + ref.get.toString)
   }
 
   test("cancel") {

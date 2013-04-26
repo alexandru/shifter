@@ -1,6 +1,6 @@
 package shifter.http.client
 
-import concurrent.{Promise, Future, ExecutionContext}
+import concurrent.{Promise, Future}
 import com.ning.http.client._
 import extra.ThrottleRequestFilter
 import util._
@@ -8,9 +8,9 @@ import collection.JavaConverters._
 import util.Success
 
 
-class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends HttpClient {
+class NingHttpClient private[client] (config: HttpClientConfig) extends HttpClient {
 
-  def request(method: String, url: String, data: Map[String, String], headers: Map[String, String])(implicit ec: ExecutionContext): Future[HttpClientResponse] = {
+  def request(method: String, url: String, data: Map[String, String], headers: Map[String, String]): Future[HttpClientResponse] = {
     val request = prepareRequest(method, url, data)
     val futureResponse = makeRequest(url, request, headers)
 
@@ -29,7 +29,7 @@ class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends Htt
 
 
   // To Implement
-  def request(method: String, url: String, body: Array[Byte], headers: Map[String, String])(implicit ec: ExecutionContext): Future[HttpClientResponse] = {
+  def request(method: String, url: String, body: Array[Byte], headers: Map[String, String]): Future[HttpClientResponse] = {
     val request = method match {
       case "GET" =>
         val getRequest = client.prepareGet(url)
@@ -92,6 +92,7 @@ class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends Htt
                                 headers: Map[String, String]): Future[Response] = {
     val promise = Promise[Response]()
     val builder = new Response.ResponseBuilder()
+    val future = promise.future
 
     val httpHandler = new AsyncHandler[Unit] {
       @volatile
@@ -104,7 +105,7 @@ class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends Htt
           }
           catch {
             case t: Throwable =>
-              promise.complete(Failure(t))
+              promise.tryComplete(Failure(t))
           }
           finally {
             finished = true
@@ -136,7 +137,7 @@ class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends Htt
       def onCompleted() {
         finish {
           val response = builder.build()
-          promise.complete(Success(response))
+          promise.tryComplete(Success(response))
         }
       }
     }
@@ -147,31 +148,34 @@ class NingHttpClient private[client] (config: AsyncHttpClientConfig) extends Htt
     }
 
     withHeaders.execute(httpHandler)
-    promise.future
+    future
   }
 
-  private[this] val client = new AsyncHttpClient(config)
-}
-
-object NingHttpClient {
-  def apply(): NingHttpClient =
-    apply(HttpClientConfig())
-
-  def apply(config: HttpClientConfig): NingHttpClient = {
+  private[this] lazy val ningConfig = {
     val builder = new AsyncHttpClientConfig.Builder()
 
-    val ningConfig = builder
+    builder
       .setMaximumConnectionsTotal(config.maxTotalConnections)
       .setMaximumConnectionsPerHost(config.maxConnectionsPerHost)
       .addRequestFilter(new ThrottleRequestFilter(config.maxTotalConnections))
       .setRequestTimeoutInMs(config.requestTimeoutMs)
       .setConnectionTimeoutInMs(config.connectionTimeoutMs)
+      .setIOThreadMultiplier(1)
       .setAllowPoolingConnection(true)
       .setAllowSslConnectionPool(true)
       .setFollowRedirects(config.followRedirects)
       .build
-
-    new NingHttpClient(ningConfig)
   }
+
+  private[this] lazy val client =
+    new AsyncHttpClient(ningConfig)
+}
+
+object NingHttpClient {
+  def apply(): NingHttpClient =
+    new NingHttpClient(HttpClientConfig())
+
+  def apply(config: HttpClientConfig): NingHttpClient =
+    new NingHttpClient(config)
 }
 

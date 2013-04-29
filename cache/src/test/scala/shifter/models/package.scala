@@ -56,7 +56,7 @@ package object models {
 
         ArrayBuffer("viewnow"),
 
-        "http://something.com/track?clickID=4039&pubID=45469&crid=&subID=something&clickid=[track_id]",
+        "http://something.com/track?clickID=242323&pubID=982345&something=219&subID=something",
         None,
         true,
         false,

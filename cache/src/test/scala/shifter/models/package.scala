@@ -27,7 +27,7 @@ package object models {
             Some(511)))),
 
       Some("aac636be-e42b-01d6-449b-6a0c2e5e7b09"),
-      Some("mopub-65"),
+      Some("something-65"),
       Some("71.89.145.102"),
       None,
       None,
@@ -90,7 +90,7 @@ package object models {
             Some(511)))),
 
       Some("aac636be-e42b-01d6-449b-6a0c2e5e7b09"),
-      Some("mopub-65"),
+      Some("something-65"),
       Some("71.89.145.102"),
       None,
       None,

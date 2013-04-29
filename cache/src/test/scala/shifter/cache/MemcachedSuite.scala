@@ -8,6 +8,8 @@ import concurrent.duration._
 import shifter.concurrency.extensions._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.Some
+import shifter.models.Impression
+import java.io.{ObjectOutputStream, ByteArrayOutputStream}
 
 
 @RunWith(classOf[JUnitRunner])
@@ -206,6 +208,53 @@ class MemcachedSuite extends FunSuite {
       seq.await(20.seconds)
 
       assert(cache.asyncGet[Int]("some-key").await === Some(500))
+    }
+  }
+
+  test("big-instance-1") {
+    withCache("big-instance-1") { cache =>
+      val impression = shifter.models.bigInstance
+      cache.set(impression.uuid, impression, 60.seconds)
+      assert(cache.get[Impression](impression.uuid) === Some(impression))
+    }
+  }
+
+
+  test("big-instance-1-manual") {
+    withCache("big-instance-1-manual") { cache =>
+      val byteOut = new ByteArrayOutputStream()
+      val objectOut = new ObjectOutputStream(byteOut)
+
+      val impression = shifter.models.bigInstance
+      objectOut.writeObject(impression)
+      val byteArray = byteOut.toByteArray
+
+      cache.set(impression.uuid, byteArray, 60.seconds)
+
+      val inBytes = cache.get[Array[Byte]](impression.uuid)
+      assert(inBytes.isDefined)
+      assert(inBytes.get.length == byteArray.length)
+    }
+  }
+
+
+  test("big-instance-2") {
+    withCache("big-instance-2") { cache =>
+      val impression = shifter.models.bigInstance2
+      cache.set(impression.uuid, impression, 60.seconds)
+      assert(cache.get[Impression](impression.uuid) === Some(impression))
+    }
+  }
+
+  test("big-instance-3") {
+    withCache("big-instance-3") { cache =>
+      val impression = shifter.models.bigInstance
+      val future = cache.asyncSet(impression.uuid, impression, 60.seconds) flatMap { _ =>
+        cache.asyncGet[Impression](impression.uuid)
+      }
+
+      val result = future.await
+      assert(result === Some(impression))\
     }
   }
 

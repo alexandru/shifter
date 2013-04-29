@@ -1,4 +1,4 @@
-package shifter.models
+package shifter.testModels
 
 
 import java.util.UUID

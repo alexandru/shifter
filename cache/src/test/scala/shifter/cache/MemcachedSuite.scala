@@ -8,7 +8,7 @@ import concurrent.duration._
 import shifter.concurrency.extensions._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.Some
-import shifter.models.Impression
+import shifter.testModels.Impression
 import java.io.{ObjectOutputStream, ByteArrayOutputStream}
 
 
@@ -213,7 +213,7 @@ class MemcachedSuite extends FunSuite {
 
   test("big-instance-1") {
     withCache("big-instance-1") { cache =>
-      val impression = shifter.models.bigInstance
+      val impression = shifter.testModels.bigInstance
       cache.set(impression.uuid, impression, 60.seconds)
       assert(cache.get[Impression](impression.uuid) === Some(impression))
     }
@@ -225,7 +225,7 @@ class MemcachedSuite extends FunSuite {
       val byteOut = new ByteArrayOutputStream()
       val objectOut = new ObjectOutputStream(byteOut)
 
-      val impression = shifter.models.bigInstance
+      val impression = shifter.testModels.bigInstance
       objectOut.writeObject(impression)
       val byteArray = byteOut.toByteArray
 
@@ -240,7 +240,7 @@ class MemcachedSuite extends FunSuite {
 
   test("big-instance-2") {
     withCache("big-instance-2") { cache =>
-      val impression = shifter.models.bigInstance2
+      val impression = shifter.testModels.bigInstance2
       cache.set(impression.uuid, impression, 60.seconds)
       assert(cache.get[Impression](impression.uuid) === Some(impression))
     }
@@ -248,7 +248,7 @@ class MemcachedSuite extends FunSuite {
 
   test("big-instance-3") {
     withCache("big-instance-3") { cache =>
-      val impression = shifter.models.bigInstance
+      val impression = shifter.testModels.bigInstance
       val future = cache.asyncSet(impression.uuid, impression, 60.seconds) flatMap { _ =>
         cache.asyncGet[Impression](impression.uuid)
       }

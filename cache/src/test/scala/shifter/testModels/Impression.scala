@@ -1,4 +1,4 @@
-package shifter.models
+package shifter.testModels
 
 case class Impression(
   uuid: String,

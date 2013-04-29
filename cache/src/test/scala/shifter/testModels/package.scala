@@ -2,7 +2,7 @@ package shifter
 
 import scala.collection.mutable.ArrayBuffer
 
-package object models {
+package object testModels {
   val bigInstance = Impression(
     "96298b14-1e13-a162-662b-969bd3b41ca4",
     Session(

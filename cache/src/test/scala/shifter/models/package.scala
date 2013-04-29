@@ -10,9 +10,9 @@ package object models {
       "dummy-user-sa9d08ahusid",
       "android.web",
       UserInfo(
-        "75.101.145.87",
-        "75.101.145.87",
-        "75.101.145.87",
+        "71.89.145.102",
+        "71.89.145.102",
+        "71.89.145.102",
         "Mozilla/5.0 (Linux; U; Android 0.5; en-us) AppleWebKit/522  (KHTML, like Gecko) Safari/419.3",
         Some(
           GeoIPLocation(
@@ -28,18 +28,18 @@ package object models {
 
       Some("aac636be-e42b-01d6-449b-6a0c2e5e7b09"),
       Some("mopub-65"),
-      Some("75.101.145.87"),
+      Some("71.89.145.102"),
       None,
       None,
       Some("us")),
     List(
       Offer(
         Some(3352251),
-        "[MOPUB] Zulily Mobile",
+        "Some Dummy Offer Title",
         Advertiser(
           Some(137),
-          Some("integrate"),
-          "integrate"),
+          Some("something"),
+          "something"),
         "cpa",
         LiveDealInfo(
           Some(""),
@@ -50,13 +50,13 @@ package object models {
         OfferCreative(
           "So Many Dresses!",
           "Daily Deals For Moms, Babies and Kids. Up to 90% OFF! Shop Now!",
-          Some("Zulily"),
+          Some("Something.com"),
           Some(""),
           None),
 
         ArrayBuffer("viewnow"),
 
-        "http://integrate.com/track?cid=4039&pubid=45469&crid=&subid=mopub&clickid=[track_id]",
+        "http://something.com/track?clickID=4039&pubID=45469&crid=&subID=something&clickid=[track_id]",
         None,
         true,
         false,
@@ -73,9 +73,9 @@ package object models {
       "dummy-user-sa9d08ahusid",
       "android.web",
       UserInfo(
-        "75.101.145.87",
-        "75.101.145.87",
-        "75.101.145.87",
+        "71.89.145.102",
+        "71.89.145.102",
+        "71.89.145.102",
         "Mozilla/5.0 (Linux; U; Android 0.5; en-us) AppleWebKit/522  (KHTML, like Gecko) Safari/419.3",
         Some(
           GeoIPLocation(
@@ -91,7 +91,7 @@ package object models {
 
       Some("aac636be-e42b-01d6-449b-6a0c2e5e7b09"),
       Some("mopub-65"),
-      Some("75.101.145.87"),
+      Some("71.89.145.102"),
       None,
       None,
       Some("us")),

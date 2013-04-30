@@ -6,7 +6,7 @@ import java.net.InetSocketAddress
 import concurrent.{Promise, Future}
 import net.spy.memcached.transcoders.Transcoder
 import net.spy.memcached.ops._
-import scala.util.{Failure, Success}
+import scala.util.{Try, Failure, Success}
 import concurrent.duration._
 import shifter.cache.UnhandledStatusException
 import scala.Some
@@ -19,7 +19,6 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
 
   def realAsyncGet[T](key: String, timeout: FiniteDuration): Future[Result[Option[T]]] = {
     val promise = Promise[Result[Option[T]]]()
-    val tc = transcoder.asInstanceOf[Transcoder[T]]
     val result = new MutablePartialResult[Option[T]]
 
     val op: GetOperation = opFact.get(key, new GetOperation.Callback {
@@ -43,8 +42,11 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
         assert(key == k, "Wrong key returned")
 
         if (data != null)
-          result.tryCompleteWith(Future {
-            val value = tc.decode(new CachedData(flags, data, tc.getMaxSize))
+          result.tryComplete(Try {
+            val tc = transcoder.asInstanceOf[Transcoder[T]]
+            val value = tc.synchronized {
+              tc.decode(new CachedData(flags, data, tc.getMaxSize))
+            }
             SuccessfulResult(key, Option(value))
           })
         else
@@ -162,7 +164,6 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
 
   def realAsyncGets[T](key: String, timeout: FiniteDuration): Future[Result[Option[(T, Long)]]] = {
     val promise = Promise[Result[Option[(T, Long)]]]()
-    val tc = transcoder.asInstanceOf[Transcoder[T]]
     val result = new MutablePartialResult[Option[(T, Long)]]
 
     val op: Operation = opFact.gets(key, new GetsOperation.Callback {
@@ -187,11 +188,13 @@ class SpyMemcachedClient(conn: ConnectionFactory, addresses: jutil.List[InetSock
         assert(cas > 0, "CAS was less than zero:  " + cas)
         assert(!promise.isCompleted, "promise is already complete")
 
-        val future = Future {
-          val value = Option(tc.decode(new CachedData(flags, data, tc.getMaxSize)))
+        result.tryComplete(Try {
+          val tc = transcoder.asInstanceOf[Transcoder[T]]
+          val value = tc.synchronized {
+            Option(tc.decode(new CachedData(flags, data, tc.getMaxSize)))
+          }
           SuccessfulResult(key, value.map(v => (v, cas)))
-        }
-        result.tryCompleteWith(future)
+        })
       }
 
       def complete() {

@@ -9,9 +9,16 @@ import scala.concurrent.Future
 import scala.concurrent.duration.Duration
 import shifter.web.api.mvc.Action
 import shifter.web.api.requests.{CanForward, HttpRequest}
+import shifter.web.api.http.HeaderNames._
+import shifter.web.api.http.MimeTypes._
 
 
 trait ResponseBuilders {
+  val Ok: SimpleResponse =
+    SimpleResponse(200, body = "", headers = Map(
+      CONTENT_TYPE -> Seq(TEXT)
+    ))
+
   def Ok(body: String, contentType: String = "", headers: Map[String, String] = Map.empty): SimpleResponse = {
     val headersMulti = if (!contentType.isEmpty)
       headers.updated("Content-Type", contentType)

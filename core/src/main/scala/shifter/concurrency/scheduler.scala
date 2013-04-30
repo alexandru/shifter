@@ -46,7 +46,7 @@ import scala.concurrent.duration.FiniteDuration
  *     "Hello, after 10 seconds"
  *   }
  *
- *   val result = Await(future, 10.seconds)
+ *   val result = Await.result(future, 10.seconds)
  *
  * }}}
  */
@@ -56,7 +56,7 @@ object scheduler {
    * Is returned by `runOnce` as a task identifier and can
    * be used to cancel a scheduled task.
    *
-   * @param id - unique per-process ID if the scheduled task
+   * @param id - unique per-process ID of the scheduled task
    * @param runsAt - Unix timestamp in milliseconds of when the task is scheduled to run
    */
   case class TaskKey(id: Long, runsAt: Long)
@@ -102,7 +102,7 @@ object scheduler {
    * @param delayMillis - the initial delay to wait before executing the function
    * @param callback - the function to execute
    * @param ec - the execution context used for executing the function
-   * @return - a `TaskKey` that can be used for canceling the scheduling of this tas
+   * @return - a `TaskKey` that can be used for canceling the scheduling of this task
    */
   def runOnce(delayMillis: Long)(callback: => Any)(implicit ec: ExecutionContext): TaskKey = {
     val newID = lastID.incrementAndGet

@@ -8,6 +8,7 @@ import net.spy.memcached.ConnectionFactoryBuilder.{Protocol => SpyProtocol}
 import net.spy.memcached.auth.{PlainCallbackHandler, AuthDescriptor}
 import concurrent.duration._
 import java.util.concurrent.TimeUnit
+import net.spy.memcached.transcoders.SerializingTranscoder
 
 
 /**
@@ -211,6 +212,7 @@ trait Memcached extends Cache {
 
     val conn = {
       val builder = new ConnectionFactoryBuilder()
+        .setTranscoder(new CustomTranscoder)
         .setProtocol(
           if (config.protocol == Protocol.Binary)
             SpyProtocol.BINARY

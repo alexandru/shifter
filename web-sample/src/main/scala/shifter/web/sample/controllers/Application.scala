@@ -5,8 +5,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import shifter.concurrency.scheduler
 
-object Application extends Controller {
 
+object Application extends Controller {
   val homepage = Action {
     Ok("Welcome to your new app!")
   }

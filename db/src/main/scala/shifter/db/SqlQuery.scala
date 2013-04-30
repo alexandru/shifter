@@ -9,10 +9,10 @@ import java.sql.PreparedStatement
 import collection.breakOut
 import scala.reflect.runtime.universe._
 import scala.util.control.NonFatal
+import shifter.reflection.castTo
 
 
 class SqlException(msg: String) extends RuntimeException(msg)
-
 
 class Row(val names: Vector[String], val values: Vector[Any]) {
   lazy val toMap =
@@ -21,33 +21,40 @@ class Row(val names: Vector[String], val values: Vector[Any]) {
   private[this] lazy val namesSet =
     names.toSet
 
-  def get[T: TypeTag](key: String): T = {
+  def apply[T : Manifest](key: String): T = {
     val keys = Seq(key, key.toLowerCase, key.toUpperCase)
-    val TypeRef(_, symbol, _) = typeOf[T]
+    val m = manifest[T]
 
     keys.find(namesSet.contains(_)) match {
       case Some(k) =>
         val value = toMap(k)
-
-        if (symbol == optionSymbol)
-          Option(toMap(k)).asInstanceOf[T]
-        else if (value == null)
-          throw null
+        if (value != null)
+          castTo[T](value).getOrElse(
+            throw new IllegalArgumentException(
+              "Value related to key '%s' is not a %s".format(key, m.toString()))
+          )
         else
-          toMap(k).asInstanceOf[T]
-
+          throw new NoSuchElementException(
+            "Value related to key '%s' is null".format(key))
       case None =>
-        if (symbol == optionSymbol)
-          None.asInstanceOf[T]
-        else
-          throw new IllegalArgumentException(
-            "Cannot find element for key '" + key + "'")
+        throw new NoSuchElementException(
+          "Value related to key '%s' is missing".format(key))
     }
   }
 
-  private[this] val optionSymbol = {
-    val TypeRef(_, symbol, _) = typeOf[Option[Any]]
-    symbol
+  def get[T: Manifest](key: String): Option[T] = {
+    val keys = Seq(key, key.toLowerCase, key.toUpperCase)
+
+    keys.find(namesSet.contains(_)) match {
+      case Some(k) =>
+        val value = toMap(k)
+        if (value != null)
+          castTo[T](value)
+        else
+          None
+      case None =>
+        None
+    }
   }
 }
 

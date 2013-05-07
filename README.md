@@ -1,10 +1,6 @@
 # Shifter
 
-
-Common infrastructure for our web-services built on top of the JVM and
-Scala.
-
-Warning: Highly unstable, often breaks.
+Toolkit for building lean and mean web services in Scala.
 
 ## Quick Description
 

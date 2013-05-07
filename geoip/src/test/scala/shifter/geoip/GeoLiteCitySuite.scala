@@ -16,6 +16,7 @@ class GeoLiteCitySuite extends FunSuite {
     val loc = location.get
 
     assert(loc.countryCode === "ro")
+    assert(loc.countryCode3 === "rou")
     assert(loc.city === Some("Bucharest"))
     assert(loc.countryName === Some("Romania"))
   }

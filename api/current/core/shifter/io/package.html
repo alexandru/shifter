@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>io - shifter.io</title>
+          <meta name="description" content="io - shifter.io" />
+          <meta name="keywords" content="io shifter.io" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../lib/template.js"></script>
+      <script type="text/javascript" src="../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../index.html';
+            var hash = 'shifter.io.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../lib/package_big.png" />
+        <p id="owner"><a href="../package.html" class="extype" name="shifter">shifter</a></p>
+        <h1>io</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">io</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="shifter.io.AsyncFileChannel" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AsyncFileChannelextendsAnyRef"></a>
+      <a id="AsyncFileChannel:AsyncFileChannel"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="AsyncFileChannel.html"><span class="name">AsyncFileChannel</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Wrapper around
+<a href="http://openjdk.java.net/projects/nio/javadoc/java/nio/channels/AsynchronousFileChannel.html" target="_blank">java.nio.channels.AsynchronousFileChannel</a>
+(class available since Java 7 for doing async I/O on files).</p>
+    </li><li name="shifter.io.AsyncFileOutputStream" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AsyncFileOutputStreamextendsOutputStreamwithAsyncOutputStream"></a>
+      <a id="AsyncFileOutputStream:AsyncFileOutputStream"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="AsyncFileOutputStream.html"><span class="name">AsyncFileOutputStream</span></a><span class="result"> extends <span class="extype" name="java.io.OutputStream">OutputStream</span> with <a href="AsyncOutputStream.html" class="extype" name="shifter.io.AsyncOutputStream">AsyncOutputStream</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">An asynchronous file output stream is an output stream for
+writing data to a <code>File</code> in an asynchronous manner.</p>
+    </li><li name="shifter.io.AsyncOutputStream" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AsyncOutputStreamextendsOutputStream"></a>
+      <a id="AsyncOutputStream:AsyncOutputStream"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="AsyncOutputStream.html"><span class="name">AsyncOutputStream</span></a><span class="result"> extends <span class="extype" name="java.io.OutputStream">OutputStream</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">An <code>OutputStream</code> with added async variants for non-blocking I/O.</p>
+    </li><li name="shifter.io.RoundRobinBufferedWriter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RoundRobinBufferedWriterextendsWriter"></a>
+      <a id="RoundRobinBufferedWriter:RoundRobinBufferedWriter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RoundRobinBufferedWriter.html"><span class="name">RoundRobinBufferedWriter</span></a><span class="result"> extends <span class="extype" name="java.io.Writer">Writer</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">A <a href="http://docs.oracle.com/javase/1.5.0/docs/api/java/io/Writer.html" target="_blank">Writer</a>
+that buffers content to write in multiple char buffers, to avoid synchronization issues
+and blocking.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="shifter.io.Implicits" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Implicits"></a>
+      <a id="Implicits:Implicits"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Implicits$.html"><span class="name">Implicits</span></a>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

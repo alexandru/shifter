@@ -1,0 +1,1 @@
+Index.PACKAGES = {"shifter" : [], "shifter.http" : [], "shifter.http.client" : [{"case class" : "shifter\/http\/client\/HttpClientConfig.html", "name" : "shifter.http.client.HttpClientConfig"}, {"object" : "shifter\/http\/client\/NingHttpClient$.html", "class" : "shifter\/http\/client\/NingHttpClient.html", "name" : "shifter.http.client.NingHttpClient"}]};

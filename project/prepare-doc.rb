@@ -5,7 +5,7 @@ require 'fileutils'
 CURDIR = File.absolute_path(File.dirname(__FILE__))
 Dir.chdir(File.join(CURDIR, ".."))
 
-FileUtils.rm_r "target/website"
+FileUtils.rm_r "target/website" if File.exist? "target/website"
 FileUtils.mkdir_p "target/website"
 
 unless system("sbt doc")

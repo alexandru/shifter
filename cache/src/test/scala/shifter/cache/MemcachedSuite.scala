@@ -254,7 +254,7 @@ class MemcachedSuite extends FunSuite {
       }
 
       val result = future.await
-      assert(result === Some(impression))\
+      assert(result === Some(impression))
     }
   }
 

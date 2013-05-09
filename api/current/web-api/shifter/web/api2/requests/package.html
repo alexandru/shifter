@@ -1,0 +1,257 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>requests - shifter.web.api2.requests</title>
+          <meta name="description" content="requests - shifter.web.api2.requests" />
+          <meta name="keywords" content="requests shifter.web.api2.requests" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../../index.html';
+            var hash = 'shifter.web.api2.requests.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../../lib/package_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="shifter">shifter</a>.<a href="../../package.html" class="extype" name="shifter.web">web</a>.<a href="../package.html" class="extype" name="shifter.web.api2">api2</a></p>
+        <h1>requests</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">requests</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="shifter.web.api2.requests.AnyContent" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AnyContentextendsAnyRef"></a>
+      <a id="AnyContent:AnyContent"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="AnyContent.html"><span class="name">AnyContent</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api2.requests.BodyParser" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="BodyParser[+A]extendsshifter.web.api2.requests.RequestHeader=&gt;Either[shifter.web.api2.responses.Result,A]"></a>
+      <a id="BodyParser[+A]:BodyParser[A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="BodyParser.html"><span class="name">BodyParser</span></a><span class="tparams">[<span name="A">+A</span>]</span><span class="result"> extends (<a href="RequestHeader.html" class="extype" name="shifter.web.api2.requests.RequestHeader">RequestHeader</a>) ⇒ <span class="extype" name="scala.Either">Either</span>[<a href="../responses/Result.html" class="extype" name="shifter.web.api2.responses.Result">Result</a>, <span class="extype" name="shifter.web.api2.requests.BodyParser.A">A</span>]</span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api2.requests.BodyParsers" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="BodyParsersextendsAnyRef"></a>
+      <a id="BodyParsers:BodyParsers"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="BodyParsers.html"><span class="name">BodyParsers</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api2.requests.ParsedRequest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ParsedRequest[+A]extendsRequest[A]withProductwithSerializable"></a>
+      <a id="ParsedRequest[+A]:ParsedRequest[A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ParsedRequest.html"><span class="name">ParsedRequest</span></a><span class="tparams">[<span name="A">+A</span>]</span><span class="params">(<span name="method">method: <a href="../http/HttpMethod$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="shifter.web.api2.http.HttpMethod.Value">http.HttpMethod.Value</a></span>, <span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="domain">domain: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="port">port: <span class="extype" name="scala.Int">Int</span></span>, <span name="protocol">protocol: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="query">query: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>, <span name="remoteAddress">remoteAddress: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="cookies">cookies: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../http/Cookie.html" class="extype" name="shifter.web.api2.http.Cookie">Cookie</a>]</span>, <span name="body">body: <span class="extype" name="shifter.web.api2.requests.ParsedRequest.A">A</span></span>)</span><span class="result"> extends <a href="Request.html" class="extype" name="shifter.web.api2.requests.Request">Request</a>[<span class="extype" name="shifter.web.api2.requests.ParsedRequest.A">A</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api2.requests.RawRequest" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="RawRequestextendsRequest[java.io.InputStream]"></a>
+      <a id="RawRequest:RawRequest"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="RawRequest.html"><span class="name">RawRequest</span></a><span class="result"> extends <a href="Request.html" class="extype" name="shifter.web.api2.requests.Request">Request</a>[<span class="extype" name="java.io.InputStream">InputStream</span>]</span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api2.requests.RawServletRequest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RawServletRequestextendsRawRequest"></a>
+      <a id="RawServletRequest:RawServletRequest"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RawServletRequest.html"><span class="name">RawServletRequest</span></a><span class="result"> extends <a href="RawRequest.html" class="extype" name="shifter.web.api2.requests.RawRequest">RawRequest</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api2.requests.Request" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Request[+A]extendsRequestHeader"></a>
+      <a id="Request[+A]:Request[A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Request.html"><span class="name">Request</span></a><span class="tparams">[<span name="A">+A</span>]</span><span class="result"> extends <a href="RequestHeader.html" class="extype" name="shifter.web.api2.requests.RequestHeader">RequestHeader</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api2.requests.RequestHeader" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="RequestHeaderextendsAnyRef"></a>
+      <a id="RequestHeader:RequestHeader"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="RequestHeader.html"><span class="name">RequestHeader</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="shifter.web.api2.requests.AnyContent" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AnyContent"></a>
+      <a id="AnyContent:AnyContent"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="AnyContent$.html"><span class="name">AnyContent</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api2.requests.BodyParsers" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BodyParsers"></a>
+      <a id="BodyParsers:BodyParsers"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="BodyParsers$.html"><span class="name">BodyParsers</span></a><span class="result"> extends <a href="BodyParsers.html" class="extype" name="shifter.web.api2.requests.BodyParsers">BodyParsers</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api2.requests.Request" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Request"></a>
+      <a id="Request:Request"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Request$.html"><span class="name">Request</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api2.requests.parsers" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="parsers"></a>
+      <a id="parsers:parsers"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="parsers/package.html"><span class="name">parsers</span></a>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

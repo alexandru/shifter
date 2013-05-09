@@ -1,0 +1,229 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>extensions - shifter.concurrency.extensions</title>
+          <meta name="description" content="extensions - shifter.concurrency.extensions" />
+          <meta name="keywords" content="extensions shifter.concurrency.extensions" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../index.html';
+            var hash = 'shifter.concurrency.extensions.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../lib/package_big.png" />
+        <p id="owner"><a href="../../package.html" class="extype" name="shifter">shifter</a>.<a href="../package.html" class="extype" name="shifter.concurrency">concurrency</a></p>
+        <h1>extensions</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">extensions</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Useful extensions for various concurrency primitives.
+</p></div><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="shifter.concurrency.extensions"><span>extensions</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="shifter.concurrency.extensions.ExecutionContextExtensions" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExecutionContextExtensionsextendsAnyVal"></a>
+      <a id="ExecutionContextExtensions:ExecutionContextExtensions"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="package$$ExecutionContextExtensions.html"><span class="name">ExecutionContextExtensions</span></a><span class="result"> extends <span class="extype" name="scala.AnyVal">AnyVal</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Extensions for
+<a href="http://www.scala-lang.org/api/current/index.html#scala.concurrent.ExecutionContext" target="_blank">concurrent.ExecutionContext</a>
+</p>
+    </li><li name="shifter.concurrency.extensions.ExecutorServiceWrapper" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExecutorServiceWrapperextendsAbstractExecutorServicewithExecutionContextExecutorService"></a>
+      <a id="ExecutorServiceWrapper:ExecutorServiceWrapper"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ExecutorServiceWrapper.html"><span class="name">ExecutorServiceWrapper</span></a><span class="result"> extends <span class="extype" name="java.util.concurrent.AbstractExecutorService">AbstractExecutorService</span> with <span class="extype" name="scala.concurrent.ExecutionContextExecutorService">ExecutionContextExecutorService</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Wrapper for transforming an <code>ExecutionContext</code> into a Java
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/ExecutorService.html" target="_blank">ExecutorService</a>
+</p>
+    </li><li name="shifter.concurrency.extensions.ExecutorWrapper" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ExecutorWrapperextendsExecutor"></a>
+      <a id="ExecutorWrapper:ExecutorWrapper"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ExecutorWrapper.html"><span class="name">ExecutorWrapper</span></a><span class="result"> extends <span class="extype" name="java.util.concurrent.Executor">Executor</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Wrapper for transforming an <code>ExecutionContext</code> into a Java
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/Executor.html" target="_blank">Executor</a>
+</p>
+    </li><li name="shifter.concurrency.extensions.FutureExtensions" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="FutureExtensions[A]extendsAny"></a>
+      <a id="FutureExtensions[A]:FutureExtensions[A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="FutureExtensions.html"><span class="name">FutureExtensions</span></a><span class="tparams">[<span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.Any">Any</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt"><a href="http://www.scala-lang.org/api/current/index.html#scala.concurrent.Future" target="_blank">concurrent.Future</a>
+extensions for greater joy.</p>
+    </li><li name="shifter.concurrency.extensions.FutureExtensionsImplicit" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FutureExtensionsImplicit[A]extendsAnyValwithFutureExtensions[A]"></a>
+      <a id="FutureExtensionsImplicit[A]:FutureExtensionsImplicit[A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="package$$FutureExtensionsImplicit.html"><span class="name">FutureExtensionsImplicit</span></a><span class="tparams">[<span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyVal">AnyVal</span> with <a href="FutureExtensions.html" class="extype" name="shifter.concurrency.extensions.FutureExtensions">FutureExtensions</a>[<span class="extype" name="shifter.concurrency.extensions.FutureExtensionsImplicit.A">A</span>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Extensions for
+<a href="http://www.scala-lang.org/api/current/index.html#scala.concurrent.Future" target="_blank">concurrent.Future</a>
+</p>
+    </li><li name="shifter.concurrency.extensions.PromiseExtensions" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="PromiseExtensions[A]extendsAny"></a>
+      <a id="PromiseExtensions[A]:PromiseExtensions[A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="PromiseExtensions.html"><span class="name">PromiseExtensions</span></a><span class="tparams">[<span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.Any">Any</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt"><a href="http://www.scala-lang.org/api/current/index.html#scala.concurrent.Promise" target="_blank">concurrent.Promise</a>
+extensions for greater joy.</p>
+    </li><li name="shifter.concurrency.extensions.PromiseExtensionsImplicit" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="PromiseExtensionsImplicit[A]extendsAnyValwithPromiseExtensions[A]"></a>
+      <a id="PromiseExtensionsImplicit[A]:PromiseExtensionsImplicit[A]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="package$$PromiseExtensionsImplicit.html"><span class="name">PromiseExtensionsImplicit</span></a><span class="tparams">[<span name="A">A</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyVal">AnyVal</span> with <a href="PromiseExtensions.html" class="extype" name="shifter.concurrency.extensions.PromiseExtensions">PromiseExtensions</a>[<span class="extype" name="shifter.concurrency.extensions.PromiseExtensionsImplicit.A">A</span>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Extensions for
+<a href="http://www.scala-lang.org/api/current/index.html#scala.concurrent.Promise" target="_blank">concurrent.Promise</a>
+</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

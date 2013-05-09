@@ -212,7 +212,7 @@ trait Memcached extends Cache {
 
     val conn = {
       val builder = new ConnectionFactoryBuilder()
-        .setTranscoder(new CustomTranscoder)
+        .setTranscoder(config.transcoder.getOrElse(new CustomTranscoder))
         .setProtocol(
           if (config.protocol == Protocol.Binary)
             SpyProtocol.BINARY

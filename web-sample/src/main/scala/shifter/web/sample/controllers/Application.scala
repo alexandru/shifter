@@ -1,6 +1,6 @@
 package shifter.web.sample.controllers
 
-import shifter.web.api.mvc._
+import shifter.web.api2.mvc._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 import shifter.concurrency.scheduler
@@ -13,7 +13,7 @@ object Application extends Controller {
 
   val hello = Action { implicit req =>
     val name = req.queryParam("name").getOrElse("Anonymous")
-    Forward(helloName(name))
+    helloName(name)(req)
   }
 
   def helloName(name: String) = Action {

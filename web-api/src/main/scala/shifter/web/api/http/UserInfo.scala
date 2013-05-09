@@ -1,4 +1,4 @@
-package shifter.web.api2.http
+package shifter.web.api.http
 
 import shifter.geoip.GeoIPLocation
 

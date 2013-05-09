@@ -1,9 +1,9 @@
-package shifter.web.api2.requests
+package shifter.web.api.requests
 
-import shifter.web.api2.http.{UserInfo, Cookie, HttpMethod}
-import shifter.web.api2.utils
-import shifter.web.api2.http.HeaderNames._
-import shifter.web.api2.utils.{GeoIPService, IPUtils}
+import shifter.web.api.http.{UserInfo, Cookie, HttpMethod}
+import shifter.web.api.utils
+import shifter.web.api.http.HeaderNames._
+import shifter.web.api.utils.{GeoIPService, IPUtils}
 
 trait RequestHeader {
   def method: HttpMethod.Value

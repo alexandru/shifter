@@ -1,9 +1,8 @@
 package shifter.web.api.requests
 
-import spray.json._
-import shifter.web.api.http.{HttpMethod, Cookie}
+import shifter.web.api.http.{Cookie, HttpMethod}
 
-case class JsonRequest(
+final case class ParsedRequest[+A](
   method: HttpMethod.Value,
   path: String,
   domain: String,
@@ -14,8 +13,5 @@ case class JsonRequest(
   headers: Map[String, Seq[String]],
   remoteAddress: String,
   cookies: Map[String, Cookie],
-  body: JsValue
-)
-extends HttpRequest[JsValue]
-
-
+  body: A
+) extends Request[A]

@@ -1,6 +1,7 @@
 package shifter.cache.memcached
 
 import concurrent.duration._
+import net.spy.memcached.transcoders.SerializingTranscoder
 
 case class Configuration(
   /**
@@ -43,7 +44,13 @@ case class Configuration(
    * When the limit is reached, the Future responses finish
    * with Failure(TimeoutException)
    */
-  operationTimeout: FiniteDuration = 5.seconds
+  operationTimeout: FiniteDuration = 5.seconds,
+
+  /**
+   * SerializingTranscoder instance to use (if None then Shifter's
+   * CustomTranscoder is used)
+   */
+  transcoder: Option[SerializingTranscoder] = None
 )
 
 object Protocol extends Enumeration {

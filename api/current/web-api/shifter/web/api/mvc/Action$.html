@@ -29,9 +29,9 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../../lib/object_big.png" />
+        <a href="Action.html" title="Go to companion"><img src="../../../../lib/object_to_trait_big.png" /></a>
         <p id="owner"><a href="../../../package.html" class="extype" name="shifter">shifter</a>.<a href="../../package.html" class="extype" name="shifter.web">web</a>.<a href="../package.html" class="extype" name="shifter.web.api">api</a>.<a href="package.html" class="extype" name="shifter.web.api.mvc">mvc</a></p>
-        <h1>Action</h1>
+        <h1><a href="Action.html" title="Go to companion">Action</a></h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -44,7 +44,8 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Provides helpers for creating <code>Action</code> values.
+</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
           <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
@@ -156,41 +157,41 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
     </li><li name="shifter.web.api.mvc.Action#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="apply[T,U&lt;:shifter.web.api.requests.HttpRequest[T]](parser:shifter.web.api.requests.RequestParser[T,U]):shifter.web.api.mvc.ActionBuilder[T,U]"></a>
-      <a id="apply[T,U&lt;:HttpRequest[T]](RequestParser[T,U]):ActionBuilder[T,U]"></a>
+      <a id="apply(block:=&gt;shifter.web.api.responses.Result):shifter.web.api.mvc.Action[String]"></a>
+      <a id="apply(⇒Result):Action[String]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="tparams">[<span name="T">T</span>, <span name="U">U &lt;: <a href="../requests/HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="shifter.web.api.mvc.Action.apply.T">T</span>]</span>]</span><span class="params">(<span name="parser">parser: <a href="../requests/RequestParser.html" class="extype" name="shifter.web.api.requests.RequestParser">RequestParser</a>[<span class="extype" name="shifter.web.api.mvc.Action.apply.T">T</span>, <span class="extype" name="shifter.web.api.mvc.Action.apply.U">U</span>]</span>)</span><span class="result">: <a href="ActionBuilder.html" class="extype" name="shifter.web.api.mvc.ActionBuilder">ActionBuilder</a>[<span class="extype" name="shifter.web.api.mvc.Action.apply.T">T</span>, <span class="extype" name="shifter.web.api.mvc.Action.apply.U">U</span>]</span>
+        <span class="name">apply</span><span class="params">(<span name="block">block: ⇒ <a href="../responses/Result.html" class="extype" name="shifter.web.api.responses.Result">Result</a></span>)</span><span class="result">: <a href="Action.html" class="extype" name="shifter.web.api.mvc.Action">Action</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       </h4>
       
     </li><li name="shifter.web.api.mvc.Action#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="apply(cb:shifter.web.api.requests.SimpleRequest=&gt;shifter.web.api.responses.HttpResponse[_]):shifter.web.api.requests.RawRequest=&gt;shifter.web.api.responses.HttpResponse[_]"></a>
-      <a id="apply((SimpleRequest)⇒HttpResponse[_]):(RawRequest)⇒HttpResponse[_]"></a>
+      <a id="apply(block:shifter.web.api.requests.Request[String]=&gt;shifter.web.api.responses.Result):shifter.web.api.mvc.Action[String]"></a>
+      <a id="apply((Request[String])⇒Result):Action[String]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="cb">cb: (<a href="../requests/SimpleRequest.html" class="extype" name="shifter.web.api.requests.SimpleRequest">SimpleRequest</a>) ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]</span>)</span><span class="result">: (<a href="../requests/RawRequest.html" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a>) ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]</span>
+        <span class="name">apply</span><span class="params">(<span name="block">block: (<a href="../requests/Request.html" class="extype" name="shifter.web.api.requests.Request">Request</a>[<span class="extype" name="scala.Predef.String">String</span>]) ⇒ <a href="../responses/Result.html" class="extype" name="shifter.web.api.responses.Result">Result</a></span>)</span><span class="result">: <a href="Action.html" class="extype" name="shifter.web.api.mvc.Action">Action</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       </h4>
       
     </li><li name="shifter.web.api.mvc.Action#apply" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="apply(cb:=&gt;shifter.web.api.responses.HttpResponse[_]):shifter.web.api.requests.RawRequest=&gt;shifter.web.api.responses.HttpResponse[_]"></a>
-      <a id="apply(⇒HttpResponse[_]):(RawRequest)⇒HttpResponse[_]"></a>
+      <a id="apply[A](bodyParser:shifter.web.api.requests.BodyParser[A])(block:shifter.web.api.requests.Request[A]=&gt;shifter.web.api.responses.Result):shifter.web.api.mvc.Action[A]"></a>
+      <a id="apply[A](BodyParser[A])((Request[A])⇒Result):Action[A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">apply</span><span class="params">(<span name="cb">cb: ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]</span>)</span><span class="result">: (<a href="../requests/RawRequest.html" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a>) ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]</span>
+        <span class="name">apply</span><span class="tparams">[<span name="A">A</span>]</span><span class="params">(<span name="bodyParser">bodyParser: <a href="../requests/BodyParser.html" class="extype" name="shifter.web.api.requests.BodyParser">BodyParser</a>[<span class="extype" name="shifter.web.api.mvc.Action.apply.A">A</span>]</span>)</span><span class="params">(<span name="block">block: (<a href="../requests/Request.html" class="extype" name="shifter.web.api.requests.Request">Request</a>[<span class="extype" name="shifter.web.api.mvc.Action.apply.A">A</span>]) ⇒ <a href="../responses/Result.html" class="extype" name="shifter.web.api.responses.Result">Result</a></span>)</span><span class="result">: <a href="Action.html" class="extype" name="shifter.web.api.mvc.Action">Action</a>[<span class="extype" name="shifter.web.api.mvc.Action.apply.A">A</span>]</span>
       </span>
       </h4>
       

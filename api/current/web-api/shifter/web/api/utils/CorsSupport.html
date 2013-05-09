@@ -40,13 +40,13 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">CorsSupport</span><span class="result"> extends <a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></span>
+        <span class="name">CorsSupport</span><span class="result"> extends <a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -64,7 +64,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="shifter.web.api.utils.CorsSupport"><span>CorsSupport</span></li><li class="in" name="shifter.web.api.responses.ResponseBuilders"><span>ResponseBuilders</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="shifter.web.api.utils.CorsSupport"><span>CorsSupport</span></li><li class="in" name="shifter.web.api.responses.ResultBuilders"><span>ResultBuilders</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -155,331 +155,318 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#Async" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Async[T](response:scala.concurrent.Future[shifter.web.api.responses.CompleteResponse[T]],timeout:scala.concurrent.duration.Duration,timeoutResponse:shifter.web.api.responses.CompleteResponse[_]):shifter.web.api.responses.AsyncResponse[T]"></a>
-      <a id="Async[T](Future[CompleteResponse[T]],Duration,CompleteResponse[_]):AsyncResponse[T]"></a>
+    </li><li name="shifter.web.api.responses.ResultBuilders#Async" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Async(response:scala.concurrent.Future[shifter.web.api.responses.CompleteResult],timeout:scala.concurrent.duration.Duration,timeoutResponse:shifter.web.api.responses.CompleteResult)(implicitec:scala.concurrent.ExecutionContext):shifter.web.api.responses.AsyncResult"></a>
+      <a id="Async(Future[CompleteResult],Duration,CompleteResult)(ExecutionContext):AsyncResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">Async</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="response">response: <span class="extype" name="scala.concurrent.Future">Future</span>[<a href="../responses/CompleteResponse.html" class="extype" name="shifter.web.api.responses.CompleteResponse">CompleteResponse</a>[<span class="extype" name="shifter.web.api.responses.ResponseBuilders.Async.T">T</span>]]</span>, <span name="timeout">timeout: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span></span>, <span name="timeoutResponse">timeoutResponse: <a href="../responses/CompleteResponse.html" class="extype" name="shifter.web.api.responses.CompleteResponse">CompleteResponse</a>[_]</span>)</span><span class="result">: <a href="../responses/AsyncResponse.html" class="extype" name="shifter.web.api.responses.AsyncResponse">AsyncResponse</a>[<span class="extype" name="shifter.web.api.responses.ResponseBuilders.Async.T">T</span>]</span>
+        <span class="name">Async</span><span class="params">(<span name="response">response: <span class="extype" name="scala.concurrent.Future">Future</span>[<a href="../responses/CompleteResult.html" class="extype" name="shifter.web.api.responses.CompleteResult">CompleteResult</a>]</span>, <span name="timeout">timeout: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span></span>, <span name="timeoutResponse">timeoutResponse: <a href="../responses/CompleteResult.html" class="extype" name="shifter.web.api.responses.CompleteResult">CompleteResult</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <a href="../responses/AsyncResult.html" class="extype" name="shifter.web.api.responses.AsyncResult">AsyncResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#Async" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Async[T](response:scala.concurrent.Future[shifter.web.api.responses.CompleteResponse[T]],timeout:scala.concurrent.duration.Duration):shifter.web.api.responses.AsyncResponse[T]"></a>
-      <a id="Async[T](Future[CompleteResponse[T]],Duration):AsyncResponse[T]"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#Async" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Async(response:scala.concurrent.Future[shifter.web.api.responses.CompleteResult],timeout:scala.concurrent.duration.Duration)(implicitec:scala.concurrent.ExecutionContext):shifter.web.api.responses.AsyncResult"></a>
+      <a id="Async(Future[CompleteResult],Duration)(ExecutionContext):AsyncResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">Async</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="response">response: <span class="extype" name="scala.concurrent.Future">Future</span>[<a href="../responses/CompleteResponse.html" class="extype" name="shifter.web.api.responses.CompleteResponse">CompleteResponse</a>[<span class="extype" name="shifter.web.api.responses.ResponseBuilders.Async.T">T</span>]]</span>, <span name="timeout">timeout: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span></span>)</span><span class="result">: <a href="../responses/AsyncResponse.html" class="extype" name="shifter.web.api.responses.AsyncResponse">AsyncResponse</a>[<span class="extype" name="shifter.web.api.responses.ResponseBuilders.Async.T">T</span>]</span>
+        <span class="name">Async</span><span class="params">(<span name="response">response: <span class="extype" name="scala.concurrent.Future">Future</span>[<a href="../responses/CompleteResult.html" class="extype" name="shifter.web.api.responses.CompleteResult">CompleteResult</a>]</span>, <span name="timeout">timeout: <span class="extype" name="scala.concurrent.duration.Duration">Duration</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <a href="../responses/AsyncResult.html" class="extype" name="shifter.web.api.responses.AsyncResult">AsyncResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#Async" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Async[T](response:scala.concurrent.Future[shifter.web.api.responses.CompleteResponse[T]]):shifter.web.api.responses.AsyncResponse[T]"></a>
-      <a id="Async[T](Future[CompleteResponse[T]]):AsyncResponse[T]"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#Async" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Async(response:scala.concurrent.Future[shifter.web.api.responses.CompleteResult])(implicitec:scala.concurrent.ExecutionContext):shifter.web.api.responses.AsyncResult"></a>
+      <a id="Async(Future[CompleteResult])(ExecutionContext):AsyncResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">Async</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="response">response: <span class="extype" name="scala.concurrent.Future">Future</span>[<a href="../responses/CompleteResponse.html" class="extype" name="shifter.web.api.responses.CompleteResponse">CompleteResponse</a>[<span class="extype" name="shifter.web.api.responses.ResponseBuilders.Async.T">T</span>]]</span>)</span><span class="result">: <a href="../responses/AsyncResponse.html" class="extype" name="shifter.web.api.responses.AsyncResponse">AsyncResponse</a>[<span class="extype" name="shifter.web.api.responses.ResponseBuilders.Async.T">T</span>]</span>
+        <span class="name">Async</span><span class="params">(<span name="response">response: <span class="extype" name="scala.concurrent.Future">Future</span>[<a href="../responses/CompleteResult.html" class="extype" name="shifter.web.api.responses.CompleteResult">CompleteResult</a>]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: <a href="../responses/AsyncResult.html" class="extype" name="shifter.web.api.responses.AsyncResult">AsyncResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#BadRequest" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="BadRequest(body:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResponse"></a>
-      <a id="BadRequest(String,Map[String,String]):SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#BadRequest" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="BadRequest(body:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResult"></a>
+      <a id="BadRequest(String,Map[String,String]):SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">BadRequest</span><span class="params">(<span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">BadRequest</span><span class="params">(<span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#BadRequest" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="BadRequest:shifter.web.api.responses.SimpleResponse"></a>
-      <a id="BadRequest:SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#BadRequest" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="BadRequest:shifter.web.api.responses.SimpleResult"></a>
+      <a id="BadRequest:SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">BadRequest</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">BadRequest</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
     </li><li name="shifter.web.api.utils.CorsSupport#CorsAction" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CorsAction[T,U&lt;:shifter.web.api.requests.HttpRequest[T]](parser:shifter.web.api.requests.RequestParser[T,U])(cb:U=&gt;shifter.web.api.responses.HttpResponse[_])(implicitec:scala.concurrent.ExecutionContext):shifter.web.api.requests.RawRequest=&gt;shifter.web.api.responses.HttpResponse[_]"></a>
-      <a id="CorsAction[T,U&lt;:HttpRequest[T]](RequestParser[T,U])((U)⇒HttpResponse[_])(ExecutionContext):(RawRequest)⇒HttpResponse[_]"></a>
+      <a id="CorsAction[A](bp:shifter.web.api.requests.BodyParser[A])(f:shifter.web.api.requests.Request[A]=&gt;shifter.web.api.responses.Result):shifter.web.api.mvc.Action[A]"></a>
+      <a id="CorsAction[A](BodyParser[A])((Request[A])⇒Result):Action[A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">CorsAction</span><span class="tparams">[<span name="T">T</span>, <span name="U">U &lt;: <a href="../requests/HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="shifter.web.api.utils.CorsSupport.CorsAction.T">T</span>]</span>]</span><span class="params">(<span name="parser">parser: <a href="../requests/RequestParser.html" class="extype" name="shifter.web.api.requests.RequestParser">RequestParser</a>[<span class="extype" name="shifter.web.api.utils.CorsSupport.CorsAction.T">T</span>, <span class="extype" name="shifter.web.api.utils.CorsSupport.CorsAction.U">U</span>]</span>)</span><span class="params">(<span name="cb">cb: (<span class="extype" name="shifter.web.api.utils.CorsSupport.CorsAction.U">U</span>) ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: (<a href="../requests/RawRequest.html" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a>) ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]</span>
+        <span class="name">CorsAction</span><span class="tparams">[<span name="A">A</span>]</span><span class="params">(<span name="bp">bp: <a href="../requests/BodyParser.html" class="extype" name="shifter.web.api.requests.BodyParser">BodyParser</a>[<span class="extype" name="shifter.web.api.utils.CorsSupport.CorsAction.A">A</span>]</span>)</span><span class="params">(<span name="f">f: (<a href="../requests/Request.html" class="extype" name="shifter.web.api.requests.Request">Request</a>[<span class="extype" name="shifter.web.api.utils.CorsSupport.CorsAction.A">A</span>]) ⇒ <a href="../responses/Result.html" class="extype" name="shifter.web.api.responses.Result">Result</a></span>)</span><span class="result">: <a href="../mvc/Action.html" class="extype" name="shifter.web.api.mvc.Action">Action</a>[<span class="extype" name="shifter.web.api.utils.CorsSupport.CorsAction.A">A</span>]</span>
       </span>
       </h4>
       
     </li><li name="shifter.web.api.utils.CorsSupport#CorsAction" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CorsAction(cb:shifter.web.api.requests.SimpleRequest=&gt;shifter.web.api.responses.HttpResponse[_])(implicitec:scala.concurrent.ExecutionContext):shifter.web.api.requests.RawRequest=&gt;shifter.web.api.responses.HttpResponse[_]"></a>
-      <a id="CorsAction((SimpleRequest)⇒HttpResponse[_])(ExecutionContext):(RawRequest)⇒HttpResponse[_]"></a>
+      <a id="CorsAction(cb:shifter.web.api.requests.Request[String]=&gt;shifter.web.api.responses.Result):shifter.web.api.mvc.Action[String]"></a>
+      <a id="CorsAction((Request[String])⇒Result):Action[String]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">CorsAction</span><span class="params">(<span name="cb">cb: (<a href="../requests/SimpleRequest.html" class="extype" name="shifter.web.api.requests.SimpleRequest">SimpleRequest</a>) ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: (<a href="../requests/RawRequest.html" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a>) ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]</span>
+        <span class="name">CorsAction</span><span class="params">(<span name="cb">cb: (<a href="../requests/Request.html" class="extype" name="shifter.web.api.requests.Request">Request</a>[<span class="extype" name="scala.Predef.String">String</span>]) ⇒ <a href="../responses/Result.html" class="extype" name="shifter.web.api.responses.Result">Result</a></span>)</span><span class="result">: <a href="../mvc/Action.html" class="extype" name="shifter.web.api.mvc.Action">Action</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       </h4>
       
     </li><li name="shifter.web.api.utils.CorsSupport#CorsAction" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CorsAction(cb:=&gt;shifter.web.api.responses.HttpResponse[_])(implicitec:scala.concurrent.ExecutionContext):shifter.web.api.requests.RawRequest=&gt;shifter.web.api.responses.HttpResponse[_]"></a>
-      <a id="CorsAction(⇒HttpResponse[_])(ExecutionContext):(RawRequest)⇒HttpResponse[_]"></a>
+      <a id="CorsAction(cb:=&gt;shifter.web.api.responses.Result):shifter.web.api.mvc.Action[String]"></a>
+      <a id="CorsAction(⇒Result):Action[String]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">CorsAction</span><span class="params">(<span name="cb">cb: ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>)</span><span class="result">: (<a href="../requests/RawRequest.html" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a>) ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]</span>
+        <span class="name">CorsAction</span><span class="params">(<span name="cb">cb: ⇒ <a href="../responses/Result.html" class="extype" name="shifter.web.api.responses.Result">Result</a></span>)</span><span class="result">: <a href="../mvc/Action.html" class="extype" name="shifter.web.api.mvc.Action">Action</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.responses.ResponseBuilders#Forward" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Forward[T&lt;:shifter.web.api.requests.HttpRequest[_]](action:shifter.web.api.requests.RawRequest=&gt;shifter.web.api.responses.HttpResponse[_])(implicitreq:T,implicitev:shifter.web.api.requests.CanForward[T]):shifter.web.api.responses.ForwardResponse"></a>
-      <a id="Forward[T&lt;:HttpRequest[_]]((RawRequest)⇒HttpResponse[_])(T,CanForward[T]):ForwardResponse"></a>
+    </li><li name="shifter.web.api.responses.ResultBuilders#HttpError" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="HttpError(status:Int,body:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResult"></a>
+      <a id="HttpError(Int,String,Map[String,String]):SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">Forward</span><span class="tparams">[<span name="T">T &lt;: <a href="../requests/HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[_]</span>]</span><span class="params">(<span name="action">action: (<a href="../requests/RawRequest.html" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a>) ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]</span>)</span><span class="params">(<span class="implicit">implicit </span><span name="req">req: <span class="extype" name="shifter.web.api.responses.ResponseBuilders.Forward.T">T</span></span>, <span name="ev">ev: <a href="../requests/CanForward.html" class="extype" name="shifter.web.api.requests.CanForward">CanForward</a>[<span class="extype" name="shifter.web.api.responses.ResponseBuilders.Forward.T">T</span>]</span>)</span><span class="result">: <a href="../responses/ForwardResponse.html" class="extype" name="shifter.web.api.responses.ForwardResponse">ForwardResponse</a></span>
+        <span class="name">HttpError</span><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#HttpError" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="HttpError(status:Int,body:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResponse"></a>
-      <a id="HttpError(Int,String,Map[String,String]):SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#MethodNotAllowed" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="MethodNotAllowed(body:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResult"></a>
+      <a id="MethodNotAllowed(String,Map[String,String]):SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">HttpError</span><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">MethodNotAllowed</span><span class="params">(<span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#MethodNotAllowed" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="MethodNotAllowed(body:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResponse"></a>
-      <a id="MethodNotAllowed(String,Map[String,String]):SimpleResponse"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">MethodNotAllowed</span><span class="params">(<span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#MethodNotAllowed" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="MethodNotAllowed:shifter.web.api.responses.SimpleResponse"></a>
-      <a id="MethodNotAllowed:SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#MethodNotAllowed" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="MethodNotAllowed:shifter.web.api.responses.SimpleResult"></a>
+      <a id="MethodNotAllowed:SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">MethodNotAllowed</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">MethodNotAllowed</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#NoContent" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="NoContent(body:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResponse"></a>
-      <a id="NoContent(String,Map[String,String]):SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#NoContent" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="NoContent(body:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResult"></a>
+      <a id="NoContent(String,Map[String,String]):SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">NoContent</span><span class="params">(<span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">NoContent</span><span class="params">(<span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#NoContent" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="NoContent:shifter.web.api.responses.SimpleResponse"></a>
-      <a id="NoContent:SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#NoContent" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="NoContent:shifter.web.api.responses.SimpleResult"></a>
+      <a id="NoContent:SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">NoContent</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">NoContent</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#NotFound" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="NotFound(body:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResponse"></a>
-      <a id="NotFound(String,Map[String,String]):SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#NotFound" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="NotFound(body:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResult"></a>
+      <a id="NotFound(String,Map[String,String]):SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">NotFound</span><span class="params">(<span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">NotFound</span><span class="params">(<span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#NotFound" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="NotFound:shifter.web.api.responses.SimpleResponse"></a>
-      <a id="NotFound:SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#NotFound" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="NotFound:shifter.web.api.responses.SimpleResult"></a>
+      <a id="NotFound:SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">NotFound</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">NotFound</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#Ok" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Ok(body:twirl.api.Html):shifter.web.api.responses.SimpleResponse"></a>
-      <a id="Ok(Html):SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#Ok" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Ok(body:twirl.api.Html):shifter.web.api.responses.SimpleResult"></a>
+      <a id="Ok(Html):SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">Ok</span><span class="params">(<span name="body">body: <span class="extype" name="twirl.api.Html">Html</span></span>)</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">Ok</span><span class="params">(<span name="body">body: <span class="extype" name="twirl.api.Html">Html</span></span>)</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#Ok" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Ok(body:String,contentType:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResponse"></a>
-      <a id="Ok(String,String,Map[String,String]):SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#Ok" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Ok(body:String,contentType:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResult"></a>
+      <a id="Ok(String,String,Map[String,String]):SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">Ok</span><span class="params">(<span name="body">body: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="contentType">contentType: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">Ok</span><span class="params">(<span name="body">body: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="contentType">contentType: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#Ok" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Ok:shifter.web.api.responses.SimpleResponse"></a>
-      <a id="Ok:SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#Ok" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Ok:shifter.web.api.responses.SimpleResult"></a>
+      <a id="Ok:SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">Ok</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">Ok</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#OkStream" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="OkStream(body:java.io.InputStream,headers:Map[String,String]):shifter.web.api.responses.StreamResponse"></a>
-      <a id="OkStream(InputStream,Map[String,String]):StreamResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#OkStream" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="OkStream(body:java.io.InputStream,headers:Map[String,String]):shifter.web.api.responses.StreamedResult"></a>
+      <a id="OkStream(InputStream,Map[String,String]):StreamedResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">OkStream</span><span class="params">(<span name="body">body: <span class="extype" name="java.io.InputStream">InputStream</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/StreamResponse.html" class="extype" name="shifter.web.api.responses.StreamResponse">StreamResponse</a></span>
+        <span class="name">OkStream</span><span class="params">(<span name="body">body: <span class="extype" name="java.io.InputStream">InputStream</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/StreamedResult.html" class="extype" name="shifter.web.api.responses.StreamedResult">StreamedResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#Pixel" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Pixel:shifter.web.api.responses.CompleteResponse[Seq[Byte]]"></a>
-      <a id="Pixel:CompleteResponse[Seq[Byte]]"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#Pixel" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Pixel:shifter.web.api.responses.CompleteResult"></a>
+      <a id="Pixel:CompleteResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">Pixel</span><span class="result">: <a href="../responses/CompleteResponse.html" class="extype" name="shifter.web.api.responses.CompleteResponse">CompleteResponse</a>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]]</span>
+        <span class="name">Pixel</span><span class="result">: <a href="../responses/CompleteResult.html" class="extype" name="shifter.web.api.responses.CompleteResult">CompleteResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#Redirect" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Redirect(location:String,status:Int,headers:Map[String,String]):shifter.web.api.responses.CompleteResponse[String]"></a>
-      <a id="Redirect(String,Int,Map[String,String]):CompleteResponse[String]"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#Redirect" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Redirect(location:String,status:Int,headers:Map[String,String]):shifter.web.api.responses.CompleteResult"></a>
+      <a id="Redirect(String,Int,Map[String,String]):CompleteResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">Redirect</span><span class="params">(<span name="location">location: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="status">status: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">302</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/CompleteResponse.html" class="extype" name="shifter.web.api.responses.CompleteResponse">CompleteResponse</a>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+        <span class="name">Redirect</span><span class="params">(<span name="location">location: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="status">status: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">302</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/CompleteResult.html" class="extype" name="shifter.web.api.responses.CompleteResult">CompleteResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#RequestTimeout" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="RequestTimeout(body:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResponse"></a>
-      <a id="RequestTimeout(String,Map[String,String]):SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#RequestTimeout" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="RequestTimeout(body:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResult"></a>
+      <a id="RequestTimeout(String,Map[String,String]):SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">RequestTimeout</span><span class="params">(<span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">RequestTimeout</span><span class="params">(<span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#RequestTimeout" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="RequestTimeout:shifter.web.api.responses.SimpleResponse"></a>
-      <a id="RequestTimeout:SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#RequestTimeout" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="RequestTimeout:shifter.web.api.responses.SimpleResult"></a>
+      <a id="RequestTimeout:SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">RequestTimeout</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">RequestTimeout</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
-    </li><li name="shifter.web.api.responses.ResponseBuilders#Unauthenticated" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="Unauthenticated(realm:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResponse"></a>
-      <a id="Unauthenticated(String,Map[String,String]):SimpleResponse"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
+    </li><li name="shifter.web.api.responses.ResultBuilders#Unauthenticated" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="Unauthenticated(realm:String,headers:Map[String,String]):shifter.web.api.responses.SimpleResult"></a>
+      <a id="Unauthenticated(String,Map[String,String]):SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">Unauthenticated</span><span class="params">(<span name="realm">realm: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResponse.html" class="extype" name="shifter.web.api.responses.SimpleResponse">SimpleResponse</a></span>
+        <span class="name">Unauthenticated</span><span class="params">(<span name="realm">realm: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">Map.empty</span></span>)</span><span class="result">: <a href="../responses/SimpleResult.html" class="extype" name="shifter.web.api.responses.SimpleResult">SimpleResult</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></dd></dl></div>
     </li><li name="scala.Any#asInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <a id="asInstanceOf[T0]:T0"></a>
@@ -629,6 +616,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="shifter.web.api.utils.CorsSupport#optionsResponse" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="optionsResponse:shifter.web.api.responses.CompleteResult"></a>
+      <a id="optionsResponse:CompleteResult"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">optionsResponse</span><span class="result">: <a href="../responses/CompleteResult.html" class="extype" name="shifter.web.api.responses.CompleteResult">CompleteResult</a></span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -712,8 +712,8 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="shifter.web.api.responses.ResponseBuilders">
-              <h3>Inherited from <a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></h3>
+        <div class="parent" name="shifter.web.api.responses.ResultBuilders">
+              <h3>Inherited from <a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

@@ -86,34 +86,21 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="shifter.web.api.mvc.Action" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Action=shifter.web.api.requests.RawRequest=&gt;shifter.web.api.responses.HttpResponse[_]"></a>
-      <a id="Action:(RawRequest)⇒HttpResponse[_]"></a>
+              <ol><li name="shifter.web.api.mvc.Action" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Action[A]extendsshifter.web.api.requests.RequestHeader=&gt;shifter.web.api.responses.Result"></a>
+      <a id="Action[A]:Action[A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">type</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">Action</span><span class="result"> = (<a href="../requests/RawRequest.html" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a>) ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]</span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.mvc.ActionBuilder" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ActionBuilder[T,U&lt;:shifter.web.api.requests.HttpRequest[T]]extendsAnyRef"></a>
-      <a id="ActionBuilder[T,U&lt;:HttpRequest[T]]:ActionBuilder[T,U]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="ActionBuilder.html"><span class="name">ActionBuilder</span></a><span class="tparams">[<span name="T">T</span>, <span name="U">U &lt;: <a href="../requests/HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="shifter.web.api.mvc.ActionBuilder.T">T</span>]</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Action.html"><span class="name">Action</span></a><span class="tparams">[<span name="A">A</span>]</span><span class="result"> extends (<a href="../requests/RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a>) ⇒ <a href="../responses/Result.html" class="extype" name="shifter.web.api.responses.Result">Result</a></span>
       </span>
       </h4>
       
     </li><li name="shifter.web.api.mvc.Controller" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="ControllerextendsResponseBuilderswithMimeTypeswithStatuswithHeaderNames"></a>
+      <a id="ControllerextendsResultBuilderswithMimeTypeswithStatuswithHeaderNames"></a>
       <a id="Controller:Controller"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -121,7 +108,7 @@
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="Controller.html"><span class="name">Controller</span></a><span class="result"> extends <a href="../responses/ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a> with <a href="../http/MimeTypes.html" class="extype" name="shifter.web.api.http.MimeTypes">MimeTypes</a> with <a href="../http/Status.html" class="extype" name="shifter.web.api.http.Status">Status</a> with <a href="../http/HeaderNames.html" class="extype" name="shifter.web.api.http.HeaderNames">HeaderNames</a></span>
+        <a href="Controller.html"><span class="name">Controller</span></a><span class="result"> extends <a href="../responses/ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a> with <a href="../http/MimeTypes.html" class="extype" name="shifter.web.api.http.MimeTypes">MimeTypes</a> with <a href="../http/Status.html" class="extype" name="shifter.web.api.http.Status">Status</a> with <a href="../http/HeaderNames.html" class="extype" name="shifter.web.api.http.HeaderNames">HeaderNames</a></span>
       </span>
       </h4>
       
@@ -165,7 +152,7 @@
       </h4>
       
     </li><li name="shifter.web.api.mvc.UrlRoutes" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="UrlRoutes=PartialFunction[shifter.web.api.requests.RawRequest,shifter.web.api.requests.RawRequest=&gt;shifter.web.api.responses.HttpResponse[_]]"></a>
+      <a id="UrlRoutes=PartialFunction[shifter.web.api.requests.RequestHeader,shifter.web.api.mvc.Action[_]]"></a>
       <a id="UrlRoutes:UrlRoutes"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -173,7 +160,7 @@
         <span class="kind">type</span>
       </span>
       <span class="symbol">
-        <span class="name">UrlRoutes</span><span class="result"> = <span class="extype" name="scala.PartialFunction">PartialFunction</span>[<a href="../requests/RawRequest.html" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a>, (<a href="../requests/RawRequest.html" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a>) ⇒ <a href="../responses/HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]]</span>
+        <span class="name">UrlRoutes</span><span class="result"> = <span class="extype" name="scala.PartialFunction">PartialFunction</span>[<a href="../requests/RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a>, <a href="Action.html" class="extype" name="shifter.web.api.mvc.Action">Action</a>[_]]</span>
       </span>
       </h4>
       
@@ -209,7 +196,7 @@
         <a href="Action$.html"><span class="name">Action</span></a>
       </span>
       </h4>
-      
+      <p class="comment cmt">Provides helpers for creating <code>Action</code> values.</p>
     </li><li name="shifter.web.api.mvc.GET" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="GET"></a>
       <a id="GET:GET"></a>

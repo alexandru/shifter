@@ -63,107 +63,94 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="shifter.web.api.responses.AsyncResponse" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="AsyncResponse[T]extendsHttpResponse[T]withProductwithSerializable"></a>
-      <a id="AsyncResponse[T]:AsyncResponse[T]"></a>
+              <ol><li name="shifter.web.api.responses.AsyncResult" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AsyncResultextendsResultwithProductwithSerializable"></a>
+      <a id="AsyncResult:AsyncResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="AsyncResponse.html"><span class="name">AsyncResponse</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[<span class="extype" name="shifter.web.api.responses.AsyncResponse.T">T</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="AsyncResult.html"><span class="name">AsyncResult</span></a><span class="result"> extends <a href="Result.html" class="extype" name="shifter.web.api.responses.Result">Result</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.responses.BytesResponse" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="BytesResponseextendsCompleteResponse[Seq[Byte]]withProductwithSerializable"></a>
-      <a id="BytesResponse:BytesResponse"></a>
+    </li><li name="shifter.web.api.responses.BytesResult" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BytesResultextendsCompleteResultwithProductwithSerializable"></a>
+      <a id="BytesResult:BytesResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="BytesResponse.html"><span class="name">BytesResponse</span></a><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="defval" name="scala.this.Predef.Map.empty[String, Nothing]">...</span></span>, <span name="body">body: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="CompleteResponse.html" class="extype" name="shifter.web.api.responses.CompleteResponse">CompleteResponse</a>[<span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="BytesResult.html"><span class="name">BytesResult</span></a><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="defval" name="scala.this.Predef.Map.empty[String, Nothing]">...</span></span>, <span name="body">body: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Byte">Byte</span>]</span>)</span><span class="result"> extends <a href="CompleteResult.html" class="extype" name="shifter.web.api.responses.CompleteResult">CompleteResult</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.responses.CompleteResponse" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="CompleteResponse[T]extendsHttpResponse[T]"></a>
-      <a id="CompleteResponse[T]:CompleteResponse[T]"></a>
+    </li><li name="shifter.web.api.responses.CompleteResult" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CompleteResultextendsResult"></a>
+      <a id="CompleteResult:CompleteResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">sealed </span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="CompleteResponse.html"><span class="name">CompleteResponse</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[<span class="extype" name="shifter.web.api.responses.CompleteResponse.T">T</span>]</span>
+        <a href="CompleteResult.html"><span class="name">CompleteResult</span></a><span class="result"> extends <a href="Result.html" class="extype" name="shifter.web.api.responses.Result">Result</a></span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.responses.ForwardResponse" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ForwardResponseextendsHttpResponse[shifter.web.api.requests.RawRequest=&gt;shifter.web.api.responses.HttpResponse[_]]withProductwithSerializable"></a>
-      <a id="ForwardResponse:ForwardResponse"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="ForwardResponse.html"><span class="name">ForwardResponse</span></a><span class="result"> extends <a href="HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[(<a href="../requests/RawRequest.html" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a>) ⇒ <a href="HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[_]] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.responses.HttpResponse" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="HttpResponse[T]extendsAnyRef"></a>
-      <a id="HttpResponse[T]:HttpResponse[T]"></a>
+    </li><li name="shifter.web.api.responses.Result" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ResultextendsAnyRef"></a>
+      <a id="Result:Result"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">sealed </span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="HttpResponse.html"><span class="name">HttpResponse</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Result.html"><span class="name">Result</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.responses.ResponseBuilders" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="ResponseBuildersextendsAnyRef"></a>
-      <a id="ResponseBuilders:ResponseBuilders"></a>
+    </li><li name="shifter.web.api.responses.ResultBuilders" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ResultBuildersextendsAnyRef"></a>
+      <a id="ResultBuilders:ResultBuilders"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="ResponseBuilders.html"><span class="name">ResponseBuilders</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="ResultBuilders.html"><span class="name">ResultBuilders</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.responses.SimpleResponse" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SimpleResponseextendsCompleteResponse[String]withProductwithSerializable"></a>
-      <a id="SimpleResponse:SimpleResponse"></a>
+    </li><li name="shifter.web.api.responses.SimpleResult" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="SimpleResultextendsCompleteResultwithProductwithSerializable"></a>
+      <a id="SimpleResult:SimpleResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="SimpleResponse.html"><span class="name">SimpleResponse</span></a><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="defval" name="scala.this.Predef.Map.empty[String, Nothing]">...</span></span>, <span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>)</span><span class="result"> extends <a href="CompleteResponse.html" class="extype" name="shifter.web.api.responses.CompleteResponse">CompleteResponse</a>[<span class="extype" name="scala.Predef.String">String</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="SimpleResult.html"><span class="name">SimpleResult</span></a><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="defval" name="scala.this.Predef.Map.empty[String, Nothing]">...</span></span>, <span name="body">body: <span class="extype" name="scala.Predef.String">String</span> = <span class="symbol">&quot;&quot;</span></span>)</span><span class="result"> extends <a href="CompleteResult.html" class="extype" name="shifter.web.api.responses.CompleteResult">CompleteResult</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.responses.StreamResponse" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="StreamResponseextendsCompleteResponse[java.io.InputStream]withProductwithSerializable"></a>
-      <a id="StreamResponse:StreamResponse"></a>
+    </li><li name="shifter.web.api.responses.StreamedResult" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="StreamedResultextendsCompleteResultwithProductwithSerializable"></a>
+      <a id="StreamedResult:StreamedResult"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="StreamResponse.html"><span class="name">StreamResponse</span></a><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="defval" name="scala.this.Predef.Map.empty[String, Nothing]">...</span></span>, <span name="body">body: <span class="extype" name="java.io.InputStream">InputStream</span></span>)</span><span class="result"> extends <a href="CompleteResponse.html" class="extype" name="shifter.web.api.responses.CompleteResponse">CompleteResponse</a>[<span class="extype" name="java.io.InputStream">InputStream</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="StreamedResult.html"><span class="name">StreamedResult</span></a><span class="params">(<span name="status">status: <span class="extype" name="scala.Int">Int</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]] = <span class="defval" name="scala.this.Predef.Map.empty[String, Nothing]">...</span></span>, <span name="body">body: <span class="extype" name="java.io.InputStream">InputStream</span></span>)</span><span class="result"> extends <a href="CompleteResult.html" class="extype" name="shifter.web.api.responses.CompleteResult">CompleteResult</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
@@ -174,29 +161,16 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="shifter.web.api.responses.ChainResponse" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ChainResponse"></a>
-      <a id="ChainResponse:ChainResponse"></a>
+              <ol><li name="shifter.web.api.responses.ResultBuilders" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ResultBuilders"></a>
+      <a id="ResultBuilders:ResultBuilders"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="ChainResponse$.html"><span class="name">ChainResponse</span></a><span class="result"> extends <a href="HttpResponse.html" class="extype" name="shifter.web.api.responses.HttpResponse">HttpResponse</a>[<span class="extype" name="scala.Nothing">Nothing</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.responses.ResponseBuilders" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ResponseBuilders"></a>
-      <a id="ResponseBuilders:ResponseBuilders"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="ResponseBuilders$.html"><span class="name">ResponseBuilders</span></a><span class="result"> extends <a href="ResponseBuilders.html" class="extype" name="shifter.web.api.responses.ResponseBuilders">ResponseBuilders</a></span>
+        <a href="ResultBuilders$.html"><span class="name">ResultBuilders</span></a><span class="result"> extends <a href="ResultBuilders.html" class="extype" name="shifter.web.api.responses.ResultBuilders">ResultBuilders</a></span>
       </span>
       </h4>
       

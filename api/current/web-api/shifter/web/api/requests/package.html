@@ -63,185 +63,107 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="shifter.web.api.requests.CanForward" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="CanForward[-T]extendsAnyRef"></a>
-      <a id="CanForward[-T]:CanForward[T]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="CanForward.html"><span class="name">CanForward</span></a><span class="tparams">[<span name="T">-T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.FormRequest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="FormRequestextendsHttpRequest[Map[String,Seq[String]]]withProductwithSerializable"></a>
-      <a id="FormRequest:FormRequest"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="FormRequest.html"><span class="name">FormRequest</span></a><span class="params">(<span name="method">method: <a href="../http/HttpMethod$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="shifter.web.api.http.HttpMethod.Value">http.HttpMethod.Value</a></span>, <span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="domain">domain: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="port">port: <span class="extype" name="scala.Int">Int</span></span>, <span name="protocol">protocol: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="query">query: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>, <span name="remoteAddress">remoteAddress: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="cookies">cookies: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../http/Cookie.html" class="extype" name="shifter.web.api.http.Cookie">Cookie</a>]</span>, <span name="body">body: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>)</span><span class="result"> extends <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.HttpRequest" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="HttpRequest[T]extendsAnyRef"></a>
-      <a id="HttpRequest[T]:HttpRequest[T]"></a>
+              <ol><li name="shifter.web.api.requests.AnyContent" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="AnyContentextendsAnyRef"></a>
+      <a id="AnyContent:AnyContent"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="HttpRequest.html"><span class="name">HttpRequest</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="AnyContent.html"><span class="name">AnyContent</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.requests.JsonRequest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="JsonRequestextendsHttpRequest[spray.json.JsValue]withProductwithSerializable"></a>
-      <a id="JsonRequest:JsonRequest"></a>
+    </li><li name="shifter.web.api.requests.BodyParser" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="BodyParser[+A]extendsshifter.web.api.requests.RequestHeader=&gt;Either[shifter.web.api.responses.Result,A]"></a>
+      <a id="BodyParser[+A]:BodyParser[A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="JsonRequest.html"><span class="name">JsonRequest</span></a><span class="params">(<span name="method">method: <a href="../http/HttpMethod$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="shifter.web.api.http.HttpMethod.Value">http.HttpMethod.Value</a></span>, <span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="domain">domain: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="port">port: <span class="extype" name="scala.Int">Int</span></span>, <span name="protocol">protocol: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="query">query: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>, <span name="remoteAddress">remoteAddress: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="cookies">cookies: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../http/Cookie.html" class="extype" name="shifter.web.api.http.Cookie">Cookie</a>]</span>, <span name="body">body: <span class="extype" name="spray.json.JsValue">JsValue</span></span>)</span><span class="result"> extends <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="spray.json.JsValue">JsValue</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="BodyParser.html"><span class="name">BodyParser</span></a><span class="tparams">[<span name="A">+A</span>]</span><span class="result"> extends (<a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a>) ⇒ <span class="extype" name="scala.Either">Either</span>[<a href="../responses/Result.html" class="extype" name="shifter.web.api.responses.Result">Result</a>, <span class="extype" name="shifter.web.api.requests.BodyParser.A">A</span>]</span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.requests.LazyParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LazyParser[T,U&lt;:shifter.web.api.requests.HttpRequest[T]]extendsLazyRequestParser[T,U]"></a>
-      <a id="LazyParser[T,U&lt;:HttpRequest[T]]:LazyParser[T,U]"></a>
+    </li><li name="shifter.web.api.requests.BodyParsers" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="BodyParsersextendsAnyRef"></a>
+      <a id="BodyParsers:BodyParsers"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="BodyParsers.html"><span class="name">BodyParsers</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api.requests.ParsedRequest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ParsedRequest[+A]extendsRequest[A]withProductwithSerializable"></a>
+      <a id="ParsedRequest[+A]:ParsedRequest[A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">final </span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="LazyParser.html"><span class="name">LazyParser</span></a><span class="tparams">[<span name="T">T</span>, <span name="U">U &lt;: <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="shifter.web.api.requests.LazyParser.T">T</span>]</span>]</span><span class="result"> extends <a href="LazyRequestParser.html" class="extype" name="shifter.web.api.requests.LazyRequestParser">LazyRequestParser</a>[<span class="extype" name="shifter.web.api.requests.LazyParser.T">T</span>, <span class="extype" name="shifter.web.api.requests.LazyParser.U">U</span>]</span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.LazyRequest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="LazyRequest[T,U&lt;:shifter.web.api.requests.HttpRequest[T]]extendsHttpRequest[Option[U]]"></a>
-      <a id="LazyRequest[T,U&lt;:HttpRequest[T]]:LazyRequest[T,U]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="LazyRequest.html"><span class="name">LazyRequest</span></a><span class="tparams">[<span name="T">T</span>, <span name="U">U &lt;: <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="shifter.web.api.requests.LazyRequest.T">T</span>]</span>]</span><span class="result"> extends <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="scala.Option">Option</span>[<span class="extype" name="shifter.web.api.requests.LazyRequest.U">U</span>]]</span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.LazyRequestParser" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="LazyRequestParser[T,U&lt;:shifter.web.api.requests.HttpRequest[T]]extendsRequestParser[Option[U],shifter.web.api.requests.LazyRequest[T,U]]"></a>
-      <a id="LazyRequestParser[T,U&lt;:HttpRequest[T]]:LazyRequestParser[T,U]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="LazyRequestParser.html"><span class="name">LazyRequestParser</span></a><span class="tparams">[<span name="T">T</span>, <span name="U">U &lt;: <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="shifter.web.api.requests.LazyRequestParser.T">T</span>]</span>]</span><span class="result"> extends <a href="RequestParser.html" class="extype" name="shifter.web.api.requests.RequestParser">RequestParser</a>[<span class="extype" name="scala.Option">Option</span>[<span class="extype" name="shifter.web.api.requests.LazyRequestParser.U">U</span>], <a href="LazyRequest.html" class="extype" name="shifter.web.api.requests.LazyRequest">LazyRequest</a>[<span class="extype" name="shifter.web.api.requests.LazyRequestParser.T">T</span>, <span class="extype" name="shifter.web.api.requests.LazyRequestParser.U">U</span>]]</span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.MixedRequest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="MixedRequestextendsHttpRequest[Map[String,Seq[String]]]withProductwithSerializable"></a>
-      <a id="MixedRequest:MixedRequest"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <a href="MixedRequest.html"><span class="name">MixedRequest</span></a><span class="params">(<span name="method">method: <a href="../http/HttpMethod$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="shifter.web.api.http.HttpMethod.Value">http.HttpMethod.Value</a></span>, <span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="domain">domain: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="port">port: <span class="extype" name="scala.Int">Int</span></span>, <span name="protocol">protocol: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="query">query: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>, <span name="remoteAddress">remoteAddress: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="cookies">cookies: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../http/Cookie.html" class="extype" name="shifter.web.api.http.Cookie">Cookie</a>]</span>, <span name="body">body: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>)</span><span class="result"> extends <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="ParsedRequest.html"><span class="name">ParsedRequest</span></a><span class="tparams">[<span name="A">+A</span>]</span><span class="params">(<span name="method">method: <a href="../http/HttpMethod$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="shifter.web.api.http.HttpMethod.Value">http.HttpMethod.Value</a></span>, <span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="domain">domain: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="port">port: <span class="extype" name="scala.Int">Int</span></span>, <span name="protocol">protocol: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="query">query: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>, <span name="remoteAddress">remoteAddress: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="cookies">cookies: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../http/Cookie.html" class="extype" name="shifter.web.api.http.Cookie">Cookie</a>]</span>, <span name="body">body: <span class="extype" name="shifter.web.api.requests.ParsedRequest.A">A</span></span>)</span><span class="result"> extends <a href="Request.html" class="extype" name="shifter.web.api.requests.Request">Request</a>[<span class="extype" name="shifter.web.api.requests.ParsedRequest.A">A</span>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.requests.MultiPartRequest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="MultiPartRequestextendsHttpRequest[shifter.web.api.http.MultiPartBody]withProductwithSerializable"></a>
-      <a id="MultiPartRequest:MultiPartRequest"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="MultiPartRequest.html"><span class="name">MultiPartRequest</span></a><span class="params">(<span name="method">method: <a href="../http/HttpMethod$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="shifter.web.api.http.HttpMethod.Value">http.HttpMethod.Value</a></span>, <span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="domain">domain: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="port">port: <span class="extype" name="scala.Int">Int</span></span>, <span name="protocol">protocol: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="query">query: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>, <span name="remoteAddress">remoteAddress: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="cookies">cookies: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../http/Cookie.html" class="extype" name="shifter.web.api.http.Cookie">Cookie</a>]</span>, <span name="body">body: <a href="../http/MultiPartBody.html" class="extype" name="shifter.web.api.http.MultiPartBody">MultiPartBody</a></span>)</span><span class="result"> extends <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<a href="../http/MultiPartBody.html" class="extype" name="shifter.web.api.http.MultiPartBody">MultiPartBody</a>] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.Parser" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="ParserextendsAnyRef"></a>
-      <a id="Parser:Parser"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">trait</span>
-      </span>
-      <span class="symbol">
-        <a href="Parser.html"><span class="name">Parser</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.ParserException" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ParserExceptionextendsRuntimeException"></a>
-      <a id="ParserException:ParserException"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">class</span>
-      </span>
-      <span class="symbol">
-        <a href="ParserException.html"><span class="name">ParserException</span></a><span class="result"> extends <span class="extype" name="scala.RuntimeException">RuntimeException</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.RawRequest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="RawRequestextendsHttpRequest[javax.servlet.http.HttpServletRequest]"></a>
+    </li><li name="shifter.web.api.requests.RawRequest" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="RawRequestextendsRequest[java.io.InputStream]"></a>
       <a id="RawRequest:RawRequest"></a>
       <h4 class="signature">
       <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="RawRequest.html"><span class="name">RawRequest</span></a><span class="result"> extends <a href="Request.html" class="extype" name="shifter.web.api.requests.Request">Request</a>[<span class="extype" name="java.io.InputStream">InputStream</span>]</span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api.requests.RawServletRequest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RawServletRequestextendsRawRequest"></a>
+      <a id="RawServletRequest:RawServletRequest"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
         <span class="modifier">final </span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="RawRequest.html"><span class="name">RawRequest</span></a><span class="result"> extends <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="javax.servlet.http.HttpServletRequest">HttpServletRequest</span>]</span>
+        <a href="RawServletRequest.html"><span class="name">RawServletRequest</span></a><span class="result"> extends <a href="RawRequest.html" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a></span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.requests.RequestParser" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="RequestParser[T,U&lt;:shifter.web.api.requests.HttpRequest[T]]extendsAnyRef"></a>
-      <a id="RequestParser[T,U&lt;:HttpRequest[T]]:RequestParser[T,U]"></a>
+    </li><li name="shifter.web.api.requests.Request" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Request[+A]extendsRequestHeader"></a>
+      <a id="Request[+A]:Request[A]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="RequestParser.html"><span class="name">RequestParser</span></a><span class="tparams">[<span name="T">T</span>, <span name="U">U &lt;: <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="shifter.web.api.requests.RequestParser.T">T</span>]</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="Request.html"><span class="name">Request</span></a><span class="tparams">[<span name="A">+A</span>]</span><span class="result"> extends <a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.requests.SimpleRequest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SimpleRequestextendsHttpRequest[None.type]withProductwithSerializable"></a>
-      <a id="SimpleRequest:SimpleRequest"></a>
+    </li><li name="shifter.web.api.requests.RequestHeader" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="RequestHeaderextendsAnyRef"></a>
+      <a id="RequestHeader:RequestHeader"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">case class</span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="SimpleRequest.html"><span class="name">SimpleRequest</span></a><span class="params">(<span name="method">method: <a href="../http/HttpMethod$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="shifter.web.api.http.HttpMethod.Value">http.HttpMethod.Value</a></span>, <span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="domain">domain: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="port">port: <span class="extype" name="scala.Int">Int</span></span>, <span name="protocol">protocol: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="url">url: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="query">query: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="remoteAddress">remoteAddress: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="headers">headers: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>, <span name="cookies">cookies: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../http/Cookie.html" class="extype" name="shifter.web.api.http.Cookie">Cookie</a>]</span>)</span><span class="result"> extends <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="scala.None">None</span>.type] with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="RequestHeader.html"><span class="name">RequestHeader</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
@@ -252,107 +174,55 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="shifter.web.api.requests.FormParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="FormParser"></a>
-      <a id="FormParser:FormParser"></a>
+              <ol><li name="shifter.web.api.requests.AnyContent" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AnyContent"></a>
+      <a id="AnyContent:AnyContent"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="FormParser$.html"><span class="name">FormParser</span></a><span class="result"> extends <a href="RequestParser.html" class="extype" name="shifter.web.api.requests.RequestParser">RequestParser</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]], <a href="FormRequest.html" class="extype" name="shifter.web.api.requests.FormRequest">FormRequest</a>]</span>
+        <a href="AnyContent$.html"><span class="name">AnyContent</span></a>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.requests.JsonParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="JsonParser"></a>
-      <a id="JsonParser:JsonParser"></a>
+    </li><li name="shifter.web.api.requests.BodyParsers" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BodyParsers"></a>
+      <a id="BodyParsers:BodyParsers"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="JsonParser$.html"><span class="name">JsonParser</span></a><span class="result"> extends <a href="RequestParser.html" class="extype" name="shifter.web.api.requests.RequestParser">RequestParser</a>[<span class="extype" name="spray.json.JsValue">JsValue</span>, <a href="JsonRequest.html" class="extype" name="shifter.web.api.requests.JsonRequest">JsonRequest</a>]</span>
+        <a href="BodyParsers$.html"><span class="name">BodyParsers</span></a><span class="result"> extends <a href="BodyParsers.html" class="extype" name="shifter.web.api.requests.BodyParsers">BodyParsers</a></span>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.requests.MixedParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="MixedParser"></a>
-      <a id="MixedParser:MixedParser"></a>
+    </li><li name="shifter.web.api.requests.Request" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Request"></a>
+      <a id="Request:Request"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <a href="MixedParser$.html"><span class="name">MixedParser</span></a><span class="result"> extends <a href="RequestParser.html" class="extype" name="shifter.web.api.requests.RequestParser">RequestParser</a>[<span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]], <a href="MixedRequest.html" class="extype" name="shifter.web.api.requests.MixedRequest">MixedRequest</a>]</span>
+        <a href="Request$.html"><span class="name">Request</span></a>
       </span>
       </h4>
       
-    </li><li name="shifter.web.api.requests.MultiPartParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="MultiPartParser"></a>
-      <a id="MultiPartParser:MultiPartParser"></a>
+    </li><li name="shifter.web.api.requests.parsers" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="parsers"></a>
+      <a id="parsers:parsers"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">object</span>
+        <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a href="MultiPartParser$.html"><span class="name">MultiPartParser</span></a><span class="result"> extends <a href="RequestParser.html" class="extype" name="shifter.web.api.requests.RequestParser">RequestParser</a>[<a href="../http/MultiPartBody.html" class="extype" name="shifter.web.api.http.MultiPartBody">MultiPartBody</a>, <a href="MultiPartRequest.html" class="extype" name="shifter.web.api.requests.MultiPartRequest">MultiPartRequest</a>]</span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.Parser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Parser"></a>
-      <a id="Parser:Parser"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="Parser$.html"><span class="name">Parser</span></a><span class="result"> extends <a href="Parser.html" class="extype" name="shifter.web.api.requests.Parser">Parser</a></span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.RawParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="RawParser"></a>
-      <a id="RawParser:RawParser"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="RawParser$.html"><span class="name">RawParser</span></a><span class="result"> extends <a href="RequestParser.html" class="extype" name="shifter.web.api.requests.RequestParser">RequestParser</a>[<span class="extype" name="javax.servlet.http.HttpServletRequest">HttpServletRequest</span>, <a href="RawRequest.html" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a>]</span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.SimpleParser" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SimpleParser"></a>
-      <a id="SimpleParser:SimpleParser"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="SimpleParser$.html"><span class="name">SimpleParser</span></a><span class="result"> extends <a href="RequestParser.html" class="extype" name="shifter.web.api.requests.RequestParser">RequestParser</a>[<span class="extype" name="scala.None">None</span>.type, <a href="SimpleRequest.html" class="extype" name="shifter.web.api.requests.SimpleRequest">SimpleRequest</a>]</span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.SimpleRequest" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="SimpleRequest"></a>
-      <a id="SimpleRequest:SimpleRequest"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="SimpleRequest$.html"><span class="name">SimpleRequest</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <a href="parsers/package.html"><span class="name">parsers</span></a>
       </span>
       </h4>
       

@@ -29,24 +29,27 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img src="../../../../lib/class_big.png" />
+        <img src="../../../../lib/trait_big.png" />
         <p id="owner"><a href="../../../package.html" class="extype" name="shifter">shifter</a>.<a href="../../package.html" class="extype" name="shifter.web">web</a>.<a href="../package.html" class="extype" name="shifter.web.api">api</a>.<a href="package.html" class="extype" name="shifter.web.api.requests">requests</a></p>
         <h1>RawRequest</h1>
       </div>
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier">final </span>
-        <span class="kind">class</span>
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">RawRequest</span><span class="result"> extends <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="javax.servlet.http.HttpServletRequest">HttpServletRequest</span>]</span>
+        <span class="name">RawRequest</span><span class="result"> extends <a href="Request.html" class="extype" name="shifter.web.api.requests.Request">Request</a>[<span class="extype" name="java.io.InputStream">InputStream</span>]</span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="javax.servlet.http.HttpServletRequest">HttpServletRequest</span>], <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="Request.html" class="extype" name="shifter.web.api.requests.Request">Request</a>[<span class="extype" name="java.io.InputStream">InputStream</span>], <a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div><div class="toggleContainer block">
+          <span class="toggle">Known Subclasses</span>
+          <div class="subClasses hiddenContent"><a href="RawServletRequest.html" class="extype" name="shifter.web.api.requests.RawServletRequest">RawServletRequest</a></div>
         </div></div>
         
 
@@ -64,7 +67,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="shifter.web.api.requests.RawRequest"><span>RawRequest</span></li><li class="in" name="shifter.web.api.requests.HttpRequest"><span>HttpRequest</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="shifter.web.api.requests.RawRequest"><span>RawRequest</span></li><li class="in" name="shifter.web.api.requests.Request"><span>Request</span></li><li class="in" name="shifter.web.api.requests.RequestHeader"><span>RequestHeader</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -82,30 +85,173 @@
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="shifter.web.api.requests.RawRequest#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(underlying:javax.servlet.http.HttpServletRequest):shifter.web.api.requests.RawRequest"></a>
-      <a id="&lt;init&gt;:RawRequest"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">new</span>
-      </span>
-      <span class="symbol">
-        <span class="name">RawRequest</span><span class="params">(<span name="underlying">underlying: <span class="extype" name="javax.servlet.http.HttpServletRequest">HttpServletRequest</span></span>)</span>
-      </span>
-      </h4>
-      
-    </li></ol>
-            </div>
-
         
 
         
 
         <div id="values" class="values members">
-              <h3>Value Members</h3>
+              <h3>Abstract Value Members</h3>
+              <ol><li name="shifter.web.api.requests.RawRequest#body" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="body:java.io.InputStream"></a>
+      <a id="body:InputStream"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">body</span><span class="result">: <span class="extype" name="java.io.InputStream">InputStream</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a> → <a href="Request.html" class="extype" name="shifter.web.api.requests.Request">Request</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RawRequest#bodyAsString" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="bodyAsString:String"></a>
+      <a id="bodyAsString:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">bodyAsString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.web.api.requests.RequestHeader#cookies" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="cookies:Map[String,shifter.web.api.http.Cookie]"></a>
+      <a id="cookies:Map[String,Cookie]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">cookies</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../http/Cookie.html" class="extype" name="shifter.web.api.http.Cookie">Cookie</a>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#domain" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="domain:String"></a>
+      <a id="domain:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">domain</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#headers" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="headers:Map[String,Seq[String]]"></a>
+      <a id="headers:Map[String,Seq[String]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">headers</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#method" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="method:shifter.web.api.http.HttpMethod.Value"></a>
+      <a id="method:http.HttpMethod.Value"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">method</span><span class="result">: <a href="../http/HttpMethod$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="shifter.web.api.http.HttpMethod.Value">http.HttpMethod.Value</a></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#path" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="path:String"></a>
+      <a id="path:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">path</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#port" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="port:Int"></a>
+      <a id="port:Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">port</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#protocol" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="protocol:String"></a>
+      <a id="protocol:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">protocol</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#query" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="query:Option[String]"></a>
+      <a id="query:Option[String]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">query</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#remoteAddress" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="remoteAddress:String"></a>
+      <a id="remoteAddress:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">remoteAddress</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#url" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="url:String"></a>
+      <a id="url:String"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">url</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li></ol>
+            </div>
+
+        <div id="values" class="values members">
+              <h3>Concrete Value Members</h3>
               <ol><li name="scala.AnyRef#!=" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:AnyRef):Boolean"></a>
       <a id="!=(AnyRef):Boolean"></a>
@@ -184,32 +330,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="shifter.web.api.requests.RawRequest#body" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="body:javax.servlet.http.HttpServletRequest"></a>
-      <a id="body:HttpServletRequest"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">body</span><span class="result">: <span class="extype" name="javax.servlet.http.HttpServletRequest">HttpServletRequest</span></span>
-      </span>
-      </h4>
-      
-    </li><li name="shifter.web.api.requests.RawRequest#bodyAsString" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="bodyAsString:String"></a>
-      <a id="bodyAsString:String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">bodyAsString</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4>
-      
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -226,7 +346,7 @@
                 <span class="name">@throws</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#contentType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="shifter.web.api.requests.RequestHeader#contentType" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="contentType:String"></a>
       <a id="contentType:String"></a>
       <h4 class="signature">
@@ -238,33 +358,7 @@
         <span class="name">contentType</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.RawRequest#cookies" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="cookies:Map[String,shifter.web.api.http.Cookie]"></a>
-      <a id="cookies:Map[String,Cookie]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">cookies</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <a href="../http/Cookie.html" class="extype" name="shifter.web.api.http.Cookie">Cookie</a>]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a> → <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.RawRequest#domain" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="domain:String"></a>
-      <a id="domain:String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">domain</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a> → <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -307,7 +401,7 @@
                 <span class="name">@throws</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#fullUrl" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="shifter.web.api.requests.RequestHeader#fullUrl" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="fullUrl:String"></a>
       <a id="fullUrl:String"></a>
       <h4 class="signature">
@@ -319,7 +413,7 @@
         <span class="name">fullUrl</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
     </li><li name="scala.AnyRef#getClass" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <a id="getClass():Class[_]"></a>
@@ -346,7 +440,7 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#header" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="shifter.web.api.requests.RequestHeader#header" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="header(key:String):Option[String]"></a>
       <a id="header(String):Option[String]"></a>
       <h4 class="signature">
@@ -358,8 +452,8 @@
         <span class="name">header</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#headerList" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#headerList" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="headerList(key:String):Seq[String]"></a>
       <a id="headerList(String):Seq[String]"></a>
       <h4 class="signature">
@@ -371,20 +465,7 @@
         <span class="name">headerList</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.RawRequest#headers" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="headers:Map[String,Seq[String]]"></a>
-      <a id="headers:Map[String,Seq[String]]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">headers</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a> → <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <a id="isInstanceOf[T0]:Boolean"></a>
@@ -398,19 +479,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="shifter.web.api.requests.RawRequest#method" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="method:shifter.web.api.http.HttpMethod.Value"></a>
-      <a id="method:http.HttpMethod.Value"></a>
+    </li><li name="shifter.web.api.requests.Request#map" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="map[B](f:A=&gt;B):shifter.web.api.requests.Request[B]"></a>
+      <a id="map[B]((InputStream)⇒B):Request[B]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">lazy val</span>
+        <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">method</span><span class="result">: <a href="../http/HttpMethod$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="shifter.web.api.http.HttpMethod.Value">http.HttpMethod.Value</a></span>
+        <span class="name">map</span><span class="tparams">[<span name="B">B</span>]</span><span class="params">(<span name="f">f: (<span class="extype" name="java.io.InputStream">InputStream</span>) ⇒ <span class="extype" name="shifter.web.api.requests.Request.map.B">B</span></span>)</span><span class="result">: <a href="Request.html" class="extype" name="shifter.web.api.requests.Request">Request</a>[<span class="extype" name="shifter.web.api.requests.Request.map.B">B</span>]</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a> → <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Request.html" class="extype" name="shifter.web.api.requests.Request">Request</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -450,59 +531,7 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="shifter.web.api.requests.RawRequest#path" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="path:String"></a>
-      <a id="path:String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">path</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a> → <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.RawRequest#port" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="port:Int"></a>
-      <a id="port:Int"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">port</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a> → <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.RawRequest#protocol" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="protocol:String"></a>
-      <a id="protocol:String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">protocol</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a> → <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.RawRequest#query" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="query:Option[String]"></a>
-      <a id="query:Option[String]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">query</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a> → <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#queryParam" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="shifter.web.api.requests.RequestHeader#queryParam" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="queryParam(key:String,default:Option[String]):Option[String]"></a>
       <a id="queryParam(String,Option[String]):Option[String]"></a>
       <h4 class="signature">
@@ -514,8 +543,8 @@
         <span class="name">queryParam</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="default">default: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">None</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#queryParamList" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#queryParamList" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="queryParamList(key:String):Seq[String]"></a>
       <a id="queryParamList(String):Seq[String]"></a>
       <h4 class="signature">
@@ -527,8 +556,8 @@
         <span class="name">queryParamList</span><span class="params">(<span name="key">key: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#queryParams" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#queryParams" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="queryParams:Map[String,Seq[String]]"></a>
       <a id="queryParams:Map[String,Seq[String]]"></a>
       <h4 class="signature">
@@ -540,21 +569,8 @@
         <span class="name">queryParams</span><span class="result">: <span class="extype" name="scala.Predef.Map">Map</span>[<span class="extype" name="scala.Predef.String">String</span>, <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scala.Predef.String">String</span>]]</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.RawRequest#remoteAddress" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="remoteAddress:String"></a>
-      <a id="remoteAddress:String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">remoteAddress</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a> → <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#remoteForwardedFor" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#remoteForwardedFor" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="remoteForwardedFor:String"></a>
       <a id="remoteForwardedFor:String"></a>
       <h4 class="signature">
@@ -566,8 +582,8 @@
         <span class="name">remoteForwardedFor</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#remoteRealIP" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#remoteRealIP" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="remoteRealIP:String"></a>
       <a id="remoteRealIP:String"></a>
       <h4 class="signature">
@@ -579,8 +595,8 @@
         <span class="name">remoteRealIP</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#remoteVia" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#remoteVia" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="remoteVia:String"></a>
       <a id="remoteVia:String"></a>
       <h4 class="signature">
@@ -592,8 +608,8 @@
         <span class="name">remoteVia</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#route" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#route" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="route:String"></a>
       <a id="route:String"></a>
       <h4 class="signature">
@@ -605,7 +621,7 @@
         <span class="name">route</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
     </li><li name="scala.AnyRef#synchronized" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a>
       <a id="synchronized[T0](⇒T0):T0"></a>
@@ -632,20 +648,7 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="shifter.web.api.requests.RawRequest#url" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="url:String"></a>
-      <a id="url:String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">lazy val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">url</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="shifter.web.api.requests.RawRequest">RawRequest</a> → <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#userAgent" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="shifter.web.api.requests.RequestHeader#userAgent" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="userAgent:String"></a>
       <a id="userAgent:String"></a>
       <h4 class="signature">
@@ -657,9 +660,9 @@
         <span class="name">userAgent</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
-    </li><li name="shifter.web.api.requests.HttpRequest#userInfo" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="userInfo:shifter.web.api.utils.UserInfo"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
+    </li><li name="shifter.web.api.requests.RequestHeader#userInfo" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="userInfo:shifter.web.api.http.UserInfo"></a>
       <a id="userInfo:UserInfo"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -667,10 +670,10 @@
         <span class="kind">lazy val</span>
       </span>
       <span class="symbol">
-        <span class="name">userInfo</span><span class="result">: <a href="../utils/UserInfo.html" class="extype" name="shifter.web.api.utils.UserInfo">UserInfo</a></span>
+        <span class="name">userInfo</span><span class="result">: <a href="../http/UserInfo.html" class="extype" name="shifter.web.api.http.UserInfo">UserInfo</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a></dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -728,8 +731,10 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="shifter.web.api.requests.HttpRequest">
-              <h3>Inherited from <a href="HttpRequest.html" class="extype" name="shifter.web.api.requests.HttpRequest">HttpRequest</a>[<span class="extype" name="javax.servlet.http.HttpServletRequest">HttpServletRequest</span>]</h3>
+        <div class="parent" name="shifter.web.api.requests.Request">
+              <h3>Inherited from <a href="Request.html" class="extype" name="shifter.web.api.requests.Request">Request</a>[<span class="extype" name="java.io.InputStream">InputStream</span>]</h3>
+            </div><div class="parent" name="shifter.web.api.requests.RequestHeader">
+              <h3>Inherited from <a href="RequestHeader.html" class="extype" name="shifter.web.api.requests.RequestHeader">RequestHeader</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

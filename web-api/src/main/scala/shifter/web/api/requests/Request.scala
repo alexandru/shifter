@@ -1,4 +1,4 @@
-package shifter.web.api2.requests
+package shifter.web.api.requests
 
 
 trait Request[+A] extends RequestHeader {

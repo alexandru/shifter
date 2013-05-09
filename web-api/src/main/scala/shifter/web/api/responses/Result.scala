@@ -1,10 +1,10 @@
-package shifter.web.api2.responses
+package shifter.web.api.responses
 
 import language.existentials
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 import java.io.InputStream
-import shifter.web.api2.http._
+import shifter.web.api.http._
 
 sealed trait Result {
   def replacedHeaders(headers: Map[String, Seq[String]]): Result

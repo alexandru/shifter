@@ -1,8 +1,8 @@
-package shifter.web.api2.requests.parsers
+package shifter.web.api.requests.parsers
 
-import shifter.web.api2.requests._
-import shifter.web.api2.responses.Result
-import shifter.web.api2.http._
+import shifter.web.api.requests._
+import shifter.web.api.responses.Result
+import shifter.web.api.http._
 import scala.util.control.NonFatal
 
 object StringParser extends BodyParser[String] with HeaderNames {

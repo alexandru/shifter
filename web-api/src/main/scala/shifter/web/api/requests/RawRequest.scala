@@ -1,14 +1,18 @@
 package shifter.web.api.requests
 
+import java.io.InputStream
 import javax.servlet.http.HttpServletRequest
+import shifter.web.api.http.{Cookie, HttpMethod}
 import collection.JavaConverters._
-import shifter.web.api.http.{HttpMethod, Cookie}
 import shifter.units._
 
 
-final class RawRequest(underlying: HttpServletRequest)
-    extends HttpRequest[HttpServletRequest] {
+trait RawRequest extends Request[InputStream] {
+  def body: InputStream
+  def bodyAsString: String
+}
 
+final class RawServletRequest(val underlying: HttpServletRequest) extends RawRequest {
   private[this] val DomainRegex = "^([^:]+)(?:[:]\\d+)?$".r
 
   lazy val method: HttpMethod.Value =
@@ -59,16 +63,18 @@ final class RawRequest(underlying: HttpServletRequest)
         isSecure = c.getSecure
       ))
     }
-    .toMap
+      .toMap
 
-  lazy val body: HttpServletRequest = underlying
+  lazy val body: InputStream = underlying.getInputStream
 
   lazy val bodyAsString: String = {
-    val in = body.getReader
-    val contentLength = body.getContentLength
+    val in = underlying.getReader
+    val contentLength = underlying.getContentLength
 
-    if (contentLength >= 0 && contentLength < 5.kilobytes) {
-      val in = body.getReader
+    if (contentLength == 0)
+      ""
+    else if (contentLength > 0 && contentLength < 5.kilobytes) {
+      val in = underlying.getReader
       val buffer = new Array[Char](contentLength)
       var charsRead = 0
       var offset = 0

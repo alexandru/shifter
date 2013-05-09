@@ -1,32 +1,27 @@
 package shifter.web.api
 
 import language.existentials
-import shifter.web.api.mvc._
 import javax.servlet.{Filter => JavaFilter, _}
-import shifter.web.api.requests.RawRequest
 import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
 import scala.collection.mutable.ArrayBuffer
 import scala.util.control.NonFatal
 import com.typesafe.scalalogging.slf4j.Logging
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.Duration
-import shifter.web.api.responses._
-import shifter.web.api.responses.StreamResponse
-import shifter.web.api.responses.SimpleResponse
-import shifter.web.api.responses.AsyncResponse
-import shifter.web.api.responses.BytesResponse
-import shifter.web.api.http.HeaderNames._
-import scala.annotation.tailrec
 import shifter.concurrency.atomic.Ref
 import scala.util.{Success, Failure}
+import shifter.web.api.responses._
+import shifter.web.api.mvc._
+import shifter.web.api.requests._
+import shifter.web.api.http.HeaderNames._
 
 
-trait ShifterFilter extends JavaFilter with ResponseBuilders with Logging {
+
+trait ShifterFilter extends JavaFilter with ResultBuilders with Logging {
   def routes: UrlRoutes
-  implicit def ec: ExecutionContext
 
   final def doFilter(servletRequest: ServletRequest, servletResponse: ServletResponse, chain: FilterChain) {
-    val rawRequest = new RawRequest(servletRequest.asInstanceOf[HttpServletRequest])
+    val rawRequest = new RawServletRequest(servletRequest.asInstanceOf[HttpServletRequest])
 
     val action =
       try
@@ -42,11 +37,10 @@ trait ShifterFilter extends JavaFilter with ResponseBuilders with Logging {
       chain.doFilter(servletRequest, servletResponse)
   }
 
-  @tailrec
-  final def handleAction(servletRequest: ServletRequest, servletResponse: ServletResponse, chain: FilterChain, rawRequest: RawRequest, action: Action) {
-    val continuation: Action = try
+  final def handleAction(servletRequest: ServletRequest, servletResponse: ServletResponse, chain: FilterChain, rawRequest: RawRequest, action: Action[_]) {
+    try
       action(rawRequest) match {
-        case resp: CompleteResponse[_] =>
+        case resp: CompleteResult =>
           processBlocking(
             servletRequest.asInstanceOf[HttpServletRequest],
             servletResponse.asInstanceOf[HttpServletResponse],
@@ -54,26 +48,18 @@ trait ShifterFilter extends JavaFilter with ResponseBuilders with Logging {
             rawRequest,
             resp
           )
-          null
 
-        case AsyncResponse(future, timeout, timeoutResponse) =>
+        case AsyncResult(future, ec, timeout, timeoutResponse) =>
           processAsync(
             servletRequest.asInstanceOf[HttpServletRequest],
             servletResponse.asInstanceOf[HttpServletResponse],
             chain,
             rawRequest,
             future,
+            ec,
             timeout,
             timeoutResponse
           )
-          null
-
-        case ForwardResponse(other) =>
-          other
-
-        case ChainResponse =>
-          chain.doFilter(servletRequest, servletResponse)
-          null
       }
     catch {
       case NonFatal(ex) =>
@@ -83,18 +69,15 @@ trait ShifterFilter extends JavaFilter with ResponseBuilders with Logging {
           status = 500,
           body = "500 Internal Server Error"
         ).withHeader("Content-Type" -> "text/plain"))
-
-        null
     }
-
-    if (continuation != null)
-      handleAction(servletRequest, servletResponse, chain, rawRequest, continuation)
   }
 
   final def processAsync(
       servletRequest: HttpServletRequest, servletResponse: HttpServletResponse,
-      chain: FilterChain, request: RawRequest, future: Future[CompleteResponse[_]],
-      timeout: Duration, timeoutResponse: CompleteResponse[_]) {
+      chain: FilterChain, request: RawRequest, future: Future[CompleteResult],
+      ec: ExecutionContext, timeout: Duration, timeoutResponse: CompleteResult) {
+
+    implicit val context = ec
 
     val ctx = servletRequest.startAsync(servletRequest, servletResponse)
     val committedRef = Ref(initialValue = false)
@@ -149,19 +132,19 @@ trait ShifterFilter extends JavaFilter with ResponseBuilders with Logging {
           ctx.complete()
         catch {
           case ex: IllegalStateException if ex.getMessage.contains("expired") =>
-            // nothing
+          // nothing
         }
     }
   }
 
   final def processBlocking(
-      servletRequest: HttpServletRequest, servletResponse: HttpServletResponse,
-      chain: FilterChain, request: RawRequest, response: CompleteResponse[_]) {
+    servletRequest: HttpServletRequest, servletResponse: HttpServletResponse,
+    chain: FilterChain, request: RawRequest, response: CompleteResult) {
 
     writeResponse(servletRequest, servletResponse, chain, request, response)
   }
 
-  final def writeHeaders(request: RawRequest, response: CompleteResponse[_], servletResponse: HttpServletResponse) {
+  final def writeHeaders(request: RawRequest, response: CompleteResult, servletResponse: HttpServletResponse) {
     for ((key, list) <- response.headers; value <- list)
       servletResponse.setHeader(key, value)
 
@@ -177,11 +160,11 @@ trait ShifterFilter extends JavaFilter with ResponseBuilders with Logging {
 
   final def writeResponse(
     servletRequest: ServletRequest, servletResponse: HttpServletResponse, chain: FilterChain,
-    request: RawRequest, response: CompleteResponse[_]) {
+    request: RawRequest, response: CompleteResult) {
 
     if (!servletResponse.isCommitted)
       response match {
-        case SimpleResponse(status, headers, body) =>
+        case SimpleResult(status, headers, body) =>
           servletResponse.setStatus(status)
           servletResponse.setContentType(response.contentType)
           servletResponse.setCharacterEncoding("UTF-8")
@@ -196,7 +179,7 @@ trait ShifterFilter extends JavaFilter with ResponseBuilders with Logging {
             out.write(bytes)
           out.close()
 
-        case BytesResponse(status, headers, body) =>
+        case BytesResult(status, headers, body) =>
           servletResponse.setStatus(status)
           servletResponse.setContentType(response.contentType)
           writeHeaders(request, response, servletResponse)
@@ -208,7 +191,7 @@ trait ShifterFilter extends JavaFilter with ResponseBuilders with Logging {
             out.write(body.toArray)
           out.close()
 
-        case StreamResponse(status, headers, body) =>
+        case StreamedResult(status, headers, body) =>
           servletResponse.setStatus(status)
           servletResponse.setContentType(response.contentType)
           writeHeaders(request, response, servletResponse)
@@ -243,11 +226,11 @@ trait ShifterFilter extends JavaFilter with ResponseBuilders with Logging {
 }
 
 object ShifterFilter {
-  final class ConcreteFilter private[api] (val routes: UrlRoutes, val ec: ExecutionContext) extends ShifterFilter
+  final class ConcreteFilter private[api] (val routes: UrlRoutes) extends ShifterFilter
 
-  def apply(routes: UrlRoutes)(implicit ec: ExecutionContext): ConcreteFilter =
-    new ConcreteFilter(routes, ec)
+  def apply(routes: UrlRoutes): ConcreteFilter =
+    new ConcreteFilter(routes)
 
-  def apply(router: UrlRouter)(implicit ec: ExecutionContext): ConcreteFilter =
-    new ConcreteFilter(router.route, ec)
+  def apply(router: UrlRouter): ConcreteFilter =
+    new ConcreteFilter(router.route)
 }

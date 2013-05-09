@@ -1,11 +1,11 @@
-package shifter.web.api2.requests
+package shifter.web.api.requests
 
 import spray.json.JsValue
 import java.io.InputStream
 import shifter.concurrency.atomic.Ref
-import shifter.web.api2.requests.parsers._
+import shifter.web.api.requests.parsers._
 import scala.util.Try
-import shifter.web.api2.http.MultiPartBody
+import shifter.web.api.http.MultiPartBody
 
 trait AnyContent {
   def request: RequestHeader

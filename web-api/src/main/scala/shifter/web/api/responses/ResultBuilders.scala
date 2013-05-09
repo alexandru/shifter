@@ -1,4 +1,4 @@
-package shifter.web.api2.responses
+package shifter.web.api.responses
 
 import language.existentials
 import twirl.api.Html
@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletResponse
 import org.apache.commons.codec.binary.Base64
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.Duration
-import shifter.web.api2.http.HeaderNames._
-import shifter.web.api2.http.MimeTypes._
+import shifter.web.api.http.HeaderNames._
+import shifter.web.api.http.MimeTypes._
 
 
 trait ResultBuilders {

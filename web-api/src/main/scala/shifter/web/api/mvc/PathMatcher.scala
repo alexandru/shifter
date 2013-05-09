@@ -30,10 +30,10 @@ object PathMatcher {
         SomeNil
       else if (
         first.length > 0 &&
-        first.charAt(first.length - 1) == '/' &&
-        string != null && string.length > 0 && string.charAt(string.length - 1) != '/' &&
-        first.length == string.length + 1 &&
-        first.startsWith(string))
+          first.charAt(first.length - 1) == '/' &&
+          string != null && string.length > 0 && string.charAt(string.length - 1) != '/' &&
+          first.length == string.length + 1 &&
+          first.startsWith(string))
         SomeNil
       else
         None

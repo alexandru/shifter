@@ -1,10 +1,10 @@
 package shifter.web.api.mvc
 
+import shifter.web.api.requests.RequestHeader
 import shifter.web.api.http.{HttpMethod => m}
-import shifter.web.api.requests._
 
 class MethodMatcher(method: Option[m.Value]) {
-  def unapply(req: HttpRequest[_]) =
+  def unapply(req: RequestHeader) =
     if (method.isEmpty || req.method == method.get)
       Some(req.path)
     else

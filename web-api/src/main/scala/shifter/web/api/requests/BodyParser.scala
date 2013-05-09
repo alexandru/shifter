@@ -1,7 +1,7 @@
-package shifter.web.api2.requests
+package shifter.web.api.requests
 
-import shifter.web.api2.responses.Result
-import shifter.web.api2.requests.parsers._
+import shifter.web.api.responses.Result
+import shifter.web.api.requests.parsers._
 
 trait BodyParser[+A] extends (RequestHeader => Either[Result, A]) {
   self =>

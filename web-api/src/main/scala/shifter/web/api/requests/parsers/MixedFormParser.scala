@@ -1,10 +1,10 @@
-package shifter.web.api2.requests.parsers
+package shifter.web.api.requests.parsers
 
-import shifter.web.api2.responses.{Result, ResultBuilders}
-import shifter.web.api2.utils
-import shifter.web.api2.http.HttpMethod
+import shifter.web.api.responses.{Result, ResultBuilders}
+import shifter.web.api.utils
+import shifter.web.api.http.HttpMethod
 import scala.util.Try
-import shifter.web.api2.requests._
+import shifter.web.api.requests._
 
 object MixedFormParser extends BodyParser[Map[String, Seq[String]]] with ResultBuilders {
   def canBeParsed(raw: RawRequest): Boolean =

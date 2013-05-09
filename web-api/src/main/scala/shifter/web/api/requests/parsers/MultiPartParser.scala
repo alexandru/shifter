@@ -1,8 +1,8 @@
-package shifter.web.api2.requests.parsers
+package shifter.web.api.requests.parsers
 
-import shifter.web.api2.requests._
-import shifter.web.api2.http._
-import shifter.web.api2.responses.{ResultBuilders, Result}
+import shifter.web.api.requests._
+import shifter.web.api.http._
+import shifter.web.api.responses.{ResultBuilders, Result}
 import org.apache.commons.fileupload.servlet.ServletFileUpload
 import org.apache.commons.fileupload.disk.DiskFileItemFactory
 import org.apache.commons.fileupload.FileItem

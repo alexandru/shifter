@@ -1,6 +1,6 @@
 package shifter.web.sample.controllers
 
-import shifter.web.api2.mvc._
+import shifter.web.api.mvc._
 
 object Urls extends UrlRouter {
   def route = {

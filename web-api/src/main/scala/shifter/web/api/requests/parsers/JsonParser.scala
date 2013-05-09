@@ -1,26 +1,23 @@
-package shifter.web.api2.requests.parsers
+package shifter.web.api.requests.parsers
 
-import shifter.web.api2.http.HttpMethod
-import shifter.web.api2.utils
-import shifter.web.api2.responses._
-import shifter.web.api2.requests._
+import spray.json.{JsonParser => SprayJsonParser, JsValue}
+import shifter.web.api.responses.{Result, ResultBuilders}
+import shifter.web.api.http.HttpMethod
+import shifter.web.api.requests._
 
-object FormParser extends BodyParser[Map[String, Seq[String]]] with ResultBuilders {
+
+
+object JsonParser extends BodyParser[JsValue] with ResultBuilders {
   def canBeParsed(raw: RawRequest): Boolean =
     validMethods(raw.method) && (raw.contentType.isEmpty || validContentTypes(raw.contentType))
 
-  def apply(rh: RequestHeader): Either[Result, Map[String, Seq[String]]] =
+  def apply(rh: RequestHeader): Either[Result, JsValue] =
     rh match {
       case raw: RawRequest =>
         if (canBeParsed(raw)) {
           val bodyString = raw.bodyAsString
-
-          val params = if (bodyString.isEmpty)
-            Map.empty[String, Seq[String]]
-          else
-            utils.urlDecodeMulti(bodyString)
-
-          Right(params)
+          val json = SprayJsonParser(bodyString)
+          Right(json)
         }
         else
           Left(BadRequest)

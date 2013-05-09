@@ -283,10 +283,10 @@ trait Ref[@specialized(scala.Int, scala.Long, scala.Boolean) T] {
    */
   @tailrec
   final def transformAndGet(cb: T => T): T = {
-    val value = get
-    val newValue = cb(value)
+    val oldValue = get
+    val newValue = cb(oldValue)
 
-    if (!compareAndSet(value, newValue))
+    if (!compareAndSet(oldValue, newValue))
       transformAndGet(cb)
     else
       newValue
@@ -312,13 +312,13 @@ trait Ref[@specialized(scala.Int, scala.Long, scala.Boolean) T] {
    */
   @tailrec
   final def getAndTransform(cb: T => T): T = {
-    val value = get
-    val update = cb(value)
+    val oldValue = get
+    val update = cb(oldValue)
 
-    if (!compareAndSet(value, update))
+    if (!compareAndSet(oldValue, update))
       getAndTransform(cb)
     else
-      value
+      oldValue
   }
 
   /**

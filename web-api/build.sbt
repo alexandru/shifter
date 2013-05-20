@@ -5,7 +5,7 @@ libraryDependencies ++= Seq(
   "com.typesafe" %% "scalalogging-slf4j" % "1.0.1",
   "ch.qos.logback" % "logback-classic" % "1.0.6",
   "io.spray" %% "twirl-api" % "0.6.1",
-  "io.spray" %%  "spray-json" % "1.2.3",
+  "io.spray" %%  "spray-json" % "1.2.4",
   "commons-io" % "commons-io" % "1.3.2",
   "commons-fileupload" % "commons-fileupload" % "1.2.2",
   "commons-codec" % "commons-codec" % "1.5",

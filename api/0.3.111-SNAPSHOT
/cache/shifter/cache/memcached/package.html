@@ -1,0 +1,192 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>memcached - shifter.cache.memcached</title>
+          <meta name="description" content="memcached - shifter.cache.memcached" />
+          <meta name="keywords" content="memcached shifter.cache.memcached" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript" src="../../../lib/jquery.js" id="jquery-js"></script>
+      <script type="text/javascript" src="../../../lib/jquery-ui.js"></script>
+      <script type="text/javascript" src="../../../lib/template.js"></script>
+      <script type="text/javascript" src="../../../lib/tools.tooltip.js"></script>
+      
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../index.html';
+            var hash = 'shifter.cache.memcached.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../lib/package_big.png" />
+        <p id="owner"><a href="../../package.html" class="extype" name="shifter">shifter</a>.<a href="../package.html" class="extype" name="shifter.cache">cache</a></p>
+        <h1>memcached</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">memcached</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        
+        
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="shifter.cache.memcached.AuthConfiguration" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="AuthConfigurationextendsProductwithSerializable"></a>
+      <a id="AuthConfiguration:AuthConfiguration"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="AuthConfiguration.html"><span class="name">AuthConfiguration</span></a><span class="params">(<span name="username">username: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="password">password: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.cache.memcached.Configuration" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ConfigurationextendsProductwithSerializable"></a>
+      <a id="Configuration:Configuration"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Configuration.html"><span class="name">Configuration</span></a><span class="params">(<span name="addresses">addresses: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="authentication">authentication: <span class="extype" name="scala.Option">Option</span>[<a href="AuthConfiguration.html" class="extype" name="shifter.cache.memcached.AuthConfiguration">AuthConfiguration</a>] = <span class="symbol">scala.None</span></span>, <span name="keysPrefix">keysPrefix: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>] = <span class="symbol">scala.None</span></span>, <span name="protocol">protocol: <a href="Protocol$.html#Type=shifter.cache.memcached.Protocol.Value" class="extmbr" name="shifter.cache.memcached.Protocol.Type">Type</a> = <span class="symbol">Protocol.Binary</span></span>, <span name="failureMode">failureMode: <a href="FailureMode$.html#ValueextendsOrdered[Enumeration.this.Value]withSerializable" class="extmbr" name="shifter.cache.memcached.FailureMode.Value">FailureMode.Value</a> = <span class="symbol">FailureMode.Retry</span></span>, <span name="operationTimeout">operationTimeout: <span class="extype" name="scala.concurrent.duration.FiniteDuration">FiniteDuration</span> = <span class="defval" name="scala.concurrent.duration.`package`.DurationInt(5).seconds">...</span></span>, <span name="transcoder">transcoder: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="net.spy.memcached.transcoders.SerializingTranscoder">SerializingTranscoder</span>] = <span class="symbol">scala.None</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.cache.memcached.Memcached" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="MemcachedextendsCache"></a>
+      <a id="Memcached:Memcached"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Memcached.html"><span class="name">Memcached</span></a><span class="result"> extends <a href="../Cache.html" class="extype" name="shifter.cache.Cache">Cache</a></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Memcached client implementation based on SpyMemcached.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="shifter.cache.memcached.FailureMode" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FailureMode"></a>
+      <a id="FailureMode:FailureMode"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="FailureMode$.html"><span class="name">FailureMode</span></a><span class="result"> extends <span class="extype" name="scala.Enumeration">Enumeration</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.cache.memcached.Memcached" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Memcached"></a>
+      <a id="Memcached:Memcached"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Memcached$.html"><span class="name">Memcached</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.cache.memcached.Protocol" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Protocol"></a>
+      <a id="Protocol:Protocol"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Protocol$.html"><span class="name">Protocol</span></a><span class="result"> extends <span class="extype" name="scala.Enumeration">Enumeration</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="shifter.cache.memcached.internals" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="internals"></a>
+      <a id="internals:internals"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="internals/package.html"><span class="name">internals</span></a>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+
+
+    </body>
+      </html>

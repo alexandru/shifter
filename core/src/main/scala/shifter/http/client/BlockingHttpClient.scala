@@ -26,7 +26,15 @@ class BlockingHttpClient extends HttpClient {
             connection
 
           case "GET" =>
-            val connection = new URL(url + "?" + prepareQuery(data)).openConnection()
+            val query = prepareQuery(data)
+            val finalUrl = if (query.isEmpty)
+              url
+            else {
+              val separator = if (url.indexOf('?') > -1) "&" else "?"
+              url + separator + query
+            }
+
+            val connection = new URL(finalUrl).openConnection()
               .asInstanceOf[HttpURLConnection]
             connection.setRequestProperty("Accept-Charset", "utf-8")
             connection
@@ -35,8 +43,9 @@ class BlockingHttpClient extends HttpClient {
       for ((k,v) <- headers)
         connection.setRequestProperty(k,v)
 
-      val stream = connection.getInputStream
       val status = connection.getResponseCode
+      val stream = connection.getInputStream
+
       val responseHeaders =
         connection.getHeaderFields.asScala.foldLeft(Map.empty[String, String]) { (acc, elem) =>
           if (elem._1 != null && elem._2 != null) {

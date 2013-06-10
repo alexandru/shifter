@@ -3,7 +3,7 @@ package shifter
 import language.existentials
 import java.io.{File, FileInputStream}
 import java.util.zip.ZipInputStream
-import collection.JavaConverters._
+import scala.collection.JavaConverters._
 import annotation.tailrec
 import scala.reflect.{ClassTag, Manifest}
 import util.{Failure, Try}
@@ -150,7 +150,7 @@ package object reflection {
 
   def castTo[T : ClassTag](value: Any): Option[T] = {
     import scala.runtime._
-    import collection.immutable.StringOps
+    import scala.collection.immutable.StringOps
 
     val m = implicitly[ClassTag[T]]
 

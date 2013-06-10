@@ -19,7 +19,7 @@ object ShifterBuild extends Build {
 
       version in ThisBuild := projectVersion,
 
-      scalaVersion in ThisBuild := "2.10.1",
+      scalaVersion in ThisBuild := "2.10.2",
 
       compileOrder in ThisBuild := CompileOrder.JavaThenScala,
 

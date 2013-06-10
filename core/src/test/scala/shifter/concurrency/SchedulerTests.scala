@@ -6,7 +6,6 @@ import org.scalatest.junit.JUnitRunner
 
 import concurrent.ExecutionContext.Implicits.global
 import concurrent.duration._
-import org.scalatest.concurrent.AsyncAssertions.Waiter
 import concurrent.Await
 
 /*

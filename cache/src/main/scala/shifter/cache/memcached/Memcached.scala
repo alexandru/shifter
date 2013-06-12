@@ -122,16 +122,31 @@ trait Memcached extends Cache {
         }
     }
 
-  def transformAndGet[T](key: String, exp: Duration = defaultExpiry)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[T] = {
+  /**
+   * Used by both transformAndGet and getAndTransform for code reusability.
+   *
+   * @param f is the function that dictates what gets returned (either the old or the new value)
+   */
+  private[this] def genericTransform[T, R](key: String, exp: Duration, cb: Option[T] => T)(f: (Option[T], T) => R)(implicit ec: ExecutionContext): Future[R] = {
     val keyWithPrefix = withPrefix(key)
 
-    def loop(retry: Int): Future[T] =
+    /**
+     * Inner function used for retrying compare-and-set operations
+     * with a maximum threshold of retries.
+     *
+     * @throws TransformOverflowException in case the maximum number of
+     *                                    retries is reached
+     */
+    def loop(retry: Int): Future[R] = {
+      if (config.maxTransformCASRetries > 0 && retry >= config.maxTransformCASRetries)
+        throw new TransformOverflowException(key)
+
       instance.realAsyncGets[T](keyWithPrefix, config.operationTimeout).flatMap {
         case SuccessfulResult(_, None) =>
           val result = cb(None)
           asyncAdd(key, result, exp) flatMap {
             case true =>
-              Future.successful(result)
+              Future.successful(f(None, result))
             case false =>
               loop(retry + 1)
           }
@@ -140,48 +155,9 @@ trait Memcached extends Cache {
 
           instance.realAsyncCAS(keyWithPrefix, casID, result, exp, config.operationTimeout) flatMap {
             case SuccessfulResult(_, true) =>
-              Future.successful(result)
+              Future.successful(f(Some(current), result))
             case SuccessfulResult(_, false) =>
-              if (config.maxTransformCASRetries > 0 && retry < config.maxTransformCASRetries)
-                loop(retry + 1)
-              else
-                instance.realAsyncSet(keyWithPrefix, result, exp, config.operationTimeout).map(_ => result)
-            case failure: FailedResult =>
-              throwExceptionOn(failure)
-          }
-
-        case failure: FailedResult =>
-          throwExceptionOn(failure)
-      }
-
-    loop(0)
-  }
-
-  def getAndTransform[T](key: String, exp: Duration = defaultExpiry)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[Option[T]] = {
-    val keyWithPrefix = withPrefix(key)
-
-    def loop(retry: Int): Future[Option[T]] =
-      instance.realAsyncGets[T](keyWithPrefix, config.operationTimeout).flatMap {
-        case SuccessfulResult(_, None) =>
-          val result = cb(None)
-          asyncAdd(key, result, exp) flatMap {
-            case true =>
-              Future.successful(None)
-            case false =>
               loop(retry + 1)
-          }
-
-        case SuccessfulResult(_, Some((current, casID))) =>
-          val result = cb(Some(current))
-
-          instance.realAsyncCAS(keyWithPrefix, casID, result, exp, config.operationTimeout) flatMap {
-            case SuccessfulResult(_, true) =>
-              Future.successful(Some(current))
-            case SuccessfulResult(_, false) =>
-              if (config.maxTransformCASRetries > 0 && retry < config.maxTransformCASRetries)
-                loop(retry + 1)
-              else
-                instance.realAsyncSet(keyWithPrefix, result, exp, config.operationTimeout).map(_ => Some(current))
             case failure: FailedResult =>
               throwExceptionOn(failure)
           }
@@ -189,9 +165,20 @@ trait Memcached extends Cache {
         case failure: FailedResult =>
           throwExceptionOn(failure)
       }
+    }
 
     loop(0)
   }
+
+  def transformAndGet[T](key: String, exp: Duration = defaultExpiry)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[T] =
+    genericTransform(key, exp, cb) {
+      case (oldValue, newValue) => newValue
+    }
+
+  def getAndTransform[T](key: String, exp: Duration = defaultExpiry)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[Option[T]] =
+    genericTransform(key, exp, cb) {
+      case (oldValue, newValue) => oldValue
+    }
 
   def shutdown() {
     instance.shutdown(3, TimeUnit.SECONDS)

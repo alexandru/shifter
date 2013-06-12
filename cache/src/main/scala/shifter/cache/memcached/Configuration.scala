@@ -56,11 +56,11 @@ case class Configuration(
    * Maximum number of retries on a transform operation
    * (since it uses compare-and-set, it can have big problems on highly contended keys)
    *
-   * If this threshold is exceeded, then it falls back to a regular set(), disregarding
-   * concurrent clients that are updating at the same time.
+   * If this threshold is exceeded, then it throws a TransformOverflowException
    */
   maxTransformCASRetries: Int = 100000
 )
+
 
 object Protocol extends Enumeration {
   type Type = Value

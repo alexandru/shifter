@@ -28,3 +28,9 @@ class UnhandledStatusException(msg: String) extends CacheException(msg)
  * Gets thrown in case a key is not found in the cache store on #apply().
  */
 class KeyNotInCacheException(key: String) extends CacheException(key)
+
+/**
+ * Gets thrown in case a transform method (transformAndGet)
+ * exceeds the maximum amount of retries configured.
+ */
+class TransformOverflowException(key: String) extends CacheException(key)

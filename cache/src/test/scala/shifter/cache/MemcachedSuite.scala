@@ -211,6 +211,59 @@ class MemcachedSuite extends FunSuite {
     }
   }
 
+  test("transformAndGet-concurrent-overflow") {
+    withCache("transformAndGet", maxRetries = Some(100)) { cache =>
+      cache.asyncDelete("some-key").await
+      assert(cache.asyncGet[Value]("some-key").await === None)
+
+      def incrementValue =
+        cache.transformAndGet[Int]("some-key", 60.seconds) {
+          case None => 1
+          case Some(nr) => nr + 1
+        }
+
+      val initial = incrementValue.flatMap { case _ => incrementValue }.await(3.seconds)
+      assert(initial === 2)
+
+      val seq = concurrent.Future.sequence((0 until 500).map(nr => incrementValue))
+      try {
+        seq.await(20.seconds)
+        assert(false, "should throw exception")
+      }
+      catch {
+        case ex: TransformOverflowException =>
+          assert(ex.getMessage === "some-key")
+      }
+    }
+  }
+
+  test("getAndTransform-concurrent-overflow") {
+    withCache("getAndTransform", maxRetries = Some(100)) { cache =>
+      cache.asyncDelete("some-key").await
+      assert(cache.asyncGet[Value]("some-key").await === None)
+
+      def incrementValue =
+        cache.getAndTransform[Int]("some-key", 60.seconds) {
+          case None => 1
+          case Some(nr) => nr + 1
+        }
+
+      val initial = incrementValue.flatMap { case _ => incrementValue }.await(3.seconds)
+      assert(initial === Some(1))
+
+      val seq = concurrent.Future.sequence((0 until 500).map(nr => incrementValue))
+
+      try {
+        seq.await(20.seconds)
+        assert(false, "should throw exception")
+      }
+      catch {
+        case ex: TransformOverflowException =>
+          assert(ex.getMessage === "some-key")
+      }
+    }
+  }
+
   test("big-instance-1") {
     withCache("big-instance-1") { cache =>
       val impression = shifter.testModels.bigInstance
@@ -258,7 +311,7 @@ class MemcachedSuite extends FunSuite {
     }
   }
 
-  val config = Configuration(
+  val defaultConfig = Configuration(
     addresses = "127.0.0.1:11211",
     authentication = None,
     keysPrefix = Some("my-tests"),
@@ -267,9 +320,11 @@ class MemcachedSuite extends FunSuite {
     operationTimeout = 15.seconds
   )
 
-  def withCache[T](prefix: String)(cb: Cache => T): T = {
-    val cache = Memcached(
-      config.copy(keysPrefix = config.keysPrefix.map(s => s + "-" + prefix)))
+  def withCache[T](prefix: String, maxRetries: Option[Int] = None)(cb: Cache => T): T = {
+    val cache = Memcached(defaultConfig.copy(
+      keysPrefix = defaultConfig.keysPrefix.map(s => s + "-" + prefix),
+      maxTransformCASRetries = maxRetries.getOrElse(defaultConfig.maxTransformCASRetries)
+    ))
 
     try {
       cb(cache)

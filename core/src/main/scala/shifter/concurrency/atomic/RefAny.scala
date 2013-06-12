@@ -4,11 +4,11 @@ import java.util.concurrent.atomic.AtomicReference
 
 
 /**
- * A [[Ref]] with an
+ * Ref with an
  * [[http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicReference.html AtomicReference]]
  * as the underlying atomic reference.
  *
- *@see The documentation on [[Ref]]
+ *@see The documentation on [[shifter.concurrency.atomic.Ref]]
  */
 final class RefAny[T] private[atomic] (initialValue: T) extends Ref[T] {
   def set(update: T) {

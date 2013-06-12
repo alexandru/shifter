@@ -8,7 +8,6 @@ import net.spy.memcached.ConnectionFactoryBuilder.{Protocol => SpyProtocol}
 import net.spy.memcached.auth.{PlainCallbackHandler, AuthDescriptor}
 import concurrent.duration._
 import java.util.concurrent.TimeUnit
-import net.spy.memcached.transcoders.SerializingTranscoder
 
 
 /**
@@ -123,58 +122,76 @@ trait Memcached extends Cache {
         }
     }
 
-  def transformAndGet[T](key: String, exp: Duration = defaultExpiry)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[T] =
-    instance.realAsyncGets[T](withPrefix(key), config.operationTimeout).flatMap {
-      case SuccessfulResult(_, None) =>
-        val result = cb(None)
-        asyncAdd(key, result, exp) flatMap {
-          case true =>
-            Future.successful(result)
-          case false =>
-            transformAndGet[T](key, exp)(cb)
-        }
-      case SuccessfulResult(_, Some((current, casID))) =>
-        val result = cb(Some(current))
+  def transformAndGet[T](key: String, exp: Duration = defaultExpiry)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[T] = {
+    val keyWithPrefix = withPrefix(key)
 
-        instance.realAsyncCAS(withPrefix(key), casID, result, exp, config.operationTimeout) flatMap {
-          case SuccessfulResult(_, true) =>
-            Future.successful(result)
-          case SuccessfulResult(_, false) =>
-            transformAndGet[T](key, exp)(cb)
-          case failure: FailedResult =>
-            throwExceptionOn(failure)
-        }
+    def loop(retry: Int): Future[T] =
+      instance.realAsyncGets[T](keyWithPrefix, config.operationTimeout).flatMap {
+        case SuccessfulResult(_, None) =>
+          val result = cb(None)
+          asyncAdd(key, result, exp) flatMap {
+            case true =>
+              Future.successful(result)
+            case false =>
+              loop(retry + 1)
+          }
+        case SuccessfulResult(_, Some((current, casID))) =>
+          val result = cb(Some(current))
 
-      case failure: FailedResult =>
-        throwExceptionOn(failure)
-    }
+          instance.realAsyncCAS(keyWithPrefix, casID, result, exp, config.operationTimeout) flatMap {
+            case SuccessfulResult(_, true) =>
+              Future.successful(result)
+            case SuccessfulResult(_, false) =>
+              if (config.maxTransformCASRetries > 0 && retry < config.maxTransformCASRetries)
+                loop(retry + 1)
+              else
+                instance.realAsyncSet(keyWithPrefix, result, exp, config.operationTimeout).map(_ => result)
+            case failure: FailedResult =>
+              throwExceptionOn(failure)
+          }
 
-  def getAndTransform[T](key: String, exp: Duration = defaultExpiry)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[Option[T]] =
-    instance.realAsyncGets[T](withPrefix(key), config.operationTimeout).flatMap {
-      case SuccessfulResult(_, None) =>
-        val result = cb(None)
-        asyncAdd(key, result, exp) flatMap {
-          case true =>
-            Future.successful(None)
-          case false =>
-            getAndTransform[T](key, exp)(cb)
-        }
+        case failure: FailedResult =>
+          throwExceptionOn(failure)
+      }
 
-      case SuccessfulResult(_, Some((current, casID))) =>
-        val result = cb(Some(current))
+    loop(0)
+  }
 
-        instance.realAsyncCAS(withPrefix(key), casID, result, exp, config.operationTimeout) flatMap {
-          case SuccessfulResult(_, true) =>
-            Future.successful(Some(current))
-          case SuccessfulResult(_, false) =>
-            getAndTransform[T](key, exp)(cb)
-          case failure: FailedResult =>
-            throwExceptionOn(failure)
-        }
+  def getAndTransform[T](key: String, exp: Duration = defaultExpiry)(cb: Option[T] => T)(implicit ec: ExecutionContext): Future[Option[T]] = {
+    val keyWithPrefix = withPrefix(key)
 
-      case failure: FailedResult =>
-        throwExceptionOn(failure)
-    }
+    def loop(retry: Int): Future[Option[T]] =
+      instance.realAsyncGets[T](keyWithPrefix, config.operationTimeout).flatMap {
+        case SuccessfulResult(_, None) =>
+          val result = cb(None)
+          asyncAdd(key, result, exp) flatMap {
+            case true =>
+              Future.successful(None)
+            case false =>
+              loop(retry + 1)
+          }
+
+        case SuccessfulResult(_, Some((current, casID))) =>
+          val result = cb(Some(current))
+
+          instance.realAsyncCAS(keyWithPrefix, casID, result, exp, config.operationTimeout) flatMap {
+            case SuccessfulResult(_, true) =>
+              Future.successful(Some(current))
+            case SuccessfulResult(_, false) =>
+              if (config.maxTransformCASRetries > 0 && retry < config.maxTransformCASRetries)
+                loop(retry + 1)
+              else
+                instance.realAsyncSet(keyWithPrefix, result, exp, config.operationTimeout).map(_ => Some(current))
+            case failure: FailedResult =>
+              throwExceptionOn(failure)
+          }
+
+        case failure: FailedResult =>
+          throwExceptionOn(failure)
+      }
+
+    loop(0)
+  }
 
   def shutdown() {
     instance.shutdown(3, TimeUnit.SECONDS)

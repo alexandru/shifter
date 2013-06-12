@@ -50,7 +50,16 @@ case class Configuration(
    * SerializingTranscoder instance to use (if None then Shifter's
    * CustomTranscoder is used)
    */
-  transcoder: Option[SerializingTranscoder] = None
+  transcoder: Option[SerializingTranscoder] = None,
+
+  /**
+   * Maximum number of retries on a transform operation
+   * (since it uses compare-and-set, it can have big problems on highly contended keys)
+   *
+   * If this threshold is exceeded, then it falls back to a regular set(), disregarding
+   * concurrent clients that are updating at the same time.
+   */
+  maxTransformCASRetries: Int = 100000
 )
 
 object Protocol extends Enumeration {

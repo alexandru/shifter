@@ -48,7 +48,9 @@ object ShifterBuild extends Build {
       resolvers in ThisBuild ++= Seq(
         "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
         "Spray Releases" at "http://repo.spray.io",
-        "Spy" at "http://files.couchbase.com/maven2/"
+        "Spy" at "http://files.couchbase.com/maven2/",
+        "BionicSpirit Releases" at "http://maven.bionicspirit.com/releases/",
+        "BionicSpirit Snapshots" at "http://maven.bionicspirit.com/snapshots/"
       )
     )
   )

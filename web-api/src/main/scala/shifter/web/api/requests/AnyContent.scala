@@ -1,6 +1,5 @@
 package shifter.web.api.requests
 
-import spray.json.JsValue
 import java.io.InputStream
 import shifter.concurrency.atomic.Ref
 import shifter.web.api.requests.parsers._
@@ -11,7 +10,6 @@ trait AnyContent {
   def request: RequestHeader
   def asForm: Option[Map[String, Seq[String]]]
   def asMixedForm: Option[Map[String, Seq[String]]]
-  def asJson: Option[JsValue]
   def asMultiPart: Option[MultiPartBody]
   def asRaw: Option[InputStream]
 }
@@ -29,11 +27,6 @@ object AnyContent {
     lazy val asMixedForm = {
       checkProcessed("mixed form")
       Try(MixedFormParser(request).right.toOption).toOption.flatten
-    }
-
-    lazy val asJson = {
-      checkProcessed("json")
-      Try(JsonParser(request).right.toOption).toOption.flatten
     }
 
     lazy val asMultiPart = {

@@ -24,7 +24,6 @@ trait BodyParsers {
   val string = StringParser
   val form = FormParser
   val mixedForm = MixedFormParser
-  val json = JsonParser
   val multiPart = MultiPartParser
   val raw = RawParser
   val anyContent = AnyContentParser

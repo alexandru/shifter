@@ -1,0 +1,233 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html>
+        <head>
+          <title>atomic - shifter.concurrency.atomic</title>
+          <meta name="description" content="atomic - shifter.concurrency.atomic" />
+          <meta name="keywords" content="atomic shifter.concurrency.atomic" />
+          <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+          
+      <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
+      <link href="../../../lib/diagrams.css" media="screen" type="text/css" rel="stylesheet" id="diagrams-css" />
+      <script type="text/javascript">
+         if(top === self) {
+            var url = '../../../index.html';
+            var hash = 'shifter.concurrency.atomic.package';
+            var anchor = window.location.hash;
+            var anchor_opt = '';
+            if (anchor.length >= 1)
+              anchor_opt = '@' + anchor.substring(1);
+            window.location.href = url + '#' + hash + anchor_opt;
+         }
+   	  </script>
+    
+        </head>
+        <body class="value">
+      <div id="definition">
+        <img src="../../../lib/package_big.png" />
+        <p id="owner"><a href="../../package.html" class="extype" name="shifter">shifter</a>.<a href="../package.html" class="extype" name="shifter.concurrency">concurrency</a></p>
+        <h1>atomic</h1>
+      </div>
+
+      <h4 id="signature" class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <span class="name">atomic</span>
+      </span>
+      </h4>
+      
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Wrappers around the atomic references provided by the standard
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic.html" target="_blank">java.util.concurrent.atomic</a>
+package, provided for ease of use and extra utilities.</p><p>Atomic references are classes that support lock-free thread-safe programming
+on single variables. They are much like simple
+<a href="http://www.scala-lang.org/api/current/index.html#scala.volatile" target="_blank">volatile</a>
+references, with the addition of an atomic conditional update: </p><pre><span class="kw">def</span> compareAndSet(expect: T, update: T): <span class="std">Boolean</span></pre><p>On modern processors, this instruction is optimized and has a non-blocking behavior,
+however depending on the underlying architecture it does not guarantee that the
+behavior is non-blocking, although in general it is.</p><p>The Java standard library provides amongst others
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicReference.html" target="_blank">AtomicReference</a>,
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicInteger.html" target="_blank">AtomicInteger</a>,
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicLong.html" target="_blank">AtomicLong</a> and
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicBoolean.html" target="_blank">AtomicBoolean</a>.
+The supported operations vary and <a href="Ref.html" class="extype" name="shifter.concurrency.atomic.Ref">shifter.concurrency.atomic.Ref</a>
+is a unified interface of them all, with higher-level helpers to aid in the
+development of non-blocking algorithms.
+</p></div><dl class="attributes block"> <div class="block">Example:
+               <ol><li class="cmt"><p></p><pre><span class="kw">import</span> shifter.concurrent.atomic.Ref
+
+<span class="kw">val</span> intValue = Ref(<span class="num">0</span>)
+
+<span class="kw">def</span> increment = intValue.incrementAndGet
+
+<span class="kw">def</span> multiplyBy(n: <span class="std">Int</span>) = value.transformAndGet(_ * value)</pre></li></ol>
+            </div><dt>See also</dt><dd><span class="cmt"><p>The documentation on <a href="Ref.html" class="extype" name="shifter.concurrency.atomic.Ref">Ref</a>
+</p></span></dd></dl><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
+        
+
+      <div id="mbrsel">
+        <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="shifter.concurrency.atomic"><span>atomic</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
+        <div id="visbl">
+            <span class="filtertype">Visibility</span>
+            <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
+          </div>
+      </div>
+
+      <div id="template">
+        <div id="allMembers">
+        
+
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="shifter.concurrency.atomic.Ref" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="Ref[T]extendsAnyRef"></a>
+      <a id="Ref[T]:Ref[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Ref.html"><span class="name">Ref</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">A <code>Ref</code> is the common trait of all reference types.</p>
+    </li><li name="shifter.concurrency.atomic.RefAny" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RefAny[T]extendsRef[T]"></a>
+      <a id="RefAny[T]:RefAny[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RefAny.html"><span class="name">RefAny</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <a href="Ref.html" class="extype" name="shifter.concurrency.atomic.Ref">Ref</a>[<span class="extype" name="shifter.concurrency.atomic.RefAny.T">T</span>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">Ref with an
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicReference.html" target="_blank">AtomicReference</a>
+as the underlying atomic reference.</p>
+    </li><li name="shifter.concurrency.atomic.RefBoolean" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RefBooleanextendsRef[Boolean]"></a>
+      <a id="RefBoolean:RefBoolean"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RefBoolean.html"><span class="name">RefBoolean</span></a><span class="result"> extends <a href="Ref.html" class="extype" name="shifter.concurrency.atomic.Ref">Ref</a>[<span class="extype" name="scala.Boolean">Boolean</span>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A <a href="Ref.html" class="extype" name="shifter.concurrency.atomic.Ref">Ref</a> with an
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicBoolean.html" target="_blank">AtomicBoolean</a>
+as the underlying atomic reference.</p>
+    </li><li name="shifter.concurrency.atomic.RefInt" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RefIntextendsRef[Int]"></a>
+      <a id="RefInt:RefInt"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RefInt.html"><span class="name">RefInt</span></a><span class="result"> extends <a href="Ref.html" class="extype" name="shifter.concurrency.atomic.Ref">Ref</a>[<span class="extype" name="scala.Int">Int</span>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A <a href="Ref.html" class="extype" name="shifter.concurrency.atomic.Ref">Ref</a> with an
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicInteger.html" target="_blank">AtomicInteger</a>
+as the underlying atomic reference.</p>
+    </li><li name="shifter.concurrency.atomic.RefLong" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="RefLongextendsRef[Long]"></a>
+      <a id="RefLong:RefLong"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="RefLong.html"><span class="name">RefLong</span></a><span class="result"> extends <a href="Ref.html" class="extype" name="shifter.concurrency.atomic.Ref">Ref</a>[<span class="extype" name="scala.Long">Long</span>]</span>
+      </span>
+      </h4>
+      <p class="comment cmt">A <a href="Ref.html" class="extype" name="shifter.concurrency.atomic.Ref">Ref</a> with an
+<a href="http://docs.oracle.com/javase/7/docs/api/java/util/concurrent/concurrent/atomic/AtomicLong.html" target="_blank">AtomicLong</a>
+as the underlying atomic reference.</p>
+    </li></ol>
+            </div>
+
+        
+
+        <div id="values" class="values members">
+              <h3>Value Members</h3>
+              <ol><li name="shifter.concurrency.atomic.Ref" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Ref"></a>
+      <a id="Ref:Ref"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Ref$.html"><span class="name">Ref</span></a>
+      </span>
+      </h4>
+      <p class="comment cmt">Provides constructors for <a href="Ref.html" class="extype" name="shifter.concurrency.atomic.Ref">shifter.concurrency.atomic.Ref</a>
+</p>
+    </li></ol>
+            </div>
+
+        
+
+        
+        </div>
+
+        <div id="inheritedMembers">
+        <div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
+        
+        </div>
+
+        <div id="groupedMembers">
+        <div class="group" name="Ungrouped">
+              <h3>Ungrouped</h3>
+              
+            </div>
+        </div>
+
+      </div>
+
+      <div id="tooltip"></div>
+
+      <div id="footer">  </div>
+      <script defer="defer" type="text/javascript" id="jquery-js" src="../../../lib/jquery.js"></script><script defer="defer" type="text/javascript" id="jquery-ui-js" src="../../../lib/jquery-ui.js"></script><script defer="defer" type="text/javascript" id="tools-tooltip-js" src="../../../lib/tools.tooltip.js"></script><script defer="defer" type="text/javascript" id="template-js" src="../../../lib/template.js"></script>
+    </body>
+      </html>

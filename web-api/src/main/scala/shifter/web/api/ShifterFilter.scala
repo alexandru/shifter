@@ -75,7 +75,7 @@ trait ShifterFilter extends JavaFilter with ResultBuilders with Logging {
   final def processAsync(
       servletRequest: HttpServletRequest, servletResponse: HttpServletResponse,
       chain: FilterChain, request: RawRequest, future: Future[CompleteResult],
-      ec: ExecutionContext, timeout: Duration, timeoutResponse: CompleteResult) {
+      ec: ExecutionContext, timeout: Duration, timeoutResponse: () => CompleteResult) {
 
     implicit val context = ec
 
@@ -107,7 +107,7 @@ trait ShifterFilter extends JavaFilter with ResultBuilders with Logging {
       }
 
       def onTimeout(event: AsyncEvent) {
-        timeoutRef.set(true)
+        timeoutRef.set(update = true)
         val canCommit = committedRef.compareAndSet(expect = false, update = true)
 
         if (canCommit) {
@@ -116,7 +116,7 @@ trait ShifterFilter extends JavaFilter with ResultBuilders with Logging {
             servletResponse,
             chain,
             request,
-            timeoutResponse
+            timeoutResponse()
           )
 
           ctx.complete()

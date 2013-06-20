@@ -9,7 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.Duration
 import shifter.web.api.http.HeaderNames._
 import shifter.web.api.http.MimeTypes._
-
+import concurrent.duration._
 
 trait ResultBuilders {
   val Ok: SimpleResult =
@@ -82,13 +82,13 @@ trait ResultBuilders {
   }
 
   def Async(response: Future[CompleteResult])(implicit ec: ExecutionContext) =
-    AsyncResult(response, ec)
+    AsyncResult(response, ec, 1.second, ResultBuilders.defaultAsyncTimeoutResponse)
 
   def Async(response: Future[CompleteResult], timeout: Duration)(implicit ec: ExecutionContext) =
-    AsyncResult(response, ec, timeout)
+    AsyncResult(response, ec, timeout, ResultBuilders.defaultAsyncTimeoutResponse)
 
-  def Async(response: Future[CompleteResult], timeout: Duration, timeoutResponse: CompleteResult)(implicit ec: ExecutionContext) =
-    AsyncResult(response, ec, timeout, timeoutResponse)
+  val defaultAsyncTimeoutResponse = () => RequestTimeout
 }
 
 object ResultBuilders extends ResultBuilders
+

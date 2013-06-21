@@ -1,7 +1,7 @@
 {
     "array": [
         {
-            "string-sample": "Hello world!",
+            "string-sample": "Hello \"world\"!",
             "null-string-sample": null,
             "some-string-sample": "Another String!",
             "double-sample": 12.12,
@@ -24,7 +24,7 @@
             "null-sample": null
         },
         {
-            "string-sample": "Hello world!",
+            "string-sample": "Hello \"world\"!",
             "null-string-sample": null,
             "some-string-sample": "Another String!",
             "double-sample": 12.12,
@@ -51,7 +51,7 @@
         {
             "my-array": [
                 {
-                    "string-sample": "Hello world!",
+                    "string-sample": "Hello \"world\"!",
                     "null-string-sample": null,
                     "some-string-sample": "Another String!",
                     "double-sample": 12.12,
@@ -74,7 +74,7 @@
                     "null-sample": null
                 },
                 {
-                    "string-sample": "Hello world!",
+                    "string-sample": "Hello \"world\"!",
                     "null-string-sample": null,
                     "some-string-sample": "Another String!",
                     "double-sample": 12.12,

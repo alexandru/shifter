@@ -21,6 +21,11 @@ class BuilderSuite extends FunSuite {
     assert(Json.obj("hello" -> Json.arr()).compactPrint === """{"hello":[]}""")
   }
 
+  test("json string escape") {
+    assert(Json.str("hello ' world").compactPrint === "\"hello ' world\"")
+    assert(Json.str("hello \" world").compactPrint === "\"hello \\\" world\"")
+  }
+
   test("generate json") {
     val simpleObj = Json.obj(
       "string-sample" -> Json.str("Hello \"world\"!"),

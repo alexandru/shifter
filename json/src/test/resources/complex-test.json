@@ -1,0 +1,63 @@
+{
+    "app":{
+        "id":"1231312321"
+    },
+    "at":2,
+    "device":{
+        "dpidsha1":"09dca81da8d12c72c907ae5f839414cd15ece2ac",
+        "geo":{
+            "country":"US",
+            "lat":45.594555,
+            "lon":-121.14975,
+            "type":3,
+            "city": "Los Angeles",
+            "region": "CA"
+        },
+        "ip":"75.101.145.87",
+        "js":1,
+        "make":"Apple",
+        "model":"iPhone",
+        "os":"iPhone OS",
+        "ua":"Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_2_1 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Mobile/8C148a"
+    },
+    "id":"SGu1Jpq1IO",
+    "imp":[
+        {
+            "banner":{
+                "h":320,
+                "mimes":[
+                    "application/javascript",
+                    "image/gif",
+                    "image/jpeg",
+                    "image/png",
+                    "text/html",
+                    "text/javascript",
+                    "text/plain"
+                ],
+                "pos":0,
+                "w":50
+            },
+            "id":"imp-id1",
+            "instl":1,
+            "interstitial":1,
+            "bidfloor": 0.01
+        }
+    ],
+    "user":{
+        "gen":"F",
+        "geo":{
+            "country":"US",
+            "lat":45.594555,
+            "lon":-121.14975,
+            "type":3,
+            "zip": "90210"
+        },
+        "id":"aON4jWFUT3",
+        "keywords":"",
+        "yob": 1982
+    },
+    "badv": [
+        "blocked.ap.ps",
+        "blocked.epigrams.co"
+    ]
+}

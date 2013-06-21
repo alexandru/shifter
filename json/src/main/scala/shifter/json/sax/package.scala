@@ -5,30 +5,34 @@ import scala.collection.mutable
 import java.io.{Reader, InputStream, File}
 import java.net.URL
 
-object JsonSax {
-  def parse(f: File): Iterator[JsEvent] =
-    parse(jsonFactory.createParser(f))
+package object sax {
+  def parseJson(f: File): JsonIterator =
+    parseJson(jsonFactory.createParser(f))
 
-  def parse(content: String): Iterator[JsEvent] =
-    parse(jsonFactory.createParser(content))
+  def parseJson(content: String): JsonIterator =
+    parseJson(jsonFactory.createParser(content))
 
-  def parse(data: Array[Byte], off: Int, len: Int): Iterator[JsEvent] =
-    parse(jsonFactory.createParser(data, off, len))
+  def parseJson(data: Array[Byte], off: Int, len: Int): JsonIterator =
+    parseJson(jsonFactory.createParser(data, off, len))
 
-  def parse(data: Array[Byte]): Iterator[JsEvent] =
-    parse(jsonFactory.createParser(data))
+  def parseJson(data: Array[Byte]): JsonIterator =
+    parseJson(jsonFactory.createParser(data))
 
-  def parse(url: URL): Iterator[JsEvent] =
-    parse(jsonFactory.createParser(url))
+  def parseJson(url: URL): JsonIterator =
+    parseJson(jsonFactory.createParser(url))
 
-  def parse[T](in: InputStream): Iterator[JsEvent] =
-    parse(jsonFactory.createParser(in))
+  def parseJson[T](in: InputStream): JsonIterator =
+    parseJson(jsonFactory.createParser(in))
 
-  def parse[T](r: Reader): Iterator[JsEvent] =
-    parse(jsonFactory.createParser(r))
+  def parseJson[T](r: Reader): JsonIterator =
+    parseJson(jsonFactory.createParser(r))
 
-  def parse(parser: JsonParser): Iterator[JsEvent] = new Iterator[JsEvent] {
-    def next(): JsEvent = {
+  trait JsonIterator extends Iterator[JsonEvent] {
+    def current: JsonEvent
+  }
+  
+  def parseJson(parser: JsonParser) = new JsonIterator {
+    def next(): JsonEvent = {
       def popFieldName() {
         if (!trace.isEmpty && trace.head == JsonToken.FIELD_NAME) {
           trace.pop()
@@ -52,7 +56,7 @@ object JsonSax {
           pathPush(pathPop().asInstanceOf[Int] + 1)
       }
 
-      var returnValue: JsEvent = null
+      var returnValue: JsonEvent = null
 
       while (returnValue == null && token != null)
         try {
@@ -87,27 +91,27 @@ object JsonSax {
 
             case JsonToken.VALUE_STRING =>
               ifArrayIncrementIndex()
-              returnValue = JsString(path, parser.getValueAsString)
+              returnValue = JsStringEvent(path, parser.getValueAsString)
               popFieldName()
 
             case JsonToken.VALUE_FALSE =>
               ifArrayIncrementIndex()
-              returnValue = JsBoolean(path, false)
+              returnValue = JsBooleanEvent(path, false)
               popFieldName()
 
             case JsonToken.VALUE_TRUE =>
               ifArrayIncrementIndex()
-              returnValue = JsBoolean(path, true)
+              returnValue = JsBooleanEvent(path, true)
               popFieldName()
 
             case JsonToken.VALUE_NUMBER_FLOAT =>
               ifArrayIncrementIndex()
-              returnValue = JsDouble(path, parser.getValueAsDouble)
+              returnValue = JsDoubleEvent(path, parser.getValueAsDouble)
               popFieldName()
 
             case JsonToken.VALUE_NUMBER_INT =>
               ifArrayIncrementIndex()
-              returnValue = JsLong(path, parser.getValueAsLong)
+              returnValue = JsLongEvent(path, parser.getValueAsLong)
               popFieldName()
 
             case JsonToken.VALUE_NULL =>
@@ -123,23 +127,28 @@ object JsonSax {
         catch {
           case ex: JsonProcessingException =>
             ifArrayIncrementIndex()
-            returnValue = JsError(path, ex.getMessage)
+            returnValue = JsonError(path, ex.getMessage)
             reachedEnd = true
         }
 
-      if (returnValue == null)
+      _current = if (returnValue == null)
         if (!reachedEnd) {
           reachedEnd = true
-          JsEnd
+          JsonEnd
         }
         else
           throw new NoSuchElementException("json.parse.next")
       else
         returnValue
+
+      _current
     }
 
     def hasNext: Boolean = !reachedEnd
 
+    def current = _current
+
+    private[this] var _current: JsonEvent = null
     private[this] var reachedEnd = false
     private[this] var token: JsonToken = JsonToken.NOT_AVAILABLE
     private[this] var path = Path.empty[Any]

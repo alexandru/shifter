@@ -29,9 +29,7 @@ case class AsyncResult private[responses] (
   result: Future[CompleteResult],
   ec: ExecutionContext,
   timeout: Duration = 10.seconds,
-  timeoutResponse: CompleteResult =
-    ResultBuilders.RequestTimeout("408 Timeout")
-      .withHeader("Content-Type" -> "text/plain")
+  timeoutResponse: () => CompleteResult
 )
 extends Result {
   def replacedHeaders(headers: Map[String, Seq[String]]): AsyncResult = {
@@ -58,6 +56,9 @@ extends Result {
     val newResponse = result.map(_.deleteHeader(key))(ec)
     AsyncResult(newResponse, ec, timeout, timeoutResponse)
   }
+
+  def withTimeoutResponse(cb: => CompleteResult) =
+    AsyncResult(result, ec, timeout, () => cb)
 }
 
 sealed trait CompleteResult extends Result {
@@ -70,7 +71,7 @@ sealed trait CompleteResult extends Result {
 
   def hasHeader(key: String) = {
     val upper = key.toUpperCase
-    headers.keySet.find(_.toUpperCase == upper).isDefined
+    headers.keySet.exists(_.toUpperCase == upper)
   }
 
   def replacedHeaders(headers: Map[String, Seq[String]]): CompleteResult

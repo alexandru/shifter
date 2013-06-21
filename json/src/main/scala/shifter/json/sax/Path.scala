@@ -1,10 +1,10 @@
-package shifter.json
+package shifter.json.sax
 
 import scala.annotation.tailrec
 import org.apache.commons.lang.StringEscapeUtils
 
 sealed trait Path[+T]  {
-  def \[U >: T](part: U): \[U] = shifter.json.\(this, part)
+  def \[U >: T](part: U): \[U] = shifter.json.sax.\(this, part)
 
   def pop: Path[T] = this match {
     case Root => throw new NoSuchElementException("Root.pop")

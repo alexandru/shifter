@@ -23,7 +23,7 @@ class BuilderSuite extends FunSuite {
 
   test("generate json") {
     val simpleObj = Json.obj(
-      "string-sample" -> Json.str("Hello world!"),
+      "string-sample" -> Json.str("Hello \"world\"!"),
       "null-string-sample" -> Json.str(None),
       "some-string-sample" -> Json.str(Some("Another String!")),
 

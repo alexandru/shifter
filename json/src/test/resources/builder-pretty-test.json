@@ -1,0 +1,128 @@
+{
+    "array": [
+        {
+            "string-sample": "Hello world!",
+            "null-string-sample": null,
+            "some-string-sample": "Another String!",
+            "double-sample": 12.12,
+            "null-double-sample": null,
+            "some-double-sample": 29.2913,
+            "long-sample": 9223372036854775807,
+            "null-long-sample": null,
+            "some-long-sample": -9223372036854775808,
+            "int-sample": 2147483647,
+            "null-int-sample": null,
+            "some-int-sample": -2147483648,
+            "array-sample": [
+                1,
+                2,
+                3
+            ],
+            "bool-sample": true,
+            "null-bool-sample": null,
+            "some-bool-sample": false,
+            "null-sample": null
+        },
+        {
+            "string-sample": "Hello world!",
+            "null-string-sample": null,
+            "some-string-sample": "Another String!",
+            "double-sample": 12.12,
+            "null-double-sample": null,
+            "some-double-sample": 29.2913,
+            "long-sample": 9223372036854775807,
+            "null-long-sample": null,
+            "some-long-sample": -9223372036854775808,
+            "int-sample": 2147483647,
+            "null-int-sample": null,
+            "some-int-sample": -2147483648,
+            "array-sample": [
+                1,
+                2,
+                3
+            ],
+            "bool-sample": true,
+            "null-bool-sample": null,
+            "some-bool-sample": false,
+            "null-sample": null
+        }
+    ],
+    "obj-in-array": [
+        {
+            "my-array": [
+                {
+                    "string-sample": "Hello world!",
+                    "null-string-sample": null,
+                    "some-string-sample": "Another String!",
+                    "double-sample": 12.12,
+                    "null-double-sample": null,
+                    "some-double-sample": 29.2913,
+                    "long-sample": 9223372036854775807,
+                    "null-long-sample": null,
+                    "some-long-sample": -9223372036854775808,
+                    "int-sample": 2147483647,
+                    "null-int-sample": null,
+                    "some-int-sample": -2147483648,
+                    "array-sample": [
+                        1,
+                        2,
+                        3
+                    ],
+                    "bool-sample": true,
+                    "null-bool-sample": null,
+                    "some-bool-sample": false,
+                    "null-sample": null
+                },
+                {
+                    "string-sample": "Hello world!",
+                    "null-string-sample": null,
+                    "some-string-sample": "Another String!",
+                    "double-sample": 12.12,
+                    "null-double-sample": null,
+                    "some-double-sample": 29.2913,
+                    "long-sample": 9223372036854775807,
+                    "null-long-sample": null,
+                    "some-long-sample": -9223372036854775808,
+                    "int-sample": 2147483647,
+                    "null-int-sample": null,
+                    "some-int-sample": -2147483648,
+                    "array-sample": [
+                        1,
+                        2,
+                        3
+                    ],
+                    "bool-sample": true,
+                    "null-bool-sample": null,
+                    "some-bool-sample": false,
+                    "null-sample": null
+                }
+            ]
+        }
+    ],
+    "array-in-array": [
+        [
+            1,
+            2,
+            [
+                3
+            ],
+            4,
+            [
+                5
+            ]
+        ],
+        [
+            [
+                1
+            ],
+            2,
+            [
+                3
+            ],
+            4,
+            [
+                5
+            ]
+        ]
+    ]
+}

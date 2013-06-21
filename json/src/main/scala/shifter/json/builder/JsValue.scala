@@ -33,7 +33,7 @@ final case class JsBool(value: Boolean) extends JsValue[Boolean] {
 
 final case class JsString(value: String) extends JsValue[String] {
   def export(isPretty: Boolean, level: Int) =
-    "\"" + StringEscapeUtils.escapeJavaScript(value) + "\""
+    "\"" + escapeJsonString(value) + "\""
 }
 
 case object JsNull extends JsValue[Nothing] {
@@ -106,7 +106,7 @@ final case class JsObj(value: Seq[(String, JsValue[_])]) extends JsValue[Seq[(St
 
       builder
         .append('"')
-        .append(StringEscapeUtils.escapeJavaScript(key))
+        .append(escapeJsonString(key))
         .append(if (isPretty) "\": " else "\":")
         .append(value.export(isPretty, level + 1))
 

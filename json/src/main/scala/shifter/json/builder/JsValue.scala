@@ -55,7 +55,7 @@ case object JsNull extends JsValue[Nothing] {
   }
 }
 
-final case class JsArray[T](value: Seq[JsValue[T]]) extends JsValue[Seq[JsValue[T]]] {
+final case class JsArray[T](value: IndexedSeq[JsValue[T]]) extends JsValue[IndexedSeq[JsValue[T]]] {
   def export(isPretty: Boolean, level: Int, builder: StringBuilder) {
     val hasElements = !value.isEmpty
 
@@ -89,9 +89,45 @@ final case class JsArray[T](value: Seq[JsValue[T]]) extends JsValue[Seq[JsValue[
   }
 }
 
-final case class JsObj(value: Seq[(String, JsValue[_])]) extends JsValue[Seq[(String, JsValue[_])]] {
+final case class JsObj(value: IndexedSeq[(String, JsValue[_])]) extends JsValue[IndexedSeq[(String, JsValue[_])]] {
+  def +[T](elem: (String, T))(implicit ev: NullableJsValue[T]) =
+    JsObj(value :+ (elem._1, ev.of(Option(elem._2))))
+
+  def +(elem: (String, JsValue[_])) =
+    JsObj(value :+ elem)
+
+  def ++(other: JsObj) =
+    JsObj(value ++ other.value)
+
+  def updated(k: String, v: JsValue[_]) =
+    JsObj(value :+ (k, v))
+
+  def updated[T](k: String, v: T)(implicit ev: NullableJsValue[T]) =
+    JsObj(value :+ (k, ev.of(Option(v))))
+
   def export(isPretty: Boolean, level: Int, builder: StringBuilder) {
     val hasElements = !value.isEmpty
+    val length = value.length
+
+    val skipKeys = {
+      val arr = new Array[Boolean](length)
+      val alreadyPicked = collection.mutable.Set.empty[String]
+
+      var idx = 0
+      while (idx < length) {
+        val arrIdx = length - idx - 1
+        val key = value(arrIdx)._1
+        if (alreadyPicked(key))
+          arr(arrIdx) = true
+        else {
+          arr(arrIdx) = false
+          alreadyPicked += key
+        }
+        idx += 1
+      }
+
+      arr
+    }
 
     val indentStr =
       if (isPretty)
@@ -104,28 +140,30 @@ final case class JsObj(value: Seq[(String, JsValue[_])]) extends JsValue[Seq[(St
     else
       builder.append("{")
 
-    val iterator = value.iterator
-
-    while (iterator.hasNext) {
-      val (key, value) = iterator.next()
-
-      if (isPretty && hasElements)
-        builder
-          .append(indentStr)
-          .append("    ")
-
-      builder
-        .append('"')
-        .append(escapeJsonString(key))
-        .append(if (isPretty) "\": " else "\":")
-
-      value.export(isPretty, level + 1, builder)
-
-      if (iterator.hasNext)
+    var idx = 0
+    while (idx < length) {
+      if (!skipKeys(idx)) {
+        val (key, value) = this.value(idx)
         if (isPretty && hasElements)
-          builder.append(",\n")
-        else
-          builder.append(",")
+          builder
+            .append(indentStr)
+            .append("    ")
+
+        builder
+          .append('"')
+          .append(escapeJsonString(key))
+          .append(if (isPretty) "\": " else "\":")
+
+        value.export(isPretty, level + 1, builder)
+
+        if (idx < length - 1)
+          if (isPretty && hasElements)
+            builder.append(",\n")
+          else
+            builder.append(",")
+      }
+
+      idx += 1
     }
 
     if (isPretty && hasElements)

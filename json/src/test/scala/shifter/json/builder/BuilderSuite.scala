@@ -26,6 +26,17 @@ class BuilderSuite extends FunSuite {
     assert(Json.str("hello \" world").compactPrint === "\"hello \\\" world\"")
   }
 
+  test("updated JsObj") {
+    val obj = Json.obj("first" -> Json.str("field"), "hello" -> Json.str("world"))
+    val test1 = obj + ("timestamp" -> 1938921312) + ("hello" -> "another world")
+
+    val obj2 = Json.obj("timestamp" -> Json.int(1938921312), "hello" -> Json.str("another world"))
+    val test2 = obj ++ obj2
+
+    assert(test1.compactPrint === """{"first":"field","timestamp":1938921312,"hello":"another world"}""")
+    assert(test2.compactPrint === """{"first":"field","timestamp":1938921312,"hello":"another world"}""")
+  }
+
   test("generate json") {
     val simpleObj = Json.obj(
       "string-sample" -> Json.str("Hello \"world\"!"),

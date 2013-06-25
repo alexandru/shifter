@@ -71,6 +71,11 @@ class BuilderSuite extends FunSuite {
     assert(complexObj.compactPrint === compactTest.trim)
   }
 
+  test("simple object") {
+    val obj = Json.obj("hello" -> "world", "number" -> "1")
+    assert(obj.compactPrint === """{"hello":"world","number":"1"}""")
+  }
+
   def readTextFrom(resource: String): String = {
     val in = new BufferedReader(
       new InputStreamReader(

@@ -3,6 +3,8 @@ package shifter.json.builder
 object Json {
   def obj(elems: (String, JsValue[Any])*): JsObj =
     JsObj(elems)
+  def obj[T](elems: (String, T)*)(implicit ev: NullableJsValue[T]) =
+    JsObj(elems.map { case (k,v) => (k, ev.of(Option(v))) })
 
   def arr[T](elems: JsValue[T]*): JsArray[T] = JsArray(elems)
   def arr[T](elems: T*)(implicit ev: NullableJsValue[T]): JsArray[T] =

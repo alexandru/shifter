@@ -16,7 +16,6 @@ import shifter.web.api.requests._
 import shifter.web.api.http.HeaderNames._
 
 
-
 trait ShifterFilter extends JavaFilter with ResultBuilders with Logging {
   def routes: UrlRoutes
 
@@ -126,13 +125,15 @@ trait ShifterFilter extends JavaFilter with ResultBuilders with Logging {
 
     // dealing with failures (exceptions thrown)
     future.onComplete { case _ =>
-      val canCommit = !timeoutRef.get && committedRef.compareAndSet(expect = false, update = true)
+      val canCommit =
+        !timeoutRef.get && committedRef.compareAndSet(expect = false, update = true)
+
       if (canCommit)
         try
           ctx.complete()
         catch {
-          case ex: IllegalStateException if ex.getMessage.contains("expired") =>
-          // nothing
+          case ex: IllegalStateException =>
+            // swallow exception
         }
     }
   }

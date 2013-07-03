@@ -19,13 +19,9 @@ The project is made of several smaller projects, that can be used independently:
 * **shifter-migrations** - a simple system for dealing with
   migrations, like database migrations, though usage isn't
   restricted to JDBC databases at all
-* **shifter-cache** - wrapper around
-  [SpyMemcached](http://code.google.com/p/spymemcached/) for working
-  with
-  [Futures/Promises](http://docs.scala-lang.org/sips/pending/futures-promises.html),
-  also contains a stupidly simple in-memory cache implementation of
-  the same interface (see the [README](https://github.com/alexandru/shifter/blob/master/cache/README.md) for samples)
 * **shifter-web-api**, **shifter-web-jetty8**, **shifter-web-jetty9** - for servicing web requests, built over Servlets 3.0 and Jetty
+
+**NOTE**: `shifter-cache`, the integration with SpyMemcached, moved to: [github.com/alexandru/shade](https://github.com/alexandru/shade)
 
 ## Usage From SBT
 
@@ -45,20 +41,17 @@ but right now you can get away with these:
 resolvers ++= Seq(
   // just in case you don't have it already
   "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-  // for SpyMemcached (shifter-cache dependency)
-  "Spy" at "http://files.couchbase.com/maven2/",
-  // for Shifter
 )
 ```
 
 Specify the dependency for individual subprojects:
 
 ```scala
-dependencies += "shifter" %% "shifter-cache" % "0.4.0"
+dependencies += "shifter" %% "shifter-web-api" % "0.4.7"
 ```
 
 Or for the whole project, pulling in all required dependencies:
 
 ```scala
-dependencies += "shifter" %% "shifter" % "0.4.0"
+dependencies += "shifter" %% "shifter" % "0.4.7"
 ```

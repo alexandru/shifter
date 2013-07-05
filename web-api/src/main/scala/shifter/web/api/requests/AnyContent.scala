@@ -1,10 +1,10 @@
 package shifter.web.api.requests
 
 import java.io.InputStream
-import shifter.concurrency.atomic.Ref
 import shifter.web.api.requests.parsers._
 import scala.util.Try
 import shifter.web.api.http.MultiPartBody
+import scala.concurrent.atomic.Atomic
 
 trait AnyContent {
   def request: RequestHeader
@@ -44,6 +44,6 @@ object AnyContent {
         throw new IllegalStateException("Request was already parsed as %s".format(isParsed.get))
     }
 
-    private[this] val isParsed = Ref(null : String)
+    private[this] val isParsed = Atomic(null : String)
   }
 }

@@ -21,9 +21,25 @@ class BuilderSuite extends FunSuite {
     assert(Json.obj("hello" -> Json.arr()).compactPrint === """{"hello":[]}""")
   }
 
+  test("json string escape") {
+    assert(Json.str("hello ' world").compactPrint === "\"hello ' world\"")
+    assert(Json.str("hello \" world").compactPrint === "\"hello \\\" world\"")
+  }
+
+  test("updated JsObj") {
+    val obj = Json.obj("first" -> Json.str("field"), "hello" -> Json.str("world"))
+    val test1 = obj + ("timestamp" -> 1938921312) + ("hello" -> "another world")
+
+    val obj2 = Json.obj("timestamp" -> Json.int(1938921312), "hello" -> Json.str("another world"))
+    val test2 = obj ++ obj2
+
+    assert(test1.compactPrint === """{"first":"field","timestamp":1938921312,"hello":"another world"}""")
+    assert(test2.compactPrint === """{"first":"field","timestamp":1938921312,"hello":"another world"}""")
+  }
+
   test("generate json") {
     val simpleObj = Json.obj(
-      "string-sample" -> Json.str("Hello world!"),
+      "string-sample" -> Json.str("Hello \"world\"!"),
       "null-string-sample" -> Json.str(None),
       "some-string-sample" -> Json.str(Some("Another String!")),
 
@@ -64,6 +80,11 @@ class BuilderSuite extends FunSuite {
 
     val compactTest = readTextFrom("/builder-compact-test.json")
     assert(complexObj.compactPrint === compactTest.trim)
+  }
+
+  test("simple object") {
+    val obj = Json.obj("hello" -> "world", "number" -> "1")
+    assert(obj.compactPrint === """{"hello":"world","number":"1"}""")
   }
 
   def readTextFrom(resource: String): String = {

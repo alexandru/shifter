@@ -4,10 +4,10 @@ import java.io.{InputStream, ByteArrayInputStream, UnsupportedEncodingException}
 import collection.mutable.ArrayBuffer
 import java.util
 import scala.util.Try
-import shifter.concurrency.atomic.Ref
+import scala.concurrent.atomic.Atomic
 
 class HttpClientResponse(val status: Int, val headers: Map[String, String], inputStream: InputStream) {
-  private[this] val consumed = Ref(initialValue = false)
+  private[this] val consumed = Atomic(initialValue = false)
 
   private[this] lazy val bytes =
     consumed.synchronized {

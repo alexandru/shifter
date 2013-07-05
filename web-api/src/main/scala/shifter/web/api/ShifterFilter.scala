@@ -8,12 +8,12 @@ import scala.util.control.NonFatal
 import com.typesafe.scalalogging.slf4j.Logging
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.Duration
-import shifter.concurrency.atomic.Ref
 import scala.util.{Success, Failure}
 import shifter.web.api.responses._
 import shifter.web.api.mvc._
 import shifter.web.api.requests._
 import shifter.web.api.http.HeaderNames._
+import scala.concurrent.atomic.Atomic
 
 
 trait ShifterFilter extends JavaFilter with ResultBuilders with Logging {
@@ -79,8 +79,8 @@ trait ShifterFilter extends JavaFilter with ResultBuilders with Logging {
     implicit val context = ec
 
     val ctx = servletRequest.startAsync(servletRequest, servletResponse)
-    val committedRef = Ref(initialValue = false)
-    val timeoutRef = Ref(initialValue = false)
+    val committedRef = Atomic(initialValue = false)
+    val timeoutRef = Atomic(initialValue = false)
 
     if (timeout.isFinite())
       ctx.setTimeout(timeout.toMillis)

@@ -2,7 +2,7 @@ package shifter.io
 
 import java.io.Writer
 import shifter.units._
-import shifter.concurrency.atomic.Ref
+import scala.concurrent.atomic.Atomic
 
 
 /**
@@ -64,7 +64,7 @@ final class RoundRobinBufferedWriter(out: Writer, capacity: Int = 1.megabyte, pa
     }
   }
 
-  private[this] final case class CharBuffer(array: Array[Char], position: Ref[Int])
+  private[this] final case class CharBuffer(array: Array[Char], position: Atomic[Int])
 
   private[this] def withBuffer[T](cb: CharBuffer => T): T = {
     val buffer = allBuffers(roundRobinCnt.getAndIncrement % allBuffers.length)
@@ -77,10 +77,10 @@ final class RoundRobinBufferedWriter(out: Writer, capacity: Int = 1.megabyte, pa
   private[this] def initBuffer =
     CharBuffer(
       array = new Array[Char](capacity),
-      position = Ref(0)
+      position = Atomic(0)
     )
 
-  private[this] val roundRobinCnt = Ref(0)
+  private[this] val roundRobinCnt = Atomic(0)
 
   private[this] val number = {
     math.max(Runtime.getRuntime.availableProcessors(), 1) * parallelismFactor

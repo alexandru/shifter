@@ -54,8 +54,8 @@ object ShifterBuild extends Build {
       )
     )
   )
-  .aggregate(core, db, migrations, cache, json, httpClient, geoip, webApi, webJetty8, webJetty9, webSample)
-  .dependsOn(core, db, migrations, cache, json, httpClient, geoip, webApi)
+  .aggregate(core, db, migrations, json, httpClient, geoip, webApi, webJetty8, webJetty9, webSample)
+  .dependsOn(core, db, migrations, json, httpClient, geoip, webApi)
 
   lazy val core = Project(
     id = "shifter-core",
@@ -72,10 +72,6 @@ object ShifterBuild extends Build {
   lazy val httpClient = Project(
     id = "shifter-http-client",
     base = file("http-client")) dependsOn (core)
-
-  lazy val cache = Project(
-    id = "shifter-cache",
-    base = file("cache")) dependsOn (core)
 
   lazy val json = Project(
     id = "shifter-json",

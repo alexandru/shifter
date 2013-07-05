@@ -27,12 +27,12 @@ package object sax {
   def parseJson[T](r: Reader): JsonIterator =
     parseJson(jsonFactory.createParser(r))
 
-  trait JsonIterator extends Iterator[JsonEvent] {
-    def current: JsonEvent
+  trait JsonIterator extends Iterator[Event] {
+    def current: Event
   }
   
   def parseJson(parser: JsonParser) = new JsonIterator {
-    def next(): JsonEvent = {
+    def next(): Event = {
       def popFieldName() {
         if (!trace.isEmpty && trace.head == JsonToken.FIELD_NAME) {
           trace.pop()
@@ -56,7 +56,7 @@ package object sax {
           pathPush(pathPop().asInstanceOf[Int] + 1)
       }
 
-      var returnValue: JsonEvent = null
+      var returnValue: Event = null
 
       while (returnValue == null && token != null)
         try {
@@ -91,30 +91,32 @@ package object sax {
 
             case JsonToken.VALUE_STRING =>
               ifArrayIncrementIndex()
-              returnValue = JsStringEvent(path, parser.getValueAsString)
+              returnValue = Event.String(path, parser.getValueAsString)
               popFieldName()
 
             case JsonToken.VALUE_FALSE =>
               ifArrayIncrementIndex()
-              returnValue = JsBooleanEvent(path, false)
+              returnValue = Event.Bool(path, false)
               popFieldName()
 
             case JsonToken.VALUE_TRUE =>
               ifArrayIncrementIndex()
-              returnValue = JsBooleanEvent(path, true)
+              returnValue = Event.Bool(path, true)
               popFieldName()
 
             case JsonToken.VALUE_NUMBER_FLOAT =>
               ifArrayIncrementIndex()
-              returnValue = JsDoubleEvent(path, parser.getValueAsDouble)
+              returnValue = Event.Double(path, parser.getValueAsDouble)
               popFieldName()
 
             case JsonToken.VALUE_NUMBER_INT =>
               ifArrayIncrementIndex()
-              returnValue = JsLongEvent(path, parser.getValueAsLong)
+              returnValue = Event.Long(path, parser.getValueAsLong)
               popFieldName()
 
             case JsonToken.VALUE_NULL =>
+              ifArrayIncrementIndex()
+              returnValue = Event.Null(path)
               popFieldName()
 
             case JsonToken.VALUE_EMBEDDED_OBJECT =>
@@ -127,14 +129,14 @@ package object sax {
         catch {
           case ex: JsonProcessingException =>
             ifArrayIncrementIndex()
-            returnValue = JsonError(path, ex.getMessage)
+            returnValue = Event.Error(path, ex.getMessage)
             reachedEnd = true
         }
 
       _current = if (returnValue == null)
         if (!reachedEnd) {
           reachedEnd = true
-          JsonEnd
+          Event.End
         }
         else
           throw new NoSuchElementException("json.parse.next")
@@ -148,7 +150,7 @@ package object sax {
 
     def current = _current
 
-    private[this] var _current: JsonEvent = null
+    private[this] var _current: Event = null
     private[this] var reachedEnd = false
     private[this] var token: JsonToken = JsonToken.NOT_AVAILABLE
     private[this] var path = Path.empty[Any]

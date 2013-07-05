@@ -4,8 +4,8 @@ import collection.immutable.TreeMap
 import annotation.tailrec
 import scala.concurrent.{Promise, Future, ExecutionContext}
 import util.control.NonFatal
-import shifter.concurrency.atomic.Ref
 import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.atomic.Atomic
 
 
 /**
@@ -238,12 +238,12 @@ object scheduler {
    * Our internal priority queue for scheduled tasks.
    */
   private[this] val scheduledTasks =
-    Ref(TreeMap.empty[TaskKey, TaskCallback])
+    Atomic(TreeMap.empty[TaskKey, TaskCallback])
 
   /**
    * For generating unique IDs of scheduled tasks.
    */
-  private[this] val lastID = Ref(0L)
+  private[this] val lastID = Atomic(0L)
 
   /**
    * Start thread that does it all.

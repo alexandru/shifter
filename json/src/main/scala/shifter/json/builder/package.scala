@@ -1,5 +1,7 @@
 package shifter.json
 
+import org.apache.commons.lang.StringEscapeUtils
+
 package object builder {
   trait NullableJsValue[T] {
     def of(v: Option[T]): JsValue[T]
@@ -24,4 +26,7 @@ package object builder {
   implicit val NullableBool = new NullableJsValue[Boolean] {
     def of(v: Option[Boolean]) = v.map(JsBool.apply).getOrElse(JsNull)
   }
+
+  def escapeJsonString(str: String) =
+    StringEscapeUtils.escapeJavaScript(str).replace("\\'", "'")
 }

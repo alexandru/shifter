@@ -4,11 +4,11 @@ import scala.concurrent.{Promise, Future}
 import java.io.File
 import java.nio.file.{StandardOpenOption => o}
 import java.nio.ByteBuffer
-import shifter.concurrency.atomic.Ref
 import scala.util.Try
 import scala.concurrent.duration.Duration
 import shifter.concurrency.extensions._
 import shifter.io.Implicits.IOContext
+import scala.concurrent.atomic.Atomic
 
 
 /**
@@ -94,8 +94,8 @@ final class AsyncFileOutputStream(file: File) extends AsyncOutputStream {
     newFuture
   }
 
-  private[this] val lastFutureRef = Ref(Future.successful(0))
-  private[this] val positionRef = Ref(0L)
+  private[this] val lastFutureRef = Atomic(Future.successful(0))
+  private[this] val positionRef = Atomic(0L)
   private[this] val instance = {
     if (file.exists()) file.delete()
     new AsyncFileChannel(file, o.CREATE_NEW, o.WRITE)

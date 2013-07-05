@@ -1,56 +1,69 @@
 package shifter.json.builder
 
-import org.apache.commons.lang.StringEscapeUtils
-
 sealed trait JsValue[@specialized(scala.Int, scala.Long, scala.Double, scala.Boolean) +T] {
   def value: T
 
-  final lazy val compactPrint: String = export(false, 0)
-  final lazy val prettyPrint: String = export(true, 0)
+  final lazy val compactPrint: String = {
+    val builder = new StringBuilder
+    export(false, 0, builder)
+    builder.toString()
+  }
 
-  private[builder] def export(isPretty: Boolean, level: Int): String
+  final lazy val prettyPrint: String = {
+    val builder = new StringBuilder
+    export(true, 0, builder)
+    builder.toString()
+  }
+
+  def export(isPretty: Boolean, level: Int, builder: StringBuilder)
 }
 
 final case class JsInt(value: Int) extends JsValue[Int] {
-  def export(isPretty: Boolean, level: Int) =
-    value.toString
+  def export(isPretty: Boolean, level: Int, builder: StringBuilder) {
+    builder.append(value)
+  }
 }
 
 final case class JsLong(value: Long) extends JsValue[Long] {
-  def export(isPretty: Boolean, level: Int) =
-    value.toString
+  def export(isPretty: Boolean, level: Int, builder: StringBuilder) {
+    builder.append(value)
+  }
 }
 
 final case class JsDouble(value: Double) extends JsValue[Double] {
-  def export(isPretty: Boolean, level: Int) =
-    value.toString
+  def export(isPretty: Boolean, level: Int, builder: StringBuilder) {
+    builder.append(value)
+  }
 }
 
 final case class JsBool(value: Boolean) extends JsValue[Boolean] {
-  def export(isPretty: Boolean, level: Int) =
-    value.toString
+  def export(isPretty: Boolean, level: Int, builder: StringBuilder) {
+    builder.append(value)
+  }
 }
 
 final case class JsString(value: String) extends JsValue[String] {
-  def export(isPretty: Boolean, level: Int) =
-    "\"" + StringEscapeUtils.escapeJavaScript(value) + "\""
+  def export(isPretty: Boolean, level: Int, builder: StringBuilder) {
+    builder.append("\"").append(escapeJsonString(value)).append("\"")
+  }
 }
 
 case object JsNull extends JsValue[Nothing] {
   def value = throw new NoSuchElementException("JsNull")
-  def export(isPretty: Boolean, level: Int) = "null"
+  def export(isPretty: Boolean, level: Int, builder: StringBuilder) {
+    builder.append("null")
+  }
 }
 
-final case class JsArray[T](value: Seq[JsValue[T]]) extends JsValue[Seq[JsValue[T]]] {
-  def export(isPretty: Boolean, level: Int) = {
+final case class JsArray[T](value: IndexedSeq[JsValue[T]]) extends JsValue[IndexedSeq[JsValue[T]]] {
+  def export(isPretty: Boolean, level: Int, builder: StringBuilder) {
     val hasElements = !value.isEmpty
 
     val indentStr = if (isPretty) "    " * level else ""
-    val builder =
-      if (isPretty && hasElements)
-        new StringBuilder("[\n")
-      else
-        new StringBuilder("[")
+    if (isPretty && hasElements)
+      builder.append("[\n")
+    else
+      builder.append("[")
 
     val iterator = value.iterator
 
@@ -60,7 +73,7 @@ final case class JsArray[T](value: Seq[JsValue[T]]) extends JsValue[Seq[JsValue[
       if (isPretty && hasElements)
         builder.append(indentStr + "    ")
 
-      builder.append(elem.export(isPretty, level + 1))
+      elem.export(isPretty, level + 1, builder)
 
       if (iterator.hasNext)
         if (isPretty && hasElements)
@@ -73,14 +86,48 @@ final case class JsArray[T](value: Seq[JsValue[T]]) extends JsValue[Seq[JsValue[
       builder.append("\n" + indentStr + "]")
     else
       builder.append("]")
-
-    builder.toString()
   }
 }
 
-final case class JsObj(value: Seq[(String, JsValue[_])]) extends JsValue[Seq[(String, JsValue[_])]] {
-  def export(isPretty: Boolean, level: Int) = {
+final case class JsObj(value: IndexedSeq[(String, JsValue[_])]) extends JsValue[IndexedSeq[(String, JsValue[_])]] {
+  def +[T](elem: (String, T))(implicit ev: NullableJsValue[T]) =
+    JsObj(value :+ (elem._1, ev.of(Option(elem._2))))
+
+  def +(elem: (String, JsValue[_])) =
+    JsObj(value :+ elem)
+
+  def ++(other: JsObj) =
+    JsObj(value ++ other.value)
+
+  def updated(k: String, v: JsValue[_]) =
+    JsObj(value :+ (k, v))
+
+  def updated[T](k: String, v: T)(implicit ev: NullableJsValue[T]) =
+    JsObj(value :+ (k, ev.of(Option(v))))
+
+  def export(isPretty: Boolean, level: Int, builder: StringBuilder) {
     val hasElements = !value.isEmpty
+    val length = value.length
+
+    val skipKeys = {
+      val arr = new Array[Boolean](length)
+      val alreadyPicked = collection.mutable.Set.empty[String]
+
+      var idx = 0
+      while (idx < length) {
+        val arrIdx = length - idx - 1
+        val key = value(arrIdx)._1
+        if (alreadyPicked(key))
+          arr(arrIdx) = true
+        else {
+          arr(arrIdx) = false
+          alreadyPicked += key
+        }
+        idx += 1
+      }
+
+      arr
+    }
 
     val indentStr =
       if (isPretty)
@@ -88,40 +135,40 @@ final case class JsObj(value: Seq[(String, JsValue[_])]) extends JsValue[Seq[(St
       else
         ""
 
-    val builder =
-      if (isPretty && hasElements)
-        new StringBuilder("{\n")
-      else
-        new StringBuilder("{")
+    if (isPretty && hasElements)
+      builder.append("{\n")
+    else
+      builder.append("{")
 
-    val iterator = value.iterator
-
-    while (iterator.hasNext) {
-      val (key, value) = iterator.next()
-
-      if (isPretty && hasElements)
-        builder
-          .append(indentStr)
-          .append("    ")
-
-      builder
-        .append('"')
-        .append(StringEscapeUtils.escapeJavaScript(key))
-        .append(if (isPretty) "\": " else "\":")
-        .append(value.export(isPretty, level + 1))
-
-      if (iterator.hasNext)
+    var idx = 0
+    while (idx < length) {
+      if (!skipKeys(idx)) {
+        val (key, value) = this.value(idx)
         if (isPretty && hasElements)
-          builder.append(",\n")
-        else
-          builder.append(",")
+          builder
+            .append(indentStr)
+            .append("    ")
+
+        builder
+          .append('"')
+          .append(escapeJsonString(key))
+          .append(if (isPretty) "\": " else "\":")
+
+        value.export(isPretty, level + 1, builder)
+
+        if (idx < length - 1)
+          if (isPretty && hasElements)
+            builder.append(",\n")
+          else
+            builder.append(",")
+      }
+
+      idx += 1
     }
 
     if (isPretty && hasElements)
       builder.append("\n" + indentStr + "}")
     else
       builder.append("}")
-
-    builder.toString()
   }
 }

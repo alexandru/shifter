@@ -47,11 +47,11 @@ resolvers ++= Seq(
 Specify the dependency for individual subprojects:
 
 ```scala
-dependencies += "shifter" %% "shifter-web-api" % "0.4.7"
+dependencies += "shifter" %% "shifter-web-api" % "0.4.9"
 ```
 
 Or for the whole project, pulling in all required dependencies:
 
 ```scala
-dependencies += "shifter" %% "shifter" % "0.4.7"
+dependencies += "shifter" %% "shifter" % "0.4.9"
 ```

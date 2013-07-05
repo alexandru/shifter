@@ -7,6 +7,7 @@ import org.scalatest.junit.JUnitRunner
 import concurrent.ExecutionContext.Implicits.global
 import concurrent.duration._
 import concurrent.Await
+import scala.concurrent.atomic.Atomic
 
 /*
  * Note: This tests are fragile
@@ -16,7 +17,7 @@ import concurrent.Await
 class SchedulerTests extends FunSuite {
 
   test("runOnce") {
-    val ref = shifter.concurrency.atomic.Ref(0L)
+    val ref = Atomic(0L)
     val startAt = System.currentTimeMillis()
 
     scheduler.runOnce(100) {

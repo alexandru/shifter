@@ -7,7 +7,6 @@ import org.eclipse.jetty.webapp.WebAppContext
 import java.io._
 import java.util.concurrent.LinkedBlockingQueue
 import shifter.reflection._
-import scala.Some
 
 trait Jetty extends Logging {
   def start(): Server = {

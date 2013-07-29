@@ -3,7 +3,7 @@ package shifter.web.api.requests
 import shifter.web.api.http.{UserInfo, Cookie, HttpMethod}
 import shifter.web.api.utils
 import shifter.web.api.http.HeaderNames._
-import shifter.web.api.utils.{GeoIPService, IPUtils}
+import shifter.web.api.utils.IPUtils
 
 trait RequestHeader {
   def method: HttpMethod.Value
@@ -79,7 +79,6 @@ trait RequestHeader {
     ip = remoteRealIP,
     forwardedFor = remoteForwardedFor,
     via = remoteVia,
-    agent = userAgent,
-    geoip = GeoIPService.search(remoteRealIP)
+    agent = userAgent
   )
 }

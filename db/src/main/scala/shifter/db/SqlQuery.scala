@@ -7,9 +7,9 @@ import java.io.InputStream
 import java.sql.Connection
 import java.sql.PreparedStatement
 import collection.breakOut
-import scala.reflect.runtime.universe._
 import scala.util.control.NonFatal
-import shifter.reflection.castTo
+import scala.reflect.runtime.universe._
+import scala.util.{Success, Failure, Try}
 
 
 class SqlException(msg: String) extends RuntimeException(msg)
@@ -21,39 +21,22 @@ class Row(val names: Vector[String], val values: Vector[Any]) {
   private[this] lazy val namesSet =
     names.toSet
 
-  def apply[T : Manifest](key: String): T = {
-    val keys = Seq(key, key.toLowerCase, key.toUpperCase)
-    val m = manifest[T]
-
-    keys.find(namesSet.contains(_)) match {
-      case Some(k) =>
-        val value = toMap(k)
-        if (value != null)
-          castTo[T](value).getOrElse(
-            throw new IllegalArgumentException(
-              "Value related to key '%s' is not a %s".format(key, m.toString()))
-          )
-        else
-          throw new NoSuchElementException(
-            "Value related to key '%s' is null".format(key))
-      case None =>
-        throw new NoSuchElementException(
-          "Value related to key '%s' is missing".format(key))
+  def apply[T : DBValue : TypeTag](key: String): T =
+    get[T](key) match {
+      case Success(x) => x
+      case Failure(ex) => throw ex
     }
-  }
 
-  def get[T: Manifest](key: String): Option[T] = {
+  def get[T : DBValue : TypeTag](key: String): Try[T] = {
     val keys = Seq(key, key.toLowerCase, key.toUpperCase)
+    val ev = implicitly[DBValue[T]]
 
-    keys.find(namesSet.contains(_)) match {
+    keys.find(namesSet) match {
       case Some(k) =>
-        val value = toMap(k)
-        if (value != null)
-          castTo[T](value)
-        else
-          None
+        val value = toMap.getOrElse(k, null)
+        ev.fromDB(value)
       case None =>
-        None
+        Failure(new NoSuchElementException(s"Key `$key` is not part of the resultset"))
     }
   }
 }
@@ -116,7 +99,7 @@ sealed class SqlQuery(conn: Connection, query: String) {
       val rs = stm.executeQuery
       val meta = rs.getMetaData
       val colsCount = meta.getColumnCount
-      val names = (1 to colsCount).map(meta.getColumnName(_))(breakOut): Vector[String]
+      val names = (1 to colsCount).map(meta.getColumnName)(breakOut): Vector[String]
       (names, colsCount, rs)
     }
     catch {
@@ -226,8 +209,10 @@ sealed class SqlQuery(conn: Connection, query: String) {
         stm.setURL(idx + 1, value)
       case value: String =>
         stm.setString(idx + 1, value)
+      case null =>
+        stm.setNull(idx + 1, java.sql.Types.VARCHAR)
       case x =>
-        throw new IllegalArgumentException(if (x == null) "null" else x.toString)
+        throw new IllegalArgumentException(x.toString)
     }
   }
 
@@ -317,22 +302,25 @@ object SqlQuery {
         Unit
       else if (ch == '?')
         throw new SqlException("SQL syntax with ? placeholders is not supported in combination with named arguments")
-      else if (!inParam && ch == ':') {
+      else if (!inParam && ch == '{') {
         inParam = true
         currentElem = ""
         cIdx = idx - 1
       }
-      else if (inParam && paramChars.contains(ch)) {
-        currentElem += ch
-      }
-      else if (inParam && ch == ':')
-        throw new SqlException("Invalid syntax for named parameter " + currentElem + " at char " + (idx - 1))
-      else if (inParam) {
-        discovered = discovered :+ (currentElem -> cIdx)
-        inParam = false
-        currentElem = ""
-        cIdx = -1
-      }
+      else if (inParam)
+        if (ch == '}')
+          if (currentElem.length > 0) {
+            discovered = discovered :+ (currentElem -> cIdx)
+            inParam = false
+            currentElem = ""
+            cIdx = -1
+          }
+          else
+            throw new SqlException("Invalid syntax at char " + (idx - 1))
+        else if (!paramChars.contains(ch))
+          throw new SqlException("Invalid syntax for named parameter " + currentElem + " at char " + (idx - 1))
+        else
+          currentElem += ch
       else
         Unit
     }
@@ -343,7 +331,7 @@ object SqlQuery {
     val newQuery = discovered.reverse.foldLeft(query) {
       (query, elem) =>
         val (name, idx) = elem
-        query.substring(0, idx) + "?" + query.substring(idx + 1 + name.length)
+        query.substring(0, idx) + "?" + query.substring(idx + 2 + name.length)
     }
 
     (newQuery, discovered.map(_._1))

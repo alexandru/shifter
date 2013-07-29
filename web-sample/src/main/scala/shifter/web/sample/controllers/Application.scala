@@ -3,8 +3,7 @@ package shifter.web.sample.controllers
 import shifter.web.api.mvc._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import shifter.concurrency.scheduler
-
+import scala.concurrent.Future
 
 object Application extends Controller {
   val homepage = Action {
@@ -21,7 +20,8 @@ object Application extends Controller {
   }
 
   val asyncHello = Action { req =>
-    val response = scheduler.future(500.millis) {
+    val response = Future {
+      Thread.sleep(1000)
       val name = req.queryParam("name").getOrElse("Anonymous")
       Ok("Hello, %s!".format(name))
     }

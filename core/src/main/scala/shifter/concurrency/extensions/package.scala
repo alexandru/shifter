@@ -7,21 +7,6 @@ import java.util.concurrent.{ExecutorService, Executor}
  * Useful extensions for various concurrency primitives.
  */
 package object extensions {
-
-  /**
-   * Extensions for
-   * [[http://www.scala-lang.org/api/current/index.html#scala.concurrent.Future concurrent.Future]]
-   */
-  implicit class FutureExtensionsImplicit[A](val future: Future[A])
-    extends AnyVal with FutureExtensions[A]
-
-  /**
-   * Extensions for
-   * [[http://www.scala-lang.org/api/current/index.html#scala.concurrent.Promise concurrent.Promise]]
-   */
-  implicit class PromiseExtensionsImplicit[A](val promise: Promise[A])
-    extends AnyVal with PromiseExtensions[A]
-
   /**
    * Extensions for
    * [[http://www.scala-lang.org/api/current/index.html#scala.concurrent.ExecutionContext concurrent.ExecutionContext]]

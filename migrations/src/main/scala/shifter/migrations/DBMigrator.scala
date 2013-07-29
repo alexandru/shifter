@@ -8,7 +8,7 @@ abstract class DBMigrator(packageName: String, group: String, val db: DB)
   extends Migrator(packageName, group) {
 
   override def setup() {
-    db.withSession {
+    db.withConnection {
       implicit conn =>
         if (!db.listTables.exists(_.toLowerCase == "shiftermigrations")) {
           using (conn.createStatement()) {
@@ -29,7 +29,7 @@ abstract class DBMigrator(packageName: String, group: String, val db: DB)
   }
 
   override def persistVersion(version: Int) {
-    db.withSession {
+    db.withConnection {
       conn =>
         val sql = "UPDATE shiftermigrations SET mvalue = ? WHERE mname = ?"
         using(conn.prepareStatement(sql)) {
@@ -42,7 +42,7 @@ abstract class DBMigrator(packageName: String, group: String, val db: DB)
   }
 
   override def currentVersion = {
-    db.withSession {
+    db.withConnection {
       conn =>
         val sql = "SELECT mvalue FROM shiftermigrations WHERE mname = ?"
         using(conn.prepareStatement(sql)) {

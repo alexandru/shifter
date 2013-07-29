@@ -4,36 +4,36 @@ import shifter.db.DB
 import shifter.reflection.toInstance
 
 
-class DBTestMigrator(db: DB) 
-extends DBMigrator("shifter.migrations", "Test DB", db) {
+class DBTestMigrator(db: DB)
+  extends DBMigrator("shifter.migrations", "Test DB", db) {
 
-  override def initMigration(cls: Class[Migration]) = 
+  override def initMigration(cls: Class[Migration]) =
     toInstance(cls, db)
-    
+
 }
 
-abstract class DBTestMigration(version: Int) 
-extends Migration("Test DB", version)
+abstract class DBTestMigration(version: Int)
+  extends Migration("Test DB", version)
 
 
 class DBTestM001(db: DB) extends DBTestMigration(1) {
   def up() {
-    db.withSession { 
+    db.withConnection {
       conn =>
         val sql = """CREATE TABLE test1 (id INT PRIMARY KEY, name1 VARCHAR(100))"""
-	val stm = conn.prepareStatement(sql)
-	stm.execute
-	stm.close
+        val stm = conn.prepareStatement(sql)
+        stm.execute
+        stm.close()
     }
   }
 
   def down() {
-    db.withSession { 
+    db.withConnection {
       conn =>
-	val sql = """DROP TABLE test1"""
-	val stm = conn.prepareStatement(sql)
-	stm.execute
-	stm.close
+        val sql = """DROP TABLE test1"""
+        val stm = conn.prepareStatement(sql)
+        stm.execute
+        stm.close()
     }
   }
 }
@@ -41,44 +41,44 @@ class DBTestM001(db: DB) extends DBTestMigration(1) {
 
 class DBTestM002(db: DB) extends DBTestMigration(2) {
   def up() {
-    db.withSession { 
+    db.withConnection {
       conn =>
-	val sql = """CREATE TABLE test2 (id INT PRIMARY KEY, name2 VARCHAR(100))"""
-	val stm = conn.prepareStatement(sql)
-	stm.execute
-	stm.close
+        val sql = """CREATE TABLE test2 (id INT PRIMARY KEY, name2 VARCHAR(100))"""
+        val stm = conn.prepareStatement(sql)
+        stm.execute
+        stm.close()
     }
   }
 
   def down() {
-    db.withSession { 
+    db.withConnection {
       conn =>
-	val sql = """DROP TABLE test2"""
-	val stm = conn.prepareStatement(sql)
-	stm.execute
-	stm.close
+        val sql = """DROP TABLE test2"""
+        val stm = conn.prepareStatement(sql)
+        stm.execute
+        stm.close()
     }
   }
 }
 
 class DBTestM003(db: DB) extends DBTestMigration(3) {
   def up() {
-    db.withSession { 
+    db.withConnection {
       conn =>
-	val sql = """CREATE TABLE test3 (id INT PRIMARY KEY, name3 VARCHAR(100))"""
-	val stm = conn.prepareStatement(sql)
-	stm.execute
-	stm.close
+        val sql = """CREATE TABLE test3 (id INT PRIMARY KEY, name3 VARCHAR(100))"""
+        val stm = conn.prepareStatement(sql)
+        stm.execute
+        stm.close()
     }
   }
 
   def down() {
-    db.withSession { 
+    db.withConnection {
       conn =>
-	val sql = """DROP TABLE test3"""
-	val stm = conn.prepareStatement(sql)
-	stm.execute
-	stm.close
+        val sql = """DROP TABLE test3"""
+        val stm = conn.prepareStatement(sql)
+        stm.execute
+        stm.close()
     }
   }
 }

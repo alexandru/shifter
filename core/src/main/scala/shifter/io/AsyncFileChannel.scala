@@ -1,13 +1,12 @@
 package shifter.io
 
 import java.io.File
-import scala.concurrent.{ExecutionContext, Future, Promise}
+import scala.concurrent.{Future, Promise}
 import java.nio.file.StandardOpenOption
 import java.nio.channels.{CompletionHandler, AsynchronousFileChannel}
 import scala.util.{Failure, Success}
 import java.nio.ByteBuffer
 import collection.JavaConverters._
-import shifter.io.Implicits.IOContext
 import shifter.concurrency.extensions._
 
 
@@ -37,7 +36,7 @@ import shifter.concurrency.extensions._
  * }}}
  */
 final class AsyncFileChannel(file: File, options: StandardOpenOption*) {
-  private[this] val ec = implicitly[ExecutionContext]
+  implicit val ctx = shifter.io.Implicits.IOContext
 
   /**
    * Writes a sequence of bytes to this channel from the given buffer,
@@ -123,11 +122,11 @@ final class AsyncFileChannel(file: File, options: StandardOpenOption*) {
         promise.complete(Failure(exc))
       }
       finally {
-        ec.reportFailure(exc)
+        ctx.reportFailure(exc)
       }
     }
   }
 
   private[this] val instance =
-    AsynchronousFileChannel.open(file.toPath, options.toSet.asJava, ec.toExecutorService)
+    AsynchronousFileChannel.open(file.toPath, options.toSet.asJava, ctx.toExecutorService)
 }

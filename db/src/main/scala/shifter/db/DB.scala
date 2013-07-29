@@ -2,14 +2,12 @@ package shifter.db
 
 import java.sql.Connection
 import java.sql.SQLException
-import shifter.reflection._
-import shifter.lang._
 import shifter.db.adapters._
 
 class DBException(msg: String) extends SQLException(msg)
 
 trait IDB {
-  def withSession[A](f: Connection => A): A
+  def withConnection[A](f: Connection => A): A
 
   def withTransaction[A](f: Connection => A): A
 
@@ -20,7 +18,7 @@ trait IDB {
 }
 
 case class DB(url: String, user: Option[String], password: Option[String], driver: Option[String]) extends IDB {
-  def withSession[A](f: Connection => A): A = {
+  def withConnection[A](f: Connection => A): A = {
     val underlying = adapter.initConnection(url, user, password, driver)
     try {
       f(underlying)
@@ -31,7 +29,7 @@ case class DB(url: String, user: Option[String], password: Option[String], drive
   }
 
   def withTransaction[A](f: Connection => A): A =
-    withSession {
+    withConnection {
       underlying =>
 
         underlying.setAutoCommit(false)

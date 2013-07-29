@@ -1,12 +1,11 @@
 package shifter.io
 
-import scala.concurrent.{Promise, Future}
+import scala.concurrent.{Await, Promise, Future}
 import java.io.File
 import java.nio.file.{StandardOpenOption => o}
 import java.nio.ByteBuffer
 import scala.util.Try
 import scala.concurrent.duration.Duration
-import shifter.concurrency.extensions._
 import shifter.io.Implicits.IOContext
 import scala.concurrent.atomic.Atomic
 
@@ -72,11 +71,11 @@ final class AsyncFileOutputStream(file: File) extends AsyncOutputStream {
 
 
   override def flush() {
-    asyncFlush().await(Duration.Inf)
+    Await.result(asyncFlush(), Duration.Inf)
   }
 
   override def close() {
-    asyncClose().await(Duration.Inf)
+    Await.result(asyncClose(), Duration.Inf)
   }
 
   private[this] def wrapArray(b: Array[Byte], off: Int, len: Int) = {

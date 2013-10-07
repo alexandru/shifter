@@ -16,6 +16,7 @@ trait RequestHeader {
   def headers: Map[String, Seq[String]]
   def remoteAddress: String
   def cookies: Map[String, Cookie]
+  def contentLength: Int
 
   def header(key: String): Option[String] =
     headers.get(key.toUpperCase).flatMap(_.headOption).flatMap {

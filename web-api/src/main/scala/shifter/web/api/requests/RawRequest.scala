@@ -65,6 +65,9 @@ final class RawServletRequest(val underlying: HttpServletRequest) extends RawReq
     }
       .toMap
 
+  def contentLength: Int =
+    underlying.getContentLength
+
   lazy val body: InputStream = underlying.getInputStream
 
   lazy val bodyAsString: String = {

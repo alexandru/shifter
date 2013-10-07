@@ -22,7 +22,7 @@ final class AsyncFileOutputStream(file: File) extends AsyncOutputStream {
     val buffer: ByteBuffer = if (b.isReadOnly)
       b
     else {
-      val buffer = ByteBuffer.allocate(length)
+      val buffer = ByteBuffer.allocate(length)m
       buffer.put(b)
       buffer.flip()
       buffer.asReadOnlyBuffer()

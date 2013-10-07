@@ -17,6 +17,7 @@ trait Request[+A] extends RequestHeader {
     def headers = self.headers
     def remoteAddress = self.remoteAddress
     def cookies = self.cookies
+    def contentLength = self.contentLength
     lazy val body = f(self.body)
   }
 }
@@ -33,6 +34,7 @@ object Request {
     headers = rh.headers,
     remoteAddress = rh.remoteAddress,
     cookies = rh.cookies,
+    contentLength = rh.contentLength,
     body = body
   )
 }

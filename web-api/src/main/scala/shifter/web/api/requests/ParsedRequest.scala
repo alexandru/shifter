@@ -13,5 +13,6 @@ final case class ParsedRequest[+A](
   headers: Map[String, Seq[String]],
   remoteAddress: String,
   cookies: Map[String, Cookie],
+  contentLength: Int,
   body: A
 ) extends Request[A]

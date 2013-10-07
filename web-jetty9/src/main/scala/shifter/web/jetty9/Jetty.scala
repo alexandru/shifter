@@ -1,12 +1,14 @@
 package shifter.web.jetty9
 
 import com.typesafe.scalalogging.slf4j.Logging
-import org.eclipse.jetty.server.{HttpConnectionFactory, Server, ServerConnector}
+import org.eclipse.jetty.server.{HttpConnectionFactory, Server}
 import org.eclipse.jetty.util.thread.QueuedThreadPool
 import org.eclipse.jetty.webapp.WebAppContext
 import java.io._
 import java.util.concurrent.LinkedBlockingQueue
 import shifter.reflection._
+import org.eclipse.jetty.util.thread.ThreadPool
+import org.eclipse.jetty.server.ServerConnector
 
 trait Jetty extends Logging {
   def start(): Server = {
@@ -20,6 +22,18 @@ trait Jetty extends Logging {
     start(Configuration.load(lifeCycleClass))
   }
 
+  def createThreadPool(config: Configuration): ThreadPool =
+    if (config.threadPoolMaxQueueSize.isDefined) {
+      val maxQueueSize = config.threadPoolMaxQueueSize.get
+      val queue = new LinkedBlockingQueue[Runnable](maxQueueSize)
+      new QueuedThreadPool(config.maxThreads, config.minThreads, config.threadPoolIdleTimeout, queue)
+    }
+    else
+      new QueuedThreadPool(config.maxThreads, config.minThreads, config.threadPoolIdleTimeout)
+
+  def createServerConnector(server: Server, config: Configuration): ServerConnector =
+    new ServerConnector(server, null,null,null, config.acceptors, config.selectors, new HttpConnectionFactory())
+
   def start(config: Configuration): Server = {
     logger.info("Starting Jetty on %s:%d".format(config.host, config.port))
 
@@ -29,21 +43,13 @@ trait Jetty extends Logging {
     logger.info(s"Jetty config.threadPoolMaxQueueSize: ${config.threadPoolMaxQueueSize}")
     logger.info(s"Jetty config.threadPoolIdleTimeout: ${config.threadPoolIdleTimeout}")
 
-    val pool = if (config.threadPoolMaxQueueSize.isDefined) {
-      val maxQueueSize = config.threadPoolMaxQueueSize.get
-      val queue = new LinkedBlockingQueue[Runnable](maxQueueSize)
-      new QueuedThreadPool(config.maxThreads, config.minThreads, config.threadPoolIdleTimeout, queue)
-    }
-    else
-      new QueuedThreadPool(config.maxThreads, config.minThreads, config.threadPoolIdleTimeout)
-
+    val pool = createThreadPool(config)
     val server = new Server(pool)
 
     logger.info(s"Jetty config.acceptors: ${config.acceptors}")
     logger.info(s"Jetty config.selectors: ${config.selectors}")
 
-    val connector = new ServerConnector(server, null,null,null,config.acceptors,config.selectors,new HttpConnectionFactory())
-
+    val connector = createServerConnector(server, config)
     connector.setHost(config.host)
     connector.setPort(config.port)
 

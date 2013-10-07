@@ -21,15 +21,15 @@ class Row(val names: Vector[String], val values: Vector[Any]) {
   private[this] lazy val namesSet =
     names.toSet
 
-  def apply[T : DBValue : TypeTag](key: String): T =
+  def apply[T : DBCodec : TypeTag](key: String): T =
     get[T](key) match {
       case Success(x) => x
       case Failure(ex) => throw ex
     }
 
-  def get[T : DBValue : TypeTag](key: String): Try[T] = {
+  def get[T : DBCodec : TypeTag](key: String): Try[T] = {
     val keys = Seq(key, key.toLowerCase, key.toUpperCase)
-    val ev = implicitly[DBValue[T]]
+    val ev = implicitly[DBCodec[T]]
 
     keys.find(namesSet) match {
       case Some(k) =>

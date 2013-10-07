@@ -21,7 +21,7 @@ object Application extends Controller {
 
   val asyncHello = Action { req =>
     val response = Future {
-      Thread.sleep(1000)
+      Thread.sleep(100)
       val name = req.queryParam("name").getOrElse("Anonymous")
       Ok("Hello, %s!".format(name))
     }

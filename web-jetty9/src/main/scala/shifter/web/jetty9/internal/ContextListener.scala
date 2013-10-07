@@ -48,12 +48,14 @@ class ContextListener extends ServletContextListener with Logging {
 
   private[this] def addFilterMapping(name: String, router: Filter, urlPattern: String, ctx: ServletContext) {
     val req = ctx.addFilter(name, router)
+    req.setAsyncSupported(true)
     val dispatchers = jutil.EnumSet.allOf(classOf[DispatcherType])
     req.addMappingForUrlPatterns(dispatchers, true, urlPattern)
   }
 
   private[this] def addServletMapping(name: String, router: Servlet, urlPattern: String, ctx: ServletContext) {
     val req = ctx.addServlet(name, router)
+    req.setAsyncSupported(true)
     req.addMapping(urlPattern)
   }
 
